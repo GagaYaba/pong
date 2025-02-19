@@ -1,6 +1,6 @@
 #include <QApplication>
 #include <QDebug>
-#include "Game.h"
+#include "include/game.h"
 
 #include "server/GameServer/gameserver.h"
 #include "client/GameClient/gameclient.h"
