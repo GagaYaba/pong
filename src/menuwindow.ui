@@ -1,5 +1,63 @@
-//
-// Created by Franc on 19/02/2025.
-//
-
-#include "../include/menuwindow.h"
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+    <class>MenuWindow</class>
+    <widget class="QMainWindow" name="MenuWindow">
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>400</width>
+                <height>300</height>
+            </rect>
+        </property>
+        <property name="windowTitle">
+            <string>Menu Principal</string>
+        </property>
+        <widget class="QWidget" name="centralwidget">
+            <layout class="QVBoxLayout" name="verticalLayout">
+                <item>
+                    <widget class="QLabel" name="titleLabel">
+                        <property name="text">
+                            <string>Menu Principal</string>
+                        </property>
+                        <property name="alignment">
+                            <set>Qt::AlignCenter</set>
+                        </property>
+                        <property name="font">
+                            <font>
+                                <pointsize>24</pointsize>
+                            </font>
+                        </property>
+                    </widget>
+                </item>
+                <item>
+                    <widget class="QPushButton" name="startButton">
+                        <property name="text">
+                            <string>Démarrer</string>
+                        </property>
+                        <property name="font">
+                            <font>
+                                <pointsize>14</pointsize>
+                            </font>
+                        </property>
+                    </widget>
+                </item>
+                <item>
+                    <widget class="QPushButton" name="quitButton">
+                        <property name="text">
+                            <string>Quitter</string>
+                        </property>
+                        <property name="font">
+                            <font>
+                                <pointsize>14</pointsize>
+                            </font>
+                        </property>
+                    </widget>
+                </item>
+            </layout>
+        </widget>
+        <addaction name="quitAction"/>
+    </widget>
+    <resources/>
+    <connections/>
+</ui>

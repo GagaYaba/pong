@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.19)
 project(sans_titre LANGUAGES CXX)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets Network)
 
 qt_standard_project_setup()
 
@@ -15,13 +15,17 @@ qt_add_executable(sans_titre
         include/ball.h src/ball.cpp
         include/score.h src/score.cpp
         include/game.h src/game.cpp
-
+        include/menuwindow.h src/menuwindow.cpp src/menuwindow.ui
+        client/GameClient/gameclient.h client/GameClient/gameclient.cpp
+        server/GameServer/gameserver.h server/GameServer/gameserver.cpp
 )
+
 
 target_link_libraries(sans_titre
     PRIVATE
-        Qt::Core
-        Qt::Widgets
+        Qt6::Core
+        Qt6::Widgets
+        Qt6::Network
 )
 
 include(GNUInstallDirs)

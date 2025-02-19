@@ -19,7 +19,7 @@ public:
 protected:
     void keyPressEvent(QKeyEvent *event) override;
     void keyReleaseEvent(QKeyEvent *event) override;
-
+    void closeEvent(QCloseEvent *event) override;
 private:
     QGraphicsScene* scene;
     Paddle* player1;
@@ -27,6 +27,9 @@ private:
     Ball* ball;
     QSet<int>* keysPressed;
     Score* score;
+
+signals:
+    void gameClosed();
 };
 
 #endif // GAME_H

@@ -2,35 +2,49 @@
 #include <QMenuBar>
 #include <QMenu>
 #include <QAction>
-#include <QMessageBox>
+#include <QHostAddress>
 
-MenuWindow::MenuWindow(QWidget *parent) : QMainWindow(parent) {
-    createMenu();
+MenuWindow::MenuWindow(QWidget *parent)
+        : QMainWindow(parent), game(nullptr), server(nullptr), client(nullptr), ui(new Ui::MenuWindow) {
+    ui->setupUi(this);
+    connect(ui->startButton, &QPushButton::clicked, this, &MenuWindow::onStart);
+    connect(ui->quitButton, &QPushButton::clicked, this, &MenuWindow::onQuit);
 }
 
-MenuWindow::~MenuWindow() {}
-
-void MenuWindow::createMenu() {
-    QMenu *fileMenu = menuBar()->addMenu("Menu");
-
-    QAction *startAction = new QAction("Démarrer", this);
-    QAction *quitAction = new QAction("Quitter", this);
-
-    connect(startAction, &QAction::triggered, this, &MenuWindow::onStart);
-    connect(quitAction, &QAction::triggered, this, &MenuWindow::onQuit);
-
-    fileMenu->addAction(startAction);
-    fileMenu->addSeparator();
-    fileMenu->addAction(quitAction);
+MenuWindow::~MenuWindow() {
+    delete game;
+    delete server;
+    delete client;
+    delete ui;
 }
 
 void MenuWindow::onStart() {
-    if (!mainWindow) {
-        secondWindow = new SecondWindow(this);
+    if (!server) {
+        server = new GameServer(this);
+        server->startServer(12345, 1, false);
     }
-    secondWindow->show();
+
+    if (!client) {
+        client = new GameClient(this);
+        client->connectToServer(QHostAddress::LocalHost, 12345);
+    }
+
+    if (!game) {
+        game = new Game();
+        connect(game, &Game::gameClosed, this, &MenuWindow::onGameClosed);
+    }
+
+    hide();
+    game->show();
 }
 
 void MenuWindow::onQuit() {
     close();
+}
+
+// Slot pour afficher le menu lorsque le jeu est fermé
+void MenuWindow::onGameClosed() {
+    show();  // Affiche le menu
+    game->deleteLater();  // Supprimer l'instance du jeu
+    game = nullptr;  // Réinitialise l'objet jeu
 }
