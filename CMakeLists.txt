@@ -8,9 +8,7 @@ qt_standard_project_setup()
 qt_add_executable(sans_titre
     WIN32 MACOSX_BUNDLE
     main.cpp
-        src/mainwindow.cpp
-        include/mainwindow.h
-        src/mainwindow.ui
+        src/mainwindow.cpp include/mainwindow.h src/mainwindow.ui
         include/paddle.h src/paddle.cpp
         include/ball.h src/ball.cpp
         include/score.h src/score.cpp
