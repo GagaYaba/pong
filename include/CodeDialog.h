@@ -2,7 +2,7 @@
 #define CODEDIALOG_H
 
 #include <QDialog>
-#include "./ui_codedialog.h"
+#include "../src/ui_codedialog.h"
 
 class CodeDialog : public QDialog
 {
