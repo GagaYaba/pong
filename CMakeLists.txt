@@ -10,7 +10,7 @@ qt_add_executable(sans_titre
     main.cpp
         src/mainwindow.cpp
         include/mainwindow.h
-        ui/mainwindow.ui
+        src/mainwindow.ui
         include/paddle.h src/paddle.cpp
         include/ball.h src/ball.cpp
         include/score.h src/score.cpp
