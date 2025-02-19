@@ -2,6 +2,7 @@
 #include "../include/JoinDialog.h"
 #include "../include/CodeDialog.h"
 #include "../include/utils.h"
+#include "../include/SelectDialog.h"
 #include <QMenuBar>
 #include <QMenu>
 #include <QAction>
@@ -11,10 +12,10 @@
 MenuWindow::MenuWindow(QWidget *parent)
         : QMainWindow(parent), game(nullptr), server(nullptr), client(nullptr), ui(new Ui::MenuWindow) {
     ui->setupUi(this);
+
     connect(ui->startButton, &QPushButton::clicked, this, &MenuWindow::onStart);
     connect(ui->quitButton, &QPushButton::clicked, this, &MenuWindow::onQuit);
     connect(ui->joinButton, &QPushButton::clicked, this, &MenuWindow::onJoin);
-
 }
 
 MenuWindow::~MenuWindow() {
@@ -26,6 +27,7 @@ MenuWindow::~MenuWindow() {
 
 void MenuWindow::onStart() {
     if (!server) {
+        // Initialisation du serveur
         server = new GameServer(this);
         int port = 12345;
         server->startServer(port, 1, false);
@@ -42,13 +44,9 @@ void MenuWindow::onStart() {
         client->connectToServer(QHostAddress::LocalHost, 12345);
     }
 
-    if (!game) {
-        game = new Game();
-        connect(game, &Game::gameClosed, this, &MenuWindow::onGameClosed);
-    }
-
-    hide();
-    game->show();
+    // Lancer le jeu uniquement après que le client ait rejoint et que le jeu est prêt
+    // On garde le menu visible jusqu'à ce que tout soit prêt
+    // La fenêtre du jeu ne s'affichera qu'une fois la connexion et les rôles sélectionnés
 }
 
 
@@ -83,13 +81,16 @@ void MenuWindow::onJoin() {
         }
 
         if (!client) {
+            // Initialisation du client
             client = new GameClient(this);
             client->connectToServer(QHostAddress(ip), port);
         }
+
+        SelectDialog selectDialog(this);
+        connect(&selectDialog, &SelectDialog::gameStarted, this, &MenuWindow::onRoleSelected);
+        selectDialog.exec();
     }
 }
-
-
 
 QString MenuWindow::generateJoinCode(const QString &ip, int port) {
     int a, b, c, d;
@@ -135,4 +136,12 @@ QPair<QString, int> MenuWindow::decodeIPPort(const QString& code) {
 
     QString ip = QString("%1.%2.%3.%4").arg(a).arg(b).arg(c).arg(d);
     return qMakePair(ip, port);
+}
+
+void MenuWindow::onRoleSelected(const QString &role) {
+    // Envoi du rôle au client pour qu'il s'enregistre auprès du serveur
+    if (client) {
+        client->selectRole(role);
+        qDebug() << "Rôle sélectionné:" << role;
+    }
 }
