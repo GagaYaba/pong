@@ -48,8 +48,10 @@ void Game::keyReleaseEvent(QKeyEvent *event) {
     keysPressed->remove(event->key());
 }
 
+Paddle* Game::getPlayer1() {
+    return player1;
+}
 
-void Game::closeEvent(QCloseEvent *event) {
-    emit gameClosed();
-    event->accept();
+Paddle* Game::getPlayer2() {
+    return player2;
 }
