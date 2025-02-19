@@ -2,7 +2,6 @@
 #define SCORE_H
 
 #include <QGraphicsTextItem>
-#include <QFont>
 
 class Score : public QGraphicsTextItem {
 public:
@@ -10,12 +9,11 @@ public:
 
     void increasePlayer1Score();
     void increasePlayer2Score();
+    void updateDisplay();
 
 private:
     int player1Score;
     int player2Score;
-
-    void updateDisplay();
 };
 
 #endif // SCORE_H
