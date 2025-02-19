@@ -11,6 +11,7 @@ SOURCES += \
     main.cpp \
     server/GameServer/gameserver.cpp \
     src/ball.cpp \
+    src/collision.cpp \
     src/game.cpp \
     src/mainwindow.cpp \
     src/paddle.cpp \
@@ -32,7 +33,8 @@ HEADERS += \
     include/mainwindow.h \
     include/paddle.h \
     include/score.h \
-    server/GameServer/gameserver.h
+    server/GameServer/gameserver.h \
+    src/collision.h
 
 DISTFILES += \
     .gitignore
