@@ -41,6 +41,8 @@ void GameClient::sendPaddlePosition(float paddleY)
     }
 }
 
+
+
 void GameClient::onDataReceived()
 {
     while (udpSocket->hasPendingDatagrams()) {
