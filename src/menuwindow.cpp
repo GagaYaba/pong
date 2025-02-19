@@ -29,23 +29,27 @@ void MenuWindow::onStart() {
     if (!server) {
         // Initialisation du serveur
         server = new GameServer(this);
-        server->startServer(1, false);
+        server->startServer(1, false);  // Démarre le serveur sur un port spécifique (modifie si nécessaire)
 
         QString ip = getLocalIPAddress();
         QString joinCode = generateJoinCode(ip);
 
-        CodeDialog codeDialog(joinCode, this);
-        codeDialog.exec();
+        CodeDialog *codeDialog = new CodeDialog(joinCode, this);
+        if (codeDialog->exec() == QDialog::Accepted) {
+            delete codeDialog;  // Assurez-vous que le CodeDialog est bien détruit après son utilisation
+        }
     }
 
     if (!client) {
         client = new GameClient(this);
-        client->connectToServer(QHostAddress::LocalHost);
+        client->connectToServer(QHostAddress::LocalHost);  // Connexion locale
     }
 
-    // Lancer le jeu uniquement après que le client ait rejoint et que le jeu est prêt
-    // On garde le menu visible jusqu'à ce que tout soit prêt
-    // La fenêtre du jeu ne s'affichera qu'une fois la connexion et les rôles sélectionnés
+    // Ouvre le SelectDialog pour la sélection des rôles
+    SelectDialog *selectDialog = new SelectDialog(this);
+    connect(selectDialog, &SelectDialog::gameStarted, this, &MenuWindow::onRoleSelected);
+    selectDialog->exec();  // Affiche la boîte de dialogue de sélection des rôles
+    delete selectDialog;   // Ne pas oublier de nettoyer l'objet après son utilisation
 }
 
 
@@ -79,15 +83,15 @@ void MenuWindow::onJoin() {
 
         if (!client) {
             client = new GameClient(this);
-            client->connectToServer(QHostAddress(ip));
+            client->connectToServer(QHostAddress(ip));  // Connexion avec l'IP décodée
         }
 
+        // Ouvre le SelectDialog pour la sélection des rôles
         SelectDialog selectDialog(this);
         connect(&selectDialog, &SelectDialog::gameStarted, this, &MenuWindow::onRoleSelected);
-        selectDialog.exec();
+        selectDialog.exec();  // Affiche le dialogue pour que l'utilisateur choisisse son rôle
     }
 }
-
 QString MenuWindow::generateJoinCode(const QString &ip) {
     int a, b, c, d;
     sscanf(ip.toUtf8().constData(), "%d.%d.%d.%d", &a, &b, &c, &d);
