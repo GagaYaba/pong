@@ -2,17 +2,17 @@
 #define GAMESERVER_H
 
 #include <QObject>
-#include <QUdpSocket>
+#include <QTcpSocket>
+#include <QTcpServer>
 #include <QMap>
 #include <QHostAddress>
 #include <QStringList>
 
 // Structure pour stocker les infos d'un joueur
 struct PlayerInfo {
-    QHostAddress ip;
-    quint16 port;
-    QString role;  // Rôle choisi (ex: "p1", "p2", etc.). Vide si non encore attribué.
-    bool ready;    // True si le joueur a choisi son rôle
+    QTcpSocket *socket;  // Socket du joueur
+    QString role;        // Rôle choisi (ex: "p1", "p2", etc.). Vide si non encore attribué.
+    bool ready;          // True si le joueur a choisi son rôle
 };
 
 class GameServer : public QObject
@@ -27,10 +27,12 @@ public:
     void sendMessageToPlayer(int playerId, const QString &message);
 
 private slots:
+    void onNewConnection();
     void onDataReceived();
+    void onDisconnected();
 
 private:
-    QUdpSocket *udpSocket;
+    QTcpServer *tcpServer;
     QMap<int, PlayerInfo> players; // clé = id du joueur
     int maxPlayers;
     int currentPlayers;

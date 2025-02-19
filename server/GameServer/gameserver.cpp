@@ -1,15 +1,17 @@
 #include "GameServer.h"
 #include <QDebug>
+#include <QTcpSocket>
+#include <QTcpServer>
 
 GameServer::GameServer(QObject *parent)
     : QObject(parent),
-      udpSocket(new QUdpSocket(this)),
+      tcpServer(new QTcpServer(this)),
       maxPlayers(2),
       currentPlayers(0),
       gameMode(1),
       autoAssignRoles(false)
 {
-    connect(udpSocket, &QUdpSocket::readyRead, this, &GameServer::onDataReceived);
+    connect(tcpServer, &QTcpServer::newConnection, this, &GameServer::onNewConnection);
 }
 
 void GameServer::startServer(quint16 port, int mode, bool autoAssign)
@@ -31,31 +33,72 @@ void GameServer::startServer(quint16 port, int mode, bool autoAssign)
         roleTaken[r] = false;
     }
 
-    if (udpSocket->bind(QHostAddress::Any, port)) {
-        qDebug() << "Serveur UDP démarré sur le port" << port << "Mode:" << ((mode == 1) ? "1vs1" : "2vs2");
+    if (tcpServer->listen(QHostAddress::Any, port)) {
+        qDebug() << "Serveur TCP démarré sur le port" << port << "Mode:" << ((mode == 1) ? "1vs1" : "2vs2");
     } else {
         qDebug() << "Erreur: impossible de démarrer le serveur";
     }
 }
 
+void GameServer::onNewConnection()
+{
+    QTcpSocket *clientSocket = tcpServer->nextPendingConnection();
+    connect(clientSocket, &QTcpSocket::readyRead, this, &GameServer::onDataReceived);
+    connect(clientSocket, &QTcpSocket::disconnected, this, &GameServer::onDisconnected);
+
+    if (currentPlayers < maxPlayers) {
+        int playerId = currentPlayers + 1;
+        PlayerInfo info;
+        info.socket = clientSocket;
+        info.role = "";
+        info.ready = false;
+        players[playerId] = info;
+        currentPlayers++;
+        qDebug() << "Nouveau joueur assigné:" << playerId;
+
+        sendMessageToPlayer(playerId, "ASSIGN_ID " + QString::number(playerId));
+
+        // Envoyer les infos de la salle d'attente au nouveau joueur
+        sendWaitingRoomInfo(playerId);
+        // Notifier tous les joueurs
+        sendMessageToAll("PLAYER_JOINED " + QString::number(playerId));
+
+        // Si attribution automatique des rôles activée, on attribue directement le premier rôle disponible
+        if (autoAssignRoles) {
+            for (const QString &r : rolesList) {
+                if (!roleTaken[r]) {
+                    players[playerId].role = r;
+                    players[playerId].ready = true;
+                    roleTaken[r] = true;
+                    sendMessageToPlayer(playerId, "ROLE_ASSIGNED " + r);
+                    sendMessageToAll("PLAYER_UPDATED " + QString::number(playerId) + " " + r);
+                    break;
+                }
+            }
+            checkAndStartGame();
+        }
+    } else {
+        // Partie pleine
+        clientSocket->write("FULL");
+        clientSocket->disconnectFromHost();
+    }
+}
+
 void GameServer::onDataReceived()
 {
-    while (udpSocket->hasPendingDatagrams()) {
-        QByteArray buffer;
-        buffer.resize(udpSocket->pendingDatagramSize());
-        QHostAddress sender;
-        quint16 senderPort;
-        udpSocket->readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
+    QTcpSocket *clientSocket = qobject_cast<QTcpSocket *>(sender());
+    if (clientSocket) {
+        QByteArray buffer = clientSocket->readAll();
         QString message = QString::fromUtf8(buffer);
+        QHostAddress sender = clientSocket->peerAddress();
+        quint16 senderPort = clientSocket->peerPort();
         qDebug() << "SS | Reçu:" << message << "de" << sender.toString() << ":" << senderPort;
-
 
         if (message == "JOIN") {
             if (currentPlayers < maxPlayers) {
                 int playerId = currentPlayers + 1;
                 PlayerInfo info;
-                info.ip = sender;
-                info.port = senderPort;
+                info.socket = clientSocket;
                 info.role = "";
                 info.ready = false;
                 players[playerId] = info;
@@ -85,7 +128,7 @@ void GameServer::onDataReceived()
                 }
             } else {
                 // Partie pleine
-                udpSocket->writeDatagram("FULL", sender, senderPort);
+                clientSocket->write("FULL");
             }
         }
         // Cas de la sélection d'un rôle par un joueur (attribution manuelle)
@@ -111,6 +154,22 @@ void GameServer::onDataReceived()
     }
 }
 
+void GameServer::onDisconnected()
+{
+    QTcpSocket *clientSocket = qobject_cast<QTcpSocket *>(sender());
+    if (clientSocket) {
+        // Trouver l'ID du joueur en fonction de l'adresse et du port
+        int playerId = findPlayerId(clientSocket->peerAddress(), clientSocket->peerPort());
+        if (playerId != -1) {
+            players.remove(playerId);
+            currentPlayers--;
+            qDebug() << "Joueur déconnecté:" << playerId;
+            sendMessageToAll("PLAYER_LEFT " + QString::number(playerId));
+        }
+        clientSocket->deleteLater();
+    }
+}
+
 void GameServer::sendMessageToAll(const QString &message)
 {   
     qDebug() << "  ";
@@ -119,7 +178,7 @@ void GameServer::sendMessageToAll(const QString &message)
     QByteArray data = message.toUtf8();
     for (auto it = players.begin(); it != players.end(); ++it) {
         qDebug() << "Envoi à" << it.key() << "->" << data;
-        udpSocket->writeDatagram(data, it.value().ip, it.value().port);
+        it.value().socket->write(data + "\n");
     }
     qDebug() << "Envoi terminé";
     qDebug() << "  ";
@@ -133,7 +192,7 @@ void GameServer::sendMessageToPlayer(int playerId, const QString &message)
     qDebug() << "  ";
     if (players.contains(playerId)) {
         QByteArray data = message.toUtf8();
-        udpSocket->writeDatagram(data, players[playerId].ip, players[playerId].port);
+        players[playerId].socket->write(data + "\n");
     }
 }
 
@@ -187,7 +246,7 @@ void GameServer::checkAndStartGame()
 int GameServer::findPlayerId(const QHostAddress &ip, quint16 port)
 {
     for (auto it = players.begin(); it != players.end(); ++it) {
-        if (it.value().ip == ip && it.value().port == port)
+        if (it.value().socket->peerAddress() == ip && it.value().socket->peerPort() == port)
             return it.key();
     }
     return -1;
