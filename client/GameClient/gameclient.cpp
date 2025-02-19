@@ -53,6 +53,8 @@ void GameClient::sendPaddlePosition(float paddleY)
     }
 }
 
+
+
 void GameClient::onDataReceived()
 {
     QByteArray buffer = tcpSocket->readAll();   // Lire tout ce qui a été reçu
