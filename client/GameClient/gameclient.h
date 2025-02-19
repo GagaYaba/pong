@@ -4,11 +4,6 @@
 #include <QObject>
 #include <QTcpSocket>
 #include <QHostAddress>
-#include <memory>
-#include <vector>
-
-#include "ClientEventHandler.h"
-#include "ClientEventHandlerFactory.h"
 
 class GameClient : public QObject
 {
@@ -16,37 +11,20 @@ class GameClient : public QObject
 
 public:
     explicit GameClient(QObject *parent = nullptr);
-
-    // Connexion au serveur
-    void connectToServer(const QHostAddress &serverAddr);
-
-    // Envoi de messages au serveur
+    void connectToServer(const QHostAddress &serverAddress);
     void sendMessage(const QString &message);
-
-    // Sélectionner un rôle
-    void selectRole(const QString &role);
-    // Envoyer la position de la raquette
-    void sendPaddlePosition(float paddleY);
-    int playerId;
-
-signals:
-    void availableSlotsReceived(const QStringList &slots);
-    void roleEmit(const QString &role, int playerId, bool join);
-    void gameStartedEmit();  // Signal pour informer que le jeu a commencé
-
+    void selectRole(const QString &role); // Méthode pour envoyer une demande de sélection de rôle
+    void sendPaddlePosition(float paddleY); // Méthode pour envoyer la position de la raquette
 
 private slots:
-    // Gestion des données reçues du serveur
     void onDataReceived();
 
-
 private:
-    QTcpSocket *tcpSocket;
+    QTcpSocket *tcpSocket;   // Remplacer QUdpSocket par QTcpSocket
+    int playerId;
+    int lastPaddleY;
     QHostAddress serverAddress;
-    float lastPaddleY = -1;
-
-    // Liste des gestionnaires d'événements
-    std::vector<std::unique_ptr<ClientEventHandler>> handlers;
+    quint16 serverPort;
 };
 
 #endif // GAMECLIENT_H
