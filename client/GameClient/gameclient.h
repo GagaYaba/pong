@@ -2,7 +2,7 @@
 #define GAMECLIENT_H
 
 #include <QObject>
-#include <QUdpSocket>
+#include <QTcpSocket>
 #include <QHostAddress>
 
 class GameClient : public QObject
@@ -12,7 +12,7 @@ class GameClient : public QObject
 public:
     explicit GameClient(QObject *parent = nullptr);
     void connectToServer(const QHostAddress &serverAddress, quint16 port);
-    void sendMessage(const QString &message, const QHostAddress &serverAddress, quint16 port);
+    void sendMessage(const QString &message);
     void selectRole(const QString &role); // Méthode pour envoyer une demande de sélection de rôle
     void sendPaddlePosition(float paddleY); // Méthode pour envoyer la position de la raquette
 
@@ -20,7 +20,7 @@ private slots:
     void onDataReceived();
 
 private:
-    QUdpSocket *udpSocket;
+    QTcpSocket *tcpSocket;   // Remplacer QUdpSocket par QTcpSocket
     int playerId;
     int lastPaddleY;
     QHostAddress serverAddress;
