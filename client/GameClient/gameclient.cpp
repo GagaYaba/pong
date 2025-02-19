@@ -101,14 +101,6 @@ void GameClient::onDataReceived()
             parts.removeFirst();
             qDebug() << "Slots disponibles:" << parts;
         }
-        else if (parts[0] == "FREE_COUNT") {
-            if (parts.size() > 1) {
-                int freeCount = parts[1].toInt();
-                qDebug() << "Nombre de slots libres:" << freeCount;
-            } else {
-                qDebug() << "Erreur: message FREE_COUNT mal formé";
-            }
-        }
         else if (parts[0] == "PLAYER_JOINED") {
             if (parts.size() > 1) {
                 int joinedPlayerId = parts[1].toInt();
