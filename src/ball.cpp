@@ -1,4 +1,5 @@
 #include "../include/ball.h"
+#include "../include/boundary.h"
 #include "../include/paddle.h"
 #include "../include/game.h"
 #include <QGraphicsScene>
@@ -47,35 +48,67 @@ void Ball::handlePaddleCollision() {
     for (QGraphicsItem* item : collidingItemsList) {
         Paddle* paddle = dynamic_cast<Paddle*>(item);
         if (paddle) {
+            if (paddle == game->getPlayer1()) {
+                lastTouchedByPlayer = P1;
+            } else if (paddle == game->getPlayer2()) {
+                lastTouchedByPlayer = P2;
+            }
+
             dx = -dx;
+
             float hitPosition = (y() + rect().height() / 2) - (paddle->y() + paddle->rect().height() / 2);
             dy += hitPosition * 0.1;
 
-            if (paddle->getPlayerId() == Paddle::P1) {
-                qDebug() << "P1";
-            } else if (paddle->getPlayerId() == Paddle::P2) {
-                qDebug() << "P2";
+            if (y() <= paddle->y()) {
+                setY(paddle->y() - rect().height());  // La balle est sous le paddle, on la remonte
+            } else if (y() + rect().height() >= paddle->y() + paddle->rect().height()) {
+                setY(paddle->y() + paddle->rect().height());  // La balle est au-dessus du paddle, on la descend
+            }
+
+            float speedReductionFactor = 1.0f;
+            dx *= speedReductionFactor;
+            dy *= speedReductionFactor;
+
+            float maxSpeed = 6.0f;
+            if (std::abs(dx) > maxSpeed) {
+                dx = (dx > 0 ? 1 : -1) * maxSpeed;
+            }
+            if (std::abs(dy) > maxSpeed) {
+                dy = (dy > 0 ? 1 : -1) * maxSpeed;
             }
         }
     }
 }
 
+
+
 void Ball::handleBoundary() {
+    // Bord gauche (P1)
     if (x() <= 0) {
-        game->increasePlayer2Score();
+        if (lastTouchedByPlayer == P1) {
+            qDebug() << "P1 OWN GOAL / NO POINT";
+        } else if (lastTouchedByPlayer == P2) {
+            game->increasePlayer2Score();
+            qDebug() << "P2 +1 POINT";
+        }
         setPos(screenWidth / 2, screenHeight / 2);
         direction = -direction;
         dx = 2;
         dy = 0;
-
-        qDebug() << "Left";
-    } else if (x() + rect().width() >= screenWidth) {
-        game->increasePlayer1Score();
+    }
+    // Bord droit (P2)
+    else if (x() + rect().width() >= screenWidth) {
+        if (lastTouchedByPlayer == P2) {
+            qDebug() << "P2 OWN GOAL / NO POINT";
+        } else if (lastTouchedByPlayer == P1) {
+            game->increasePlayer1Score();
+            qDebug() << "P1 +1 POINT";
+        }
+        // Reset de la balle
         setPos(screenWidth / 2, screenHeight / 2);
         direction = -direction;
         dx = 2;
         dy = 0;
-
-        qDebug() << "Right";
     }
 }
+
