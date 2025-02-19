@@ -6,9 +6,14 @@ Score::Score(int x, int y, QGraphicsItem *parent)
 
     setDefaultTextColor(Qt::black);
     setFont(QFont("Arial", 16));
-    setPos(x, y);
 
     updateDisplay();
+
+    int textWidth = boundingRect().width();
+    int screenWidth = 400;
+    int xPos = (screenWidth - textWidth) / 2;
+
+    setPos(xPos, y);
 }
 
 void Score::increasePlayer1Score() {
@@ -22,5 +27,5 @@ void Score::increasePlayer2Score() {
 }
 
 void Score::updateDisplay() {
-    setPlainText(QString("%1  |  %2").arg(player1Score).arg(player2Score));
+    setPlainText(QString("%1   |   %2").arg(player1Score).arg(player2Score));
 }
