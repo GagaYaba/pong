@@ -5,9 +5,9 @@
 #include <QGraphicsScene>
 #include <QSet>
 #include <QKeyEvent>
-#include "Paddle.h"
-#include "Ball.h"
-#include "Score.h"
+#include "paddle.h"
+#include "ball.h"
+#include "score.h"
 
 class Game : public QGraphicsView {
     Q_OBJECT

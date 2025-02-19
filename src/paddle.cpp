@@ -1,4 +1,4 @@
-#include "Paddle.h"
+#include "../include/paddle.h"
 
 Paddle::Paddle(int x, int y, int speed, int screenHeight, QSet<int>* keysPressed, QObject* parent)
     : QObject(parent), speed(speed), screenHeight(screenHeight), keysPressed(keysPressed) {
