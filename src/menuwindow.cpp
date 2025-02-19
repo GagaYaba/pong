@@ -29,11 +29,10 @@ void MenuWindow::onStart() {
     if (!server) {
         // Initialisation du serveur
         server = new GameServer(this);
-        int port = 12345;
-        server->startServer(port, 1, false);
+        server->startServer(1, false);
 
         QString ip = getLocalIPAddress();
-        QString joinCode = generateJoinCode(ip, port);
+        QString joinCode = generateJoinCode(ip);
 
         CodeDialog codeDialog(joinCode, this);
         codeDialog.exec();
@@ -41,7 +40,7 @@ void MenuWindow::onStart() {
 
     if (!client) {
         client = new GameClient(this);
-        client->connectToServer(QHostAddress::LocalHost, 12345);
+        client->connectToServer(QHostAddress::LocalHost);
     }
 
     // Lancer le jeu uniquement après que le client ait rejoint et que le jeu est prêt
@@ -71,19 +70,16 @@ void MenuWindow::onJoin() {
             return;
         }
 
-        QPair<QString, int> decoded = decodeIPPort(code);
-        QString ip = decoded.first;
-        int port = decoded.second;
+        QString ip = decodeJoinCode(code);
 
-        if (ip.isEmpty() || port <= 0) {
+        if (ip.isEmpty()) {
             QMessageBox::warning(this, "Erreur", "Le code est invalide !");
             return;
         }
 
         if (!client) {
-            // Initialisation du client
             client = new GameClient(this);
-            client->connectToServer(QHostAddress(ip), port);
+            client->connectToServer(QHostAddress(ip));
         }
 
         SelectDialog selectDialog(this);
@@ -92,54 +88,41 @@ void MenuWindow::onJoin() {
     }
 }
 
-QString MenuWindow::generateJoinCode(const QString &ip, int port) {
+QString MenuWindow::generateJoinCode(const QString &ip) {
     int a, b, c, d;
     sscanf(ip.toUtf8().constData(), "%d.%d.%d.%d", &a, &b, &c, &d);
 
-    quint64 num = ((quint64)a << 24) |
-                  ((quint64)b << 16) |
-                  ((quint64)c << 8)  |
-                  d;
-    num = (num << 16) | port;
-
+    quint32 num = ((quint32)a << 24) | ((quint32)b << 16) | ((quint32)c << 8) | d;
+    
     const QString base = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     QString code;
-    if (num == 0) return "0";
-    while (num) {
+    do {
         code.prepend(base[num % 36]);
         num /= 36;
-    }
+    } while (num);
+
     return code;
 }
 
-QPair<QString, int> MenuWindow::decodeIPPort(const QString& code) {
-    if (code.isEmpty()) return qMakePair(QString(), -1);
-
-    quint64 num = 0;
+QString MenuWindow::decodeJoinCode(const QString &code) {
+    quint32 num = 0;
     const QString base = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     for (QChar c : code) {
         int value = base.indexOf(c);
-        if (value == -1) return qMakePair(QString(), -1);
+        if (value == -1) return QString();
         num = num * 36 + value;
     }
 
-    int port = num & 0xFFFF;
-    num >>= 16;
     int d = num & 0xFF;
     int c = (num >> 8) & 0xFF;
     int b = (num >> 16) & 0xFF;
     int a = (num >> 24) & 0xFF;
 
-    if (a < 0 || a > 255 || b < 0 || b > 255 || c < 0 || c > 255 || d < 0 || d > 255 || port < 0 || port > 65535)
-        return qMakePair(QString(), -1);
-
-    QString ip = QString("%1.%2.%3.%4").arg(a).arg(b).arg(c).arg(d);
-    return qMakePair(ip, port);
+    return QString("%1.%2.%3.%4").arg(a).arg(b).arg(c).arg(d);
 }
 
 void MenuWindow::onRoleSelected(const QString &role) {
-    // Envoi du rôle au client pour qu'il s'enregistre auprès du serveur
     if (client) {
         client->selectRole(role);
         qDebug() << "Rôle sélectionné:" << role;

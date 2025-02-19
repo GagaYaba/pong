@@ -19,11 +19,13 @@ SOURCES += \
     src/paddle.cpp \
     src/score.cpp \
     src/JoinDialog.cpp \
+    src/SelectDialog.cpp \
     src/CodeDialog.cpp \
     src/utils.cpp \
 
 HEADERS += \
     client/GameClient/gameclient.h \
+    include/SelectDialog.h \
     include/ball.h \
     include/game.h \
     include/mainwindow.h \
@@ -39,6 +41,7 @@ FORMS += \
     src/mainwindow.ui \
     src/menuwindow.ui \
     src/CodeDialog.ui \
+    src/SelectDialog.ui \
     src/JoinDialog.ui
 
 
@@ -53,6 +56,7 @@ UI_HEADERS += \
     build/ui/ui_mainwindow.h \
     build/ui/ui_menuwindow.h \
     build/ui/ui_CodeDialog.h \
+    build/ui/ui_SelectDialog.h \
     build/ui/ui_JoinDialog.h
 
 qnx: target.path = /tmp/$${TARGET}/bin

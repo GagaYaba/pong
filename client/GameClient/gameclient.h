@@ -11,7 +11,7 @@ class GameClient : public QObject
 
 public:
     explicit GameClient(QObject *parent = nullptr);
-    void connectToServer(const QHostAddress &serverAddress, quint16 port);
+    void connectToServer(const QHostAddress &serverAddress);
     void sendMessage(const QString &message);
     void selectRole(const QString &role); // Méthode pour envoyer une demande de sélection de rôle
     void sendPaddlePosition(float paddleY); // Méthode pour envoyer la position de la raquette

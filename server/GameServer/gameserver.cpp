@@ -14,14 +14,12 @@ GameServer::GameServer(QObject *parent)
     connect(tcpServer, &QTcpServer::newConnection, this, &GameServer::onNewConnection);
 }
 
-void GameServer::startServer(quint16 port, int mode, bool autoAssign)
+void GameServer::startServer(int mode, bool autoAssign)
 {
-    qDebug() << "print";
     gameMode = mode;
     maxPlayers = (mode == 1) ? 2 : 4;
     autoAssignRoles = autoAssign;
 
-    // Initialisation de la liste des rôles et leur état
     rolesList.clear();
     roleTaken.clear();
     if (mode == 1) {
@@ -33,10 +31,21 @@ void GameServer::startServer(quint16 port, int mode, bool autoAssign)
         roleTaken[r] = false;
     }
 
-    if (tcpServer->listen(QHostAddress::Any, port)) {
-        qDebug() << "Serveur TCP démarré sur le port" << port << "Mode:" << ((mode == 1) ? "1vs1" : "2vs2");
-    } else {
-        qDebug() << "Erreur: impossible de démarrer le serveur";
+    QList<quint16> ports = {27460, 25518, 27718, 28147, 27808, 26897, 29102, 25499, 27520, 27392};
+    bool serverStarted = false;
+
+    for (quint16 port : ports) {
+        if (tcpServer->listen(QHostAddress::Any, port)) {
+            qDebug() << "Serveur TCP démarré sur le port" << port << "Mode:" << ((mode == 1) ? "1vs1" : "2vs2");
+            serverStarted = true;
+            break;
+        } else {
+            qDebug() << "Le port" << port << "n'est pas disponible, test suivant...";
+        }
+    }
+
+    if (!serverStarted) {
+        qDebug() << "Erreur: aucun des ports disponibles n'a pu être utilisé.";
     }
 }
 
