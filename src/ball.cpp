@@ -1,6 +1,6 @@
-#include "Ball.h"
-#include "Paddle.h"
-#include "Game.h"
+#include "../include/ball.h"
+#include "../include/paddle.h"
+#include "../include/game.h"
 #include <QGraphicsScene>
 #include <QList>
 

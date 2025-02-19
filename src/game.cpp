@@ -1,4 +1,4 @@
-#include "Game.h"
+#include "../include/game.h"
 
 Game::Game(QWidget *parent) : QGraphicsView(parent) {
     int screenWidth = 400;
