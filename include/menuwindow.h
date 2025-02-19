@@ -32,8 +32,8 @@ private slots:
 
 private:
     // Méthodes de gestion du code de connexion
-    QString generateJoinCode(const QString &ip, int port);
-    QPair<QString, int> decodeIPPort(const QString& code);
+    QString generateJoinCode(const QString &ip);
+    QString decodeJoinCode(const QString& code);
 
     Game *game;
     GameServer *server;

@@ -10,17 +10,29 @@ GameClient::GameClient(QObject *parent)
     connect(tcpSocket, &QTcpSocket::readyRead, this, &GameClient::onDataReceived);
 }
 
-void GameClient::connectToServer(const QHostAddress &serverAddr, quint16 port)
+void GameClient::connectToServer(const QHostAddress &serverAddr)
 {
     this->serverAddress = serverAddr;
-    this->serverPort = port;
 
-    tcpSocket->connectToHost(serverAddr, port);
-    if (tcpSocket->waitForConnected(3000)) {
-        qDebug() << "Connexion établie avec le serveur...";
-        // sendMessage("JOIN");  // Envoi du message de demande de connexion
-    } else {
-        qDebug() << "Impossible de se connecter au serveur";
+    // Liste des ports à tester
+    QList<quint16> ports = {27460, 25518, 27718, 28147, 27808, 26897, 29102, 25499, 27520, 27392};
+    bool connected = false;
+
+    // Tester chaque port
+    for (quint16 port : ports) {
+        tcpSocket->connectToHost(serverAddr, port);
+        if (tcpSocket->waitForConnected(3000)) {
+            qDebug() << "Connexion établie avec le serveur sur le port" << port;
+            connected = true;
+            break; // Si la connexion réussit, on arrête les tests
+        } else {
+            qDebug() << "Impossible de se connecter au serveur sur le port" << port << ", test suivant...";
+        }
+    }
+
+    // Si aucune connexion n'a fonctionné, afficher une erreur
+    if (!connected) {
+        qDebug() << "Erreur: impossible de se connecter à un des ports disponibles du serveur.";
     }
 }
 

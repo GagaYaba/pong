@@ -22,7 +22,7 @@ class GameServer : public QObject
 public:
     explicit GameServer(QObject *parent = nullptr);
     // mode: 1 pour 1vs1, 2 pour 2vs2 ; autoAssign permet de choisir l'attribution automatique ou non des rôles
-    void startServer(quint16 port, int mode, bool autoAssign = false);
+    void startServer(int mode, bool autoAssign = false);
     void sendMessageToAll(const QString &message);
     void sendMessageToPlayer(int playerId, const QString &message);
 
