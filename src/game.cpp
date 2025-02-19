@@ -51,6 +51,5 @@ void Game::keyReleaseEvent(QKeyEvent *event) {
 
 void Game::closeEvent(QCloseEvent *event) {
     emit gameClosed();
-    this->hide();
-    event->ignore();
+    event->accept();
 }

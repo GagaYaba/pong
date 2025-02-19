@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+    <class>JoinDialog</class>
+    <widget class="QDialog" name="JoinDialog">
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>300</width>
+                <height>150</height>
+            </rect>
+        </property>
+        <property name="windowTitle">
+            <string>Rejoindre une Partie</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+                <widget class="QLabel" name="label">
+                    <property name="text">
+                        <string>Entrez le code de la partie :</string>
+                    </property>
+                    <property name="alignment">
+                        <set>Qt::AlignCenter</set>
+                    </property>
+                    <property name="font">
+                        <font>
+                            <pointsize>12</pointsize>
+                        </font>
+                    </property>
+                </widget>
+            </item>
+            <item>
+                <widget class="QLineEdit" name="codeLineEdit">
+                    <property name="placeholderText">
+                        <string>Ex: 123456</string>
+                    </property>
+                    <property name="font">
+                        <font>
+                            <pointsize>12</pointsize>
+                        </font>
+                    </property>
+                </widget>
+            </item>
+            <item>
+                <layout class="QHBoxLayout" name="buttonLayout">
+                    <item>
+                        <widget class="QPushButton" name="joinButton">
+                            <property name="text">
+                                <string>Rejoindre</string>
+                            </property>
+                        </widget>
+                    </item>
+                    <item>
+                        <widget class="QPushButton" name="cancelButton">
+                            <property name="text">
+                                <string>Annuler</string>
+                            </property>
+                        </widget>
+                    </item>
+                </layout>
+            </item>
+        </layout>
+    </widget>
+    <resources/>
+    <connections/>
+</ui>

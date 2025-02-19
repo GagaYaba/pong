@@ -15,6 +15,9 @@ qt_add_executable(sans_titre
         include/ball.h src/ball.cpp
         include/score.h src/score.cpp
         include/game.h src/game.cpp
+        include/JoinDialog.h src/JoinDialog.cpp src/JoinDialog.ui
+        include/CodeDialog.h src/CodeDialog.cpp src/CodeDialog.ui
+        include/utils.h src/utils.cpp
         include/menuwindow.h src/menuwindow.cpp src/menuwindow.ui
         client/GameClient/gameclient.h client/GameClient/gameclient.cpp
         server/GameServer/gameserver.h server/GameServer/gameserver.cpp

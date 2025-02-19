@@ -43,6 +43,18 @@
                     </widget>
                 </item>
                 <item>
+                    <widget class="QPushButton" name="joinButton">
+                        <property name="text">
+                            <string>Rejoindre</string>
+                        </property>
+                        <property name="font">
+                            <font>
+                                <pointsize>14</pointsize>
+                            </font>
+                        </property>
+                    </widget>
+                </item>
+                <item>
                     <widget class="QPushButton" name="quitButton">
                         <property name="text">
                             <string>Quitter</string>
@@ -56,7 +68,8 @@
                 </item>
             </layout>
         </widget>
-        <addaction name="quitAction"/>
+        <widget class="QMenuBar" name="menubar"/>
+        <widget class="QStatusBar" name="statusbar"/>
     </widget>
     <resources/>
     <connections/>

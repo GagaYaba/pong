@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+    <class>CodeDialog</class>
+    <widget class="QDialog" name="CodeDialog">
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>400</width>
+                <height>150</height>
+            </rect>
+        </property>
+        <property name="windowTitle">
+            <string>Code de Connexion</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+                <widget class="QLineEdit" name="codeLineEdit">
+                    <property name="readOnly">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+            </item>
+            <item>
+                <widget class="QPushButton" name="copyButton">
+                    <property name="text">
+                        <string>Copier</string>
+                    </property>
+                </widget>
+            </item>
+            <item>
+                <widget class="QPushButton" name="okButton">
+                    <property name="text">
+                        <string>OK</string>
+                    </property>
+                </widget>
+            </item>
+        </layout>
+    </widget>
+</ui>
