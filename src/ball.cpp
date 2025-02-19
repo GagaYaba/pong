@@ -3,6 +3,7 @@
 #include "../include/game.h"
 #include <QGraphicsScene>
 #include <QList>
+#include <QDebug>
 
 Ball::Ball(int screenWidth, int screenHeight, Game* game, QObject* parent)
     : QObject(parent), screenWidth(screenWidth), screenHeight(screenHeight), game(game) {
@@ -17,6 +18,8 @@ Ball::Ball(int screenWidth, int screenHeight, Game* game, QObject* parent)
     movementTimer = new QTimer(this);
     connect(movementTimer, &QTimer::timeout, this, &Ball::move);
     movementTimer->start(16);
+
+    collision = new Collision(this);
 
     timer.start();
 }
@@ -47,6 +50,12 @@ void Ball::handlePaddleCollision() {
             dx = -dx;
             float hitPosition = (y() + rect().height() / 2) - (paddle->y() + paddle->rect().height() / 2);
             dy += hitPosition * 0.1;
+
+            if (paddle->getPlayerId() == Paddle::P1) {
+                qDebug() << "P1";
+            } else if (paddle->getPlayerId() == Paddle::P2) {
+                qDebug() << "P2";
+            }
         }
     }
 }
@@ -58,11 +67,15 @@ void Ball::handleBoundary() {
         direction = -direction;
         dx = 2;
         dy = 0;
+
+        qDebug() << "Left";
     } else if (x() + rect().width() >= screenWidth) {
         game->increasePlayer1Score();
         setPos(screenWidth / 2, screenHeight / 2);
         direction = -direction;
         dx = 2;
         dy = 0;
+
+        qDebug() << "Right";
     }
 }

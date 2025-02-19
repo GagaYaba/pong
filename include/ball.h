@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QTimer>
 #include <QElapsedTimer>
+#include "collision.h"
 
 class Game;
 
@@ -22,6 +23,7 @@ private:
     QTimer* movementTimer;
     int direction;
     Game* game;
+    Collision* collision;
 
     QElapsedTimer timer;
     float deltaTime;
