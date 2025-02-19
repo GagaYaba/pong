@@ -31,16 +31,16 @@
                 </widget>
             </item>
             <item>
-                <widget class="QPushButton" name="startButton">
+                <widget class="QLabel" name="statusLabel">
                     <property name="text">
-                        <string>Start Game</string>
+                        <string>Waiting for both players to be ready...</string>
                     </property>
                 </widget>
             </item>
             <item>
-                <widget class="QLabel" name="statusLabel">
+                <widget class="QPushButton" name="startButton">
                     <property name="text">
-                        <string>Waiting for both players to be ready...</string>
+                        <string>Start Game</string>
                     </property>
                 </widget>
             </item>
