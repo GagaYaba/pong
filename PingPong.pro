@@ -13,6 +13,7 @@ SOURCES += \
     src/ball.cpp \
     src/game.cpp \
     src/mainwindow.cpp \
+    src/menuwindow.cpp \
     src/paddle.cpp \
     src/score.cpp
 
@@ -23,7 +24,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 FORMS += \
-    src/mainwindow.ui
+    src/mainwindow.ui \
+    src/menuwindow.ui
 
 HEADERS += \
     client/GameClient/gameclient.h \
