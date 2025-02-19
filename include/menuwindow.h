@@ -19,6 +19,8 @@ private slots:
     void onStart();
     void onQuit();
     void onGameClosed();  // Slot pour afficher le menu après la fermeture du jeu
+    void onJoin();
+
 
 private:
     void createMenu();
@@ -27,6 +29,9 @@ private:
     Game *game;
     GameServer *server;
     GameClient *client;
+
+    QString generateJoinCode(const QString &ip, int port);
+    QPair<QString, int> decodeIPPort(const QString& code);
 };
 
 #endif // MENUWINDOW_H
