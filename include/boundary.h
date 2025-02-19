@@ -6,20 +6,23 @@
 class Boundary : public QObject {
     Q_OBJECT
 public:
-    enum Player { P1, P2 };
+    enum Side {
+        Left, Right, Top, Bottom
+    };
 
-    Boundary(Player playerId, int xPos, int width, QObject* parent = nullptr)
-        : QObject(parent), playerId(playerId), xPos(xPos), width(width) {}
+    Boundary(Side side, QObject* parent = nullptr);
 
-    Player getPlayerId() const { return playerId; }
-    int getXPos() const { return xPos; }
-    int getWidth() const { return width; }
+    Side side() const;
+    void setTeam(int teamId);
+
+    int team() const;
+
+signals:
+    void touchedByBall(Boundary::Side side);
 
 private:
-    Player playerId;
-    int xPos;
-    int width;
+    Side m_side;
+    int m_team;
 };
 
 #endif // BOUNDARY_H
-
