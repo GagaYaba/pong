@@ -15,8 +15,6 @@ public:
     Paddle(int x, int y, int speed, int screenHeight, QSet<int>* keysPressed, Player playerId, QObject* parent = nullptr);
 
     void setKeys(int upKey, int downKey);
-    void keyPressEvent(QKeyEvent *event);
-    void keyReleaseEvent(QKeyEvent *event);
 
 public slots:
     void updatePosition();
