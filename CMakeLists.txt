@@ -8,20 +8,19 @@ qt_standard_project_setup()
 qt_add_executable(sans_titre
     WIN32 MACOSX_BUNDLE
     main.cpp
-        src/mainwindow.cpp include/mainwindow.h src/mainwindow.ui
+        src/mainwindow.cpp
+        include/mainwindow.h
+        src/mainwindow.ui
         include/paddle.h src/paddle.cpp
         include/ball.h src/ball.cpp
         include/score.h src/score.cpp
         include/game.h src/game.cpp
         include/JoinDialog.h src/JoinDialog.cpp src/JoinDialog.ui
         include/CodeDialog.h src/CodeDialog.cpp src/CodeDialog.ui
-        include/SelectDialog.h src/SelectDialog.cpp src/SelectDialog.ui
         include/utils.h src/utils.cpp
         include/menuwindow.h src/menuwindow.cpp src/menuwindow.ui
         client/GameClient/gameclient.h client/GameClient/gameclient.cpp
         server/GameServer/gameserver.h server/GameServer/gameserver.cpp
-        client/GameClient/ClientEventHandler.h client/GameClient/ClientEventHandlerFactory.h
-        include/globals.h src/globals.cpp
 )
 
 

@@ -2,47 +2,36 @@
 #define MENUWINDOW_H
 
 #include <QMainWindow>
-#include <QPushButton>
-#include <QHostAddress>
-#include <QMessageBox>
-#include <QPair>
-#include "../server/GameServer/gameserver.h"
-#include "../client/GameClient/gameclient.h"
-#include "SelectDialog.h"
 #include "../src/ui_menuwindow.h"
 
-namespace Ui {
-    class MenuWindow;
-}
-class SelectDialog;
-class MenuWindow : public QMainWindow
-{
+#include "Game.h"
+#include "../server/GameServer/gameserver.h"
+#include "../client/GameClient/gameclient.h"
+
+class MenuWindow : public QMainWindow {
 Q_OBJECT
 
 public:
     explicit MenuWindow(QWidget *parent = nullptr);
     ~MenuWindow();
-    void onRoleConfirmed(const QString &role, int playerId, bool join);
 
 private slots:
     void onStart();
     void onQuit();
+    void onGameClosed();  // Slot pour afficher le menu après la fermeture du jeu
     void onJoin();
-    void onGameClosed();
-    void onRoleSelected(const QString &role, bool selected);
-    void onAvailableSlotsReceived(const QStringList &availableSlots);
 
 
 private:
-    // Méthodes de gestion du code de connexion
-    QString generateJoinCode(const QString &ip);
-    QString decodeJoinCode(const QString& code);
-    SelectDialog *selectDialog = nullptr;  // Stocke la boîte de dialogue
+    void createMenu();
+    Ui::MenuWindow *ui;  // Utilisation de la classe générée par Qt
+
     Game *game;
     GameServer *server;
     GameClient *client;
-    Ui::MenuWindow *ui;
 
+    QString generateJoinCode(const QString &ip, int port);
+    QPair<QString, int> decodeIPPort(const QString& code);
 };
 
 #endif // MENUWINDOW_H

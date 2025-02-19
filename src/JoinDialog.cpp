@@ -6,7 +6,6 @@ JoinDialog::JoinDialog(QWidget *parent) :
     ui->setupUi(this);
 
     connect(ui->cancelButton, &QPushButton::clicked, this, &JoinDialog::reject);
-    connect(ui->joinButton, &QPushButton::clicked, this, &JoinDialog::accept);
 }
 
 JoinDialog::~JoinDialog() {
