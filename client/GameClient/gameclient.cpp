@@ -11,11 +11,9 @@ GameClient::GameClient(QObject *parent)
 
 void GameClient::connectToServer(const QHostAddress &serverAddr, quint16 port)
 {
-    // Sauvegarder l'adresse et le port du serveur pour les messages ultérieurs
     this->serverAddress = serverAddr;
     this->serverPort = port;
 
-    // Envoi du message de demande de connexion
     sendMessage("JOIN", serverAddr, port);
     qDebug() << "Demande de connexion envoyée au serveur...";
 }
