@@ -12,11 +12,9 @@ GameClient::GameClient(QObject *parent)
 
 void GameClient::connectToServer(const QHostAddress &serverAddr, quint16 port)
 {
-    // Sauvegarder l'adresse et le port du serveur pour les messages ultérieurs
     this->serverAddress = serverAddr;
     this->serverPort = port;
 
-    // Connexion au serveur TCP
     tcpSocket->connectToHost(serverAddr, port);
     if (tcpSocket->waitForConnected(3000)) {
         qDebug() << "Connexion établie avec le serveur...";
@@ -54,6 +52,8 @@ void GameClient::sendPaddlePosition(float paddleY)
         sendMessage(message);
     }
 }
+
+
 
 void GameClient::onDataReceived()
 {

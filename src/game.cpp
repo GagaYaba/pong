@@ -47,3 +47,9 @@ void Game::keyPressEvent(QKeyEvent *event) {
 void Game::keyReleaseEvent(QKeyEvent *event) {
     keysPressed->remove(event->key());
 }
+
+
+void Game::closeEvent(QCloseEvent *event) {
+    emit gameClosed();
+    event->accept();
+}
