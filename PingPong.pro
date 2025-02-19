@@ -29,6 +29,7 @@ FORMS += \
 HEADERS += \
     client/GameClient/gameclient.h \
     include/ball.h \
+    include/collision.h \
     include/game.h \
     include/mainwindow.h \
     include/paddle.h \

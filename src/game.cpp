@@ -10,8 +10,8 @@ Game::Game(QWidget *parent) : QGraphicsView(parent) {
 
     keysPressed = new QSet<int>();
 
-    player1 = new Paddle(30, 150, 5, screenHeight, keysPressed);
-    player2 = new Paddle(360, 150, 5, screenHeight, keysPressed);
+    player1 = new Paddle(30, 150, 5, screenHeight, keysPressed, Paddle::P1);
+    player2 = new Paddle(360, 150, 5, screenHeight, keysPressed, Paddle::P2);
 
     player1->setKeys(Qt::Key_S, Qt::Key_W);
     player2->setKeys(Qt::Key_Up, Qt::Key_Down);
