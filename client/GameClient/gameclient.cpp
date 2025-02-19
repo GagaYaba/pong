@@ -1,48 +1,34 @@
 #include "GameClient.h"
 #include <QDebug>
-#include <QString>
 
 GameClient::GameClient(QObject *parent)
     : QObject(parent),
-      tcpSocket(new QTcpSocket(this)),   // Initialisation du socket TCP
+      udpSocket(new QUdpSocket(this)),
       playerId(-1)
 {
-    connect(tcpSocket, &QTcpSocket::readyRead, this, &GameClient::onDataReceived);
+    connect(udpSocket, &QUdpSocket::readyRead, this, &GameClient::onDataReceived);
 }
 
 void GameClient::connectToServer(const QHostAddress &serverAddr, quint16 port)
 {
-    // Sauvegarder l'adresse et le port du serveur pour les messages ultérieurs
     this->serverAddress = serverAddr;
     this->serverPort = port;
 
-    // Connexion au serveur TCP
-    tcpSocket->connectToHost(serverAddr, port);
-    if (tcpSocket->waitForConnected(3000)) {
-        qDebug() << "Connexion établie avec le serveur...";
-        // sendMessage("JOIN");  // Envoi du message de demande de connexion
-    } else {
-        qDebug() << "Impossible de se connecter au serveur";
-    }
+    sendMessage("JOIN", serverAddr, port);
+    qDebug() << "Demande de connexion envoyée au serveur...";
 }
 
-void GameClient::sendMessage(const QString &message)
+void GameClient::sendMessage(const QString &message, const QHostAddress &serverAddr, quint16 port)
 {
     QByteArray data = message.toUtf8();
-    if (tcpSocket->state() == QTcpSocket::ConnectedState) {
-        tcpSocket->write(data);
-        tcpSocket->flush();   // Assurez-vous que les données sont envoyées immédiatement
-        qDebug() << "Message envoyé:" << message;
-    } else {
-        qDebug() << "Erreur: Connexion non établie";
-    }
+    udpSocket->writeDatagram(data, serverAddr, port);
 }
 
 void GameClient::selectRole(const QString &role)
 {
     // Envoi d'une demande de sélection de rôle
     QString message = "SELECT_ROLE " + role;
-    sendMessage(message);
+    sendMessage(message, serverAddress, serverPort);
     qDebug() << "Demande de sélection de rôle envoyée:" << role;
 }
 
@@ -51,33 +37,40 @@ void GameClient::sendPaddlePosition(float paddleY)
     if (paddleY != lastPaddleY) { // N'envoie que si la position a changé
         lastPaddleY = paddleY;
         QString message = "PADDLE " + QString::number(playerId) + " " + QString::number(paddleY);
-        sendMessage(message);
+        sendMessage(message, serverAddress, serverPort);
     }
 }
 
 void GameClient::onDataReceived()
 {
-    QByteArray buffer = tcpSocket->readAll();   // Lire tout ce qui a été reçu
-    QString data = QString::fromUtf8(buffer);
+    while (udpSocket->hasPendingDatagrams()) {
+        QByteArray buffer;
+        qint64 dataSize = udpSocket->pendingDatagramSize();
+        if (dataSize <= 0)
+            continue;
 
-    qDebug() << "CC (" << playerId << ") | Message reçu du serveur:" << data;
+        buffer.resize(dataSize);
+        QHostAddress sender;
+        quint16 senderPort;
+        udpSocket->readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
 
-    QStringList messages = data.split("\n", Qt::SkipEmptyParts);   // Divise les messages sur '\n'
-
-    for (const QString &message : messages) {
+        QString message = QString::fromUtf8(buffer);
         QStringList parts = message.split(" ");
 
         qDebug() << "CC (" << playerId << ") | Message reçu du serveur:" << message;
 
         if (parts[0] == "ROLE_ASSIGNED") {
+            // Exemple de message : "ROLE_ASSIGNED p1"
             if (parts.size() > 1) {
                 QString role = parts[1];
                 qDebug() << "Rôle attribué:" << role;
+                // Vous pouvez stocker le rôle dans une variable membre si nécessaire.
             } else {
                 qDebug() << "Erreur: message ROLE_ASSIGNED mal formé";
             }
         }
         else if (parts[0] == "ASSIGN_ID") {
+            // Exemple : "ASSIGN_ID 1"
             if (parts.size() > 1) {
                 playerId = parts[1].toInt();
                 qDebug() << "ID attribué:" << playerId;
@@ -86,10 +79,13 @@ void GameClient::onDataReceived()
             }
         }
         else if (parts[0] == "AVAILABLE_SLOTS") {
-            parts.removeFirst();
+                // Exemple : "AVAILABLE_SLOTS p1 p2 p3"
+            parts.removeFirst(); // Supprime "AVAILABLE_SLOTS"
             qDebug() << "Slots disponibles:" << parts;
+            // Ici, vous pouvez mettre à jour l'interface utilisateur pour afficher les rôles disponibles.
         }
         else if (parts[0] == "FREE_COUNT") {
+            // Exemple : "FREE_COUNT 2"
             if (parts.size() > 1) {
                 int freeCount = parts[1].toInt();
                 qDebug() << "Nombre de slots libres:" << freeCount;
@@ -98,12 +94,14 @@ void GameClient::onDataReceived()
             }
         }
         else if (parts[0] == "PLAYER_JOINED") {
+            // Exemple : "PLAYER_JOINED 2"
             if (parts.size() > 1) {
                 int joinedPlayerId = parts[1].toInt();
                 qDebug() << "Nouveau joueur rejoint:" << joinedPlayerId;
             }
         }
         else if (parts[0] == "PLAYER_UPDATED") {
+            // Exemple : "PLAYER_UPDATED 2 p2"
             if (parts.size() > 2) {
                 int updatedPlayerId = parts[1].toInt();
                 QString role = parts[2];
@@ -112,9 +110,11 @@ void GameClient::onDataReceived()
         }
         else if (parts[0] == "GAME_START") {
             qDebug() << "La partie commence!";
+            // Transition vers l'interface de jeu, etc.
         }
         else if (parts[0] == "GAME_INFO") {
-            parts.removeFirst();
+            // Exemple : "GAME_INFO 1:p1 2:p2 ..."
+            parts.removeFirst(); // Supprime "GAME_INFO"
             qDebug() << "Informations de la partie:";
             for (const QString &info : parts) {
                 qDebug() << info;
