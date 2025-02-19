@@ -47,3 +47,11 @@ void Game::keyPressEvent(QKeyEvent *event) {
 void Game::keyReleaseEvent(QKeyEvent *event) {
     keysPressed->remove(event->key());
 }
+
+Paddle* Game::getPlayer1() {
+    return player1;
+}
+
+Paddle* Game::getPlayer2() {
+    return player2;
+}

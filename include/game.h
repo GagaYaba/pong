@@ -15,6 +15,8 @@ public:
     Game(QWidget *parent = nullptr);
     void increasePlayer1Score();
     void increasePlayer2Score();
+    Paddle* getPlayer1();
+    Paddle* getPlayer2();
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;

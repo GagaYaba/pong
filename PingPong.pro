@@ -11,6 +11,7 @@ SOURCES += \
     main.cpp \
     server/GameServer/gameserver.cpp \
     src/ball.cpp \
+    src/boundary.cpp \
     src/collision.cpp \
     src/game.cpp \
     src/mainwindow.cpp \
@@ -29,6 +30,7 @@ FORMS += \
 HEADERS += \
     client/GameClient/gameclient.h \
     include/ball.h \
+    include/boundary.h \
     include/collision.h \
     include/game.h \
     include/mainwindow.h \

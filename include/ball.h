@@ -28,6 +28,9 @@ private:
     QElapsedTimer timer;
     float deltaTime;
 
+    enum LastTouchedBy { P1, P2, None };
+    LastTouchedBy lastTouchedByPlayer;
+
     void handleWallCollision();
     void handlePaddleCollision();
     void handleBoundary();
