@@ -215,7 +215,6 @@ void GameServer::sendWaitingRoomInfo(int playerId)
     }
     QString msgSlots = "AVAILABLE_SLOTS " + available.join(" ");
     sendMessageToPlayer(playerId, msgSlots);
-    sendMessageToPlayer(playerId, "FREE_COUNT " + QString::number(available.size()));
 }
 
 // Met à jour la salle d'attente pour tous les joueurs qui n'ont pas encore choisi de rôle
