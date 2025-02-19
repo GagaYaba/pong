@@ -1,4 +1,4 @@
-QT = core widgets network
+QT += core widgets network
 
 CONFIG += c++17 cmdline
 
@@ -13,29 +13,19 @@ SOURCES += \
     main.cpp \
     server/GameServer/gameserver.cpp \
     src/ball.cpp \
-    src/boundary.cpp \
-    src/collision.cpp \
     src/game.cpp \
-    src/globals.cpp \
     src/mainwindow.cpp \
     src/menuwindow.cpp \
     src/paddle.cpp \
     src/score.cpp \
     src/JoinDialog.cpp \
-    src/SelectDialog.cpp \
     src/CodeDialog.cpp \
     src/utils.cpp \
 
 HEADERS += \
-    client/GameClient/ClientEventHandlerFactory.h \
-    client/GameClient/ClientEventHandler.h \
     client/GameClient/gameclient.h \
-    include/SelectDialog.h \
     include/ball.h \
-    include/boundary.h \
-    include/collision.h \
     include/game.h \
-    include/globals.h \
     include/mainwindow.h \
     include/menuwindow.h \
     include/paddle.h \
@@ -43,14 +33,12 @@ HEADERS += \
     server/GameServer/gameserver.h \
     include/utils.h \
     include/CodeDialog.h \
-    include/JoinDialog.h \
-    config.h
+    include/JoinDialog.h
 
 FORMS += \
     src/mainwindow.ui \
     src/menuwindow.ui \
     src/CodeDialog.ui \
-    src/SelectDialog.ui \
     src/JoinDialog.ui
 
 
@@ -65,14 +53,11 @@ UI_HEADERS += \
     build/ui/ui_mainwindow.h \
     build/ui/ui_menuwindow.h \
     build/ui/ui_CodeDialog.h \
-    build/ui/ui_SelectDialog.h \
     build/ui/ui_JoinDialog.h
 
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
-    server/GameServer/gameserver.h \
 
 DISTFILES += \
     .gitignore
-
