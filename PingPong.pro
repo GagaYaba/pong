@@ -1,4 +1,4 @@
-QT += core widgets network
+QT = core widgets network
 
 CONFIG += c++17 cmdline
 
@@ -13,6 +13,8 @@ SOURCES += \
     main.cpp \
     server/GameServer/gameserver.cpp \
     src/ball.cpp \
+    src/boundary.cpp \
+    src/collision.cpp \
     src/game.cpp \
     src/mainwindow.cpp \
     src/menuwindow.cpp \
@@ -27,6 +29,8 @@ HEADERS += \
     client/GameClient/gameclient.h \
     include/SelectDialog.h \
     include/ball.h \
+    include/boundary.h \
+    include/collision.h \
     include/game.h \
     include/mainwindow.h \
     include/menuwindow.h \
@@ -62,6 +66,9 @@ UI_HEADERS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+    server/GameServer/gameserver.h \
+    src/collision.h
 
 DISTFILES += \
     .gitignore
+

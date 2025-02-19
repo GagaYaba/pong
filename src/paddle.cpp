@@ -1,7 +1,8 @@
 #include "../include/paddle.h"
+#include <QKeyEvent>
 
-Paddle::Paddle(int x, int y, int speed, int screenHeight, QSet<int>* keysPressed, QObject* parent)
-    : QObject(parent), speed(speed), screenHeight(screenHeight), keysPressed(keysPressed) {
+Paddle::Paddle(int x, int y, int speed, int screenHeight, QSet<int>* keysPressed, Player playerId, QObject* parent)
+    : QObject(parent), speed(speed), screenHeight(screenHeight), keysPressed(keysPressed), playerId(playerId) {
     setRect(0, 0, 10, 60);
     setPos(x, y);
 
@@ -24,10 +25,6 @@ void Paddle::updatePosition() {
     }
 }
 
-void Paddle::keyPressEvent(QKeyEvent *event) {
-    keysPressed->insert(event->key());
-}
-
-void Paddle::keyReleaseEvent(QKeyEvent *event) {
-    keysPressed->remove(event->key());
+Paddle::Player Paddle::getPlayerId() const {
+    return playerId;
 }

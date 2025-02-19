@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QTimer>
 #include <QElapsedTimer>
+#include "paddle.h"  // Ajout de l'inclusion du fichier d'en-tête de Paddle
 
 class Game;
 
@@ -22,13 +23,22 @@ private:
     QTimer* movementTimer;
     int direction;
     Game* game;
-
     QElapsedTimer timer;
     float deltaTime;
 
-    void handleWallCollision();
+    enum LastTouchedBy { P1, P2, None };
+    LastTouchedBy lastTouchedByPlayer;
+
+    void handleCollisions();
     void handlePaddleCollision();
-    void handleBoundary();
+    void handleBoundaryCollision();
+    void processGoal();
+    void resetBall();
+    void adjustSpeed();
+    void limitMaxSpeed();
+    void handlePaddleHit(Paddle* paddle);
+    void reverseXDirection();
+    void adjustVerticalSpeed(Paddle* paddle);
 };
 
 #endif // BALL_H

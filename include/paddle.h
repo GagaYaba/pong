@@ -10,14 +10,16 @@
 class Paddle : public QObject, public QGraphicsRectItem {
     Q_OBJECT
 public:
-    Paddle(int x, int y, int speed, int screenHeight, QSet<int>* keysPressed, QObject* parent = nullptr);
+    enum Player { P1 = 1, P2 = 2 };
+
+    Paddle(int x, int y, int speed, int screenHeight, QSet<int>* keysPressed, Player playerId, QObject* parent = nullptr);
 
     void setKeys(int upKey, int downKey);
-    void keyPressEvent(QKeyEvent *event);
-    void keyReleaseEvent(QKeyEvent *event);
 
 public slots:
     void updatePosition();
+
+    Player getPlayerId() const;
 
 private:
     int upKey, downKey;
@@ -25,6 +27,7 @@ private:
     int screenHeight;
     QTimer* movementTimer;
     QSet<int>* keysPressed;
+    Player playerId;
 };
 
 #endif // PADDLE_H
