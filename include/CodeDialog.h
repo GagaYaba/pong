@@ -2,13 +2,7 @@
 #define CODEDIALOG_H
 
 #include <QDialog>
-
-#include "config.h"
-#if defined(USE_QMAKE)
-    #include "./ui_codedialog.h"
-#else
-    #include "../src/ui_codedialog.h"
-#endif
+#include "../src/ui_codedialog.h"
 
 class CodeDialog : public QDialog
 {
