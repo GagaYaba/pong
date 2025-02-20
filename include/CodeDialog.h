@@ -2,7 +2,15 @@
 #define CODEDIALOG_H
 
 #include <QDialog>
-#include "../src/ui_codedialog.h"
+
+#include "config.h"
+#if defined(USE_CMAKE)
+    #include "../src/ui_codedialog.h"
+#elif defined(USE_QMAKE)
+    #include "./ui_codedialog.h"
+#else
+    #error "CodeDialog.h: Aucun outil de build n'a été défini"
+#endif
 
 class CodeDialog : public QDialog
 {
