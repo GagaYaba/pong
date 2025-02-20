@@ -8,7 +8,15 @@
 #include <QMessageBox>
 #include "Game.h"
 #include "menuwindow.h"
-#include "./ui_SelectDialog.h"
+
+#include "config.h"
+#if defined(USE_CMAKE)
+    #include "../src/ui_SelectDialog.h"
+#elif defined(USE_QMAKE)
+    #include "./ui_SelectDialog.h"
+#else
+    #error "SelectDialog.h: Aucun outil de build n'a été défini"
+#endif
 
 namespace Ui {
     class SelectDialog;

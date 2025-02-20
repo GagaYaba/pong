@@ -41,7 +41,8 @@ HEADERS += \
     server/GameServer/gameserver.h \
     include/utils.h \
     include/CodeDialog.h \
-    include/JoinDialog.h
+    include/JoinDialog.h \
+    config.h
 
 FORMS += \
     src/mainwindow.ui \
