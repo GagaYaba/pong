@@ -20,6 +20,8 @@ private slots:
     void onDataReceived();
 
 private:
+    void sendRandomPaddlePosition();
+    void startRandomPaddleMovement();
     QTcpSocket *tcpSocket;   // Remplacer QUdpSocket par QTcpSocket
     int playerId;
     int lastPaddleY;

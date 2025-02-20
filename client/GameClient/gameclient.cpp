@@ -1,12 +1,46 @@
 #include "GameClient.h"
 #include <QDebug>
 #include <QString>
+#include <QTimer>
+#include <QRandomGenerator>
+
+void GameClient::sendPaddlePosition(float paddleY) {
+    if (paddleY != lastPaddleY) {
+        lastPaddleY = paddleY;
+
+        QByteArray data;
+        QDataStream stream(&data, QIODevice::WriteOnly);
+        stream.setByteOrder(QDataStream::LittleEndian);
+
+        quint8 messageType = 1;  // Indicateur de message Paddle
+        qint8 playerId = this->playerId;  // ID du joueur
+        stream << messageType << playerId << paddleY;
+
+        tcpSocket->write(data);
+    }
+}
+
+
+#include <QRandomGenerator>
+
+void GameClient::sendRandomPaddlePosition() {
+    float randomY = QRandomGenerator::global()->generateDouble() * 200.0f - 100.0f;
+    qDebug() << randomY;
+    sendPaddlePosition(randomY);
+}
+
+void GameClient::startRandomPaddleMovement() {
+    QTimer *timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, &GameClient::sendRandomPaddlePosition);
+    timer->start(100); // Envoie toutes les 100ms (ajuste selon besoin)
+}
 
 GameClient::GameClient(QObject *parent)
     : QObject(parent),
       tcpSocket(new QTcpSocket(this)),   // Initialisation du socket TCP
       playerId(-1)
 {
+    startRandomPaddleMovement();
     connect(tcpSocket, &QTcpSocket::readyRead, this, &GameClient::onDataReceived);
 }
 
@@ -55,17 +89,6 @@ void GameClient::selectRole(const QString &role)
     sendMessage(message);
     qDebug() << "Demande de sélection de rôle envoyée:" << role;
 }
-
-void GameClient::sendPaddlePosition(float paddleY)
-{
-    if (paddleY != lastPaddleY) { // N'envoie que si la position a changé
-        lastPaddleY = paddleY;
-        QString message = "PADDLE " + QString::number(playerId) + " " + QString::number(paddleY);
-        sendMessage(message);
-    }
-}
-
-
 
 void GameClient::onDataReceived()
 {

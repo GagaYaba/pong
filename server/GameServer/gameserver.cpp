@@ -22,29 +22,38 @@ void GameServer::startServer(int mode, bool autoAssign)
 
     rolesList.clear();
     roleTaken.clear();
-    if (mode == 1) {
+    if (mode == 1)
+    {
         rolesList << "p1" << "p2";
-    } else {
+    }
+    else
+    {
         rolesList << "p1" << "p2" << "p3" << "p4";
     }
-    for (const QString &r : rolesList) {
+    for (const QString &r : rolesList)
+    {
         roleTaken[r] = false;
     }
 
     QList<quint16> ports = {27460, 25518, 27718, 28147, 27808, 26897, 29102, 25499, 27520, 27392};
     bool serverStarted = false;
 
-    for (quint16 port : ports) {
-        if (tcpServer->listen(QHostAddress::Any, port)) {
+    for (quint16 port : ports)
+    {
+        if (tcpServer->listen(QHostAddress::Any, port))
+        {
             qDebug() << "Serveur TCP démarré sur le port" << port << "Mode:" << ((mode == 1) ? "1vs1" : "2vs2");
             serverStarted = true;
             break;
-        } else {
+        }
+        else
+        {
             qDebug() << "Le port" << port << "n'est pas disponible, test suivant...";
         }
     }
 
-    if (!serverStarted) {
+    if (!serverStarted)
+    {
         qDebug() << "Erreur: aucun des ports disponibles n'a pu être utilisé.";
     }
 }
@@ -55,7 +64,8 @@ void GameServer::onNewConnection()
     connect(clientSocket, &QTcpSocket::readyRead, this, &GameServer::onDataReceived);
     connect(clientSocket, &QTcpSocket::disconnected, this, &GameServer::onDisconnected);
 
-    if (currentPlayers < maxPlayers) {
+    if (currentPlayers < maxPlayers)
+    {
         int playerId = currentPlayers + 1;
         PlayerInfo info;
         info.socket = clientSocket;
@@ -73,9 +83,12 @@ void GameServer::onNewConnection()
         sendMessageToAll("PLAYER_JOINED " + QString::number(playerId));
 
         // Si attribution automatique des rôles activée, on attribue directement le premier rôle disponible
-        if (autoAssignRoles) {
-            for (const QString &r : rolesList) {
-                if (!roleTaken[r]) {
+        if (autoAssignRoles)
+        {
+            for (const QString &r : rolesList)
+            {
+                if (!roleTaken[r])
+                {
                     players[playerId].role = r;
                     players[playerId].ready = true;
                     roleTaken[r] = true;
@@ -86,25 +99,27 @@ void GameServer::onNewConnection()
             }
             checkAndStartGame();
         }
-    } else {
+    }
+    else
+    {
         // Partie pleine
         clientSocket->write("FULL");
         clientSocket->disconnectFromHost();
     }
 }
 
-void GameServer::onDataReceived()
+void GameServer::processStringMessage(QTcpSocket *clientSocket, const QString &message)
 {
-    QTcpSocket *clientSocket = qobject_cast<QTcpSocket *>(sender());
-    if (clientSocket) {
-        QByteArray buffer = clientSocket->readAll();
-        QString message = QString::fromUtf8(buffer);
+    if (clientSocket)
+    {
         QHostAddress sender = clientSocket->peerAddress();
         quint16 senderPort = clientSocket->peerPort();
         qDebug() << "SS | Reçu:" << message << "de" << sender.toString() << ":" << senderPort;
 
-        if (message == "JOIN") {
-            if (currentPlayers < maxPlayers) {
+        if (message == "JOIN")
+        {
+            if (currentPlayers < maxPlayers)
+            {
                 int playerId = currentPlayers + 1;
                 PlayerInfo info;
                 info.socket = clientSocket;
@@ -122,9 +137,12 @@ void GameServer::onDataReceived()
                 sendMessageToAll("PLAYER_JOINED " + QString::number(playerId));
 
                 // Si attribution automatique des rôles activée, on attribue directement le premier rôle disponible
-                if (autoAssignRoles) {
-                    for (const QString &r : rolesList) {
-                        if (!roleTaken[r]) {
+                if (autoAssignRoles)
+                {
+                    for (const QString &r : rolesList)
+                    {
+                        if (!roleTaken[r])
+                        {
                             players[playerId].role = r;
                             players[playerId].ready = true;
                             roleTaken[r] = true;
@@ -135,17 +153,22 @@ void GameServer::onDataReceived()
                     }
                     checkAndStartGame();
                 }
-            } else {
+            }
+            else
+            {
                 // Partie pleine
                 clientSocket->write("FULL");
             }
         }
         // Cas de la sélection d'un rôle par un joueur (attribution manuelle)
-        else if (message.startsWith("SELECT_ROLE ")) {
+        else if (message.startsWith("SELECT_ROLE "))
+        {
             QString chosenRole = message.section(' ', 1, 1); // ex: "p1"
             int playerId = findPlayerId(sender, senderPort);
-            if (playerId != -1) {
-                if (!roleTaken.value(chosenRole, true)) {
+            if (playerId != -1)
+            {
+                if (!roleTaken.value(chosenRole, true))
+                {
                     players[playerId].role = chosenRole;
                     players[playerId].ready = true;
                     roleTaken[chosenRole] = true;
@@ -154,7 +177,9 @@ void GameServer::onDataReceived()
                     // Mettre à jour la salle d'attente pour tous (pour actualiser la liste des slots disponibles)
                     updateWaitingRoomForAll();
                     checkAndStartGame();
-                } else {
+                }
+                else
+                {
                     sendMessageToPlayer(playerId, "ERROR Role not available");
                 }
             }
@@ -163,13 +188,49 @@ void GameServer::onDataReceived()
     }
 }
 
+void GameServer::onDataReceived() {
+    QTcpSocket *clientSocket = qobject_cast<QTcpSocket *>(sender());
+    if (!clientSocket)
+        return;
+
+    while (clientSocket->bytesAvailable() > 0) {
+        QByteArray buffer = clientSocket->peek(1); // Regarde le premier octet
+        quint8 firstByte = static_cast<quint8>(buffer.at(0));
+
+        if (firstByte == 1) {  // Message binaire (Paddle)
+            if (clientSocket->bytesAvailable() < 6)
+                return;  // Attendre d'avoir au moins 6 octets
+
+            QByteArray data = clientSocket->read(6);
+            QDataStream stream(data);
+            stream.setByteOrder(QDataStream::LittleEndian);
+
+            quint8 messageType;
+            qint8 playerId;
+            float paddleY;
+
+            stream >> messageType >> playerId >> paddleY;
+
+            if (messageType == 1) {
+                qDebug() << "🟢 Paddle reçu | Joueur:" << playerId << "| Position:" << paddleY;
+            }
+        } else {  // Message texte ("JOIN", etc.)
+            QByteArray data = clientSocket->readAll();
+            QString message = QString::fromUtf8(data).trimmed();
+            processStringMessage(clientSocket, message);
+        }
+    }
+}
+
 void GameServer::onDisconnected()
 {
     QTcpSocket *clientSocket = qobject_cast<QTcpSocket *>(sender());
-    if (clientSocket) {
+    if (clientSocket)
+    {
         // Trouver l'ID du joueur en fonction de l'adresse et du port
         int playerId = findPlayerId(clientSocket->peerAddress(), clientSocket->peerPort());
-        if (playerId != -1) {
+        if (playerId != -1)
+        {
             players.remove(playerId);
             currentPlayers--;
             qDebug() << "Joueur déconnecté:" << playerId;
@@ -180,12 +241,13 @@ void GameServer::onDisconnected()
 }
 
 void GameServer::sendMessageToAll(const QString &message)
-{   
+{
     qDebug() << "  ";
     qDebug() << "  ";
     qDebug() << "Envoi à tous:" << message;
     QByteArray data = message.toUtf8();
-    for (auto it = players.begin(); it != players.end(); ++it) {
+    for (auto it = players.begin(); it != players.end(); ++it)
+    {
         qDebug() << "Envoi à" << it.key() << "->" << data;
         it.value().socket->write(data + "\n");
     }
@@ -199,7 +261,8 @@ void GameServer::sendMessageToPlayer(int playerId, const QString &message)
     qDebug() << "  ";
     qDebug() << "Envoi au joueur" << playerId << "->" << message;
     qDebug() << "  ";
-    if (players.contains(playerId)) {
+    if (players.contains(playerId))
+    {
         QByteArray data = message.toUtf8();
         players[playerId].socket->write(data + "\n");
     }
@@ -209,7 +272,8 @@ void GameServer::sendMessageToPlayer(int playerId, const QString &message)
 void GameServer::sendWaitingRoomInfo(int playerId)
 {
     QStringList available;
-    for (const QString &r : rolesList) {
+    for (const QString &r : rolesList)
+    {
         if (!roleTaken[r])
             available << r;
     }
@@ -220,8 +284,10 @@ void GameServer::sendWaitingRoomInfo(int playerId)
 // Met à jour la salle d'attente pour tous les joueurs qui n'ont pas encore choisi de rôle
 void GameServer::updateWaitingRoomForAll()
 {
-    for (auto it = players.begin(); it != players.end(); ++it) {
-        if (!it.value().ready) {
+    for (auto it = players.begin(); it != players.end(); ++it)
+    {
+        if (!it.value().ready)
+        {
             sendWaitingRoomInfo(it.key());
         }
     }
@@ -230,19 +296,24 @@ void GameServer::updateWaitingRoomForAll()
 // Vérifie si tous les joueurs ont choisi leur rôle et démarre la partie le cas échéant
 void GameServer::checkAndStartGame()
 {
-    if (players.size() == maxPlayers) {
+    if (players.size() == maxPlayers)
+    {
         bool allReady = true;
-        for (const PlayerInfo &info : players) {
-            if (!info.ready) {
+        for (const PlayerInfo &info : players)
+        {
+            if (!info.ready)
+            {
                 allReady = false;
                 break;
             }
         }
-        if (allReady) {
+        if (allReady)
+        {
             sendMessageToAll("GAME_START");
             // Envoi d'une info de configuration (ex: la liste des joueurs et leurs rôles)
             QString gameInfo = "GAME_INFO";
-            for (auto it = players.begin(); it != players.end(); ++it) {
+            for (auto it = players.begin(); it != players.end(); ++it)
+            {
                 gameInfo += " " + QString::number(it.key()) + ":" + it.value().role;
             }
             sendMessageToAll(gameInfo);
@@ -253,7 +324,8 @@ void GameServer::checkAndStartGame()
 // Permet de retrouver l'ID du joueur grâce à son adresse IP et son port
 int GameServer::findPlayerId(const QHostAddress &ip, quint16 port)
 {
-    for (auto it = players.begin(); it != players.end(); ++it) {
+    for (auto it = players.begin(); it != players.end(); ++it)
+    {
         if (it.value().socket->peerAddress() == ip && it.value().socket->peerPort() == port)
             return it.key();
     }

@@ -45,6 +45,7 @@ private:
     void sendWaitingRoomInfo(int playerId);
     void updateWaitingRoomForAll();
     void checkAndStartGame();
+    void processStringMessage(QTcpSocket *clientSocket, const QString &message);
     int findPlayerId(const QHostAddress &ip, quint16 port);
 };
 
