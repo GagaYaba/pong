@@ -9,15 +9,7 @@
 #include "../server/GameServer/gameserver.h"
 #include "../client/GameClient/gameclient.h"
 #include "SelectDialog.h"
-
-#include "config.h"
-#if defined(USE_CMAKE)
-    #include "../src/ui_menuwindow.h"
-#elif defined(USE_QMAKE)
-    #include "./ui_menuwindow.h"
-#else
-    #error "menuwindow.h: Aucun outil de build n'a été défini"
-#endif
+#include "./ui_menuwindow.h"
 
 namespace Ui {
     class MenuWindow;
