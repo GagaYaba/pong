@@ -20,6 +20,7 @@ qt_add_executable(sans_titre
         include/menuwindow.h src/menuwindow.cpp src/menuwindow.ui
         client/GameClient/gameclient.h client/GameClient/gameclient.cpp
         server/GameServer/gameserver.h server/GameServer/gameserver.cpp
+        client/GameClient/ClientEventHandler.h client/GameClient/ClientEventHandlerFactory.h
 )
 
 
