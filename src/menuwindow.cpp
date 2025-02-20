@@ -18,7 +18,12 @@ MenuWindow::MenuWindow(QWidget *parent)
     connect(ui->startButton, &QPushButton::clicked, this, &MenuWindow::onStart);
     connect(ui->quitButton, &QPushButton::clicked, this, &MenuWindow::onQuit);
     connect(ui->joinButton, &QPushButton::clicked, this, &MenuWindow::onJoin);
-
+    if (client) {
+        qDebug() << "Connexion du signal availableSlotsReceived à onAvailableSlotsReceived";
+        connect(client, &GameClient::availableSlotsReceived, this, &MenuWindow::onAvailableSlotsReceived);
+    } else {
+        qDebug() << "client est NULL, impossible de connecter le signal.";
+    }
 
 }
 
