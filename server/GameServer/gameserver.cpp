@@ -158,9 +158,6 @@ void GameServer::onNewConnection()
     QTcpSocket *clientSocket = tcpServer->nextPendingConnection();
     connect(clientSocket, &QTcpSocket::readyRead, this, &GameServer::onDataReceived);
     connect(clientSocket, &QTcpSocket::disconnected, this, &GameServer::onDisconnected);
-
-    // Pour cette nouvelle connexion, on attendra que le client envoie un message "JOIN"
-    // qui sera traité dans onDataReceived par notre factory.
 }
 
 void GameServer::onDataReceived()
