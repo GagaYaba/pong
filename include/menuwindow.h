@@ -9,7 +9,15 @@
 #include "../server/GameServer/gameserver.h"
 #include "../client/GameClient/gameclient.h"
 #include "SelectDialog.h"
-#include "./ui_menuwindow.h"
+
+#include "config.h"
+#if defined(USE_CMAKE)
+    #include "../src/ui_menuwindow.h"
+#elif defined(USE_QMAKE)
+    #include "./ui_menuwindow.h"
+#else
+    #error "menuwindow.h: Aucun outil de build n'a été défini"
+#endif
 
 namespace Ui {
     class MenuWindow;
@@ -22,6 +30,7 @@ Q_OBJECT
 public:
     explicit MenuWindow(QWidget *parent = nullptr);
     ~MenuWindow();
+    static void onAvailableSlotsReceived(const QStringList &slots);
 
 private slots:
     void onStart();
@@ -29,8 +38,6 @@ private slots:
     void onJoin();
     void onGameClosed();
     void onRoleSelected(const QString &role);  // Slot pour la sélection de rôle
-    void onAvailableSlotsReceived(const QStringList &availableSlots);
-
 
 private:
     // Méthodes de gestion du code de connexion

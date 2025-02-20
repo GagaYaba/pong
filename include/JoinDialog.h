@@ -2,9 +2,15 @@
 #define JOINDIALOG_H
 
 #include <QDialog>
-#include "config.h"
-#include "./ui_JoinDialog.h"
 
+#include "config.h"
+#if defined(USE_CMAKE)
+    #include "../src/ui_JoinDialog.h"
+#elif defined(USE_QMAKE)
+    #include "./ui_JoinDialog.h"
+#else
+    #error "JoinDialog.h: Aucun outil de build n'a été défini"
+#endif
 namespace Ui {
     class JoinDialog;
 }
