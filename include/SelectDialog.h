@@ -19,7 +19,7 @@ class SelectDialog : public QDialog
 Q_OBJECT
 
 public:
-    explicit SelectDialog(QWidget *parent = nullptr);
+    explicit SelectDialog(QWidget *parent, const QStringList &availableSlots);
     ~SelectDialog();
 
     bool isPlayer1Ready() const;
@@ -33,16 +33,16 @@ private slots:
     void onPlayer1ReadyChanged(bool checked);
     void onPlayer2ReadyChanged(bool checked);
     void onStartGame();
-
-private:
     void updateStartButton();
 
-    Game *game;  // Variable pour gérer l'instance du jeu
+private:
+    Game *game{};  // Variable pour gérer l'instance du jeu
     Ui::SelectDialog *ui;
-    QPushButton *startButton;
-    QCheckBox *player1CheckBox;
-    QCheckBox *player2CheckBox;
-    QLabel *statusLabel;
+    QPushButton *startButton{};
+    QCheckBox *player1CheckBox{};
+    QCheckBox *player2CheckBox{};
+    QLabel *statusLabel{};
+    QStringList slotsDisponibles;
 };
 
 #endif // SELECTDIALOG_H
