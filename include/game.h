@@ -17,6 +17,7 @@ public:
     void increasePlayer2Score();
     Paddle* getPlayer1();
     Paddle* getPlayer2();
+    Ball* getBall();
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;

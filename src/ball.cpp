@@ -2,6 +2,7 @@
 #include "../include/boundary.h"
 #include "../include/paddle.h"
 #include "../include/game.h"
+
 #include <QGraphicsScene>
 #include <QList>
 #include <QDebug>
@@ -48,44 +49,17 @@ void Ball::handlePaddleCollision() {
             adjustVerticalSpeed(paddle);
             adjustSpeed();
             limitMaxSpeed();
+            qDebug() << "Ball hit the paddle!";
+            emit paddleHit();
         }
-    }
-}
-
-void Ball::handlePaddleHit(Paddle* paddle) {
-    if (paddle == game->getPlayer1()) {
-        lastTouchedByPlayer = P1;
-    } else if (paddle == game->getPlayer2()) {
-        lastTouchedByPlayer = P2;
-    }
-}
-
-void Ball::reverseXDirection() {
-    dx = -dx;
-}
-
-void Ball::adjustVerticalSpeed(Paddle* paddle) {
-    float hitPosition = (y() + rect().height() / 2) - (paddle->y() + paddle->rect().height() / 2);
-    dy += hitPosition * 0.1;
-}
-
-void Ball::adjustSpeed() {
-    // if need to reduce ball speed after condition
-}
-
-void Ball::limitMaxSpeed() {
-    float maxSpeed = 6.0f;
-    if (std::abs(dx) > maxSpeed) {
-        dx = (dx > 0 ? 1 : -1) * maxSpeed;
-    }
-    if (std::abs(dy) > maxSpeed) {
-        dy = (dy > 0 ? 1 : -1) * maxSpeed;
     }
 }
 
 void Ball::handleBoundaryCollision() {
     if (y() <= 0 || y() + rect().height() >= screenHeight) {
         dy = -dy;
+        qDebug() << "Ball hit the boundary!";
+        emit boundaryHit();
     }
 
     if (x() <= 0 || x() + rect().width() >= screenWidth) {
@@ -117,4 +91,35 @@ void Ball::resetBall() {
     direction = -direction;
     dx = 2;
     dy = 0;
+}
+
+void Ball::handlePaddleHit(Paddle* paddle) {
+    if (paddle == game->getPlayer1()) {
+        lastTouchedByPlayer = P1;
+    } else if (paddle == game->getPlayer2()) {
+        lastTouchedByPlayer = P2;
+    }
+}
+
+void Ball::reverseXDirection() {
+    dx = -dx;
+}
+
+void Ball::adjustVerticalSpeed(Paddle* paddle) {
+    float hitPosition = (y() + rect().height() / 2) - (paddle->y() + paddle->rect().height() / 2);
+    dy += hitPosition * 0.1;
+}
+
+void Ball::adjustSpeed() {
+    // if need to reduce ball speed after condition
+}
+
+void Ball::limitMaxSpeed() {
+    float maxSpeed = 6.0f;
+    if (std::abs(dx) > maxSpeed) {
+        dx = (dx > 0 ? 1 : -1) * maxSpeed;
+    }
+    if (std::abs(dy) > maxSpeed) {
+        dy = (dy > 0 ? 1 : -1) * maxSpeed;
+    }
 }

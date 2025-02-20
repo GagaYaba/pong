@@ -5,7 +5,8 @@
 #include <QObject>
 #include <QTimer>
 #include <QElapsedTimer>
-#include "paddle.h"  // Ajout de l'inclusion du fichier d'en-tête de Paddle
+
+#include "paddle.h"
 
 class Game;
 
@@ -16,6 +17,10 @@ public:
 
 public slots:
     void move();
+
+signals:
+    void paddleHit();
+    void boundaryHit();
 
 private:
     int screenWidth, screenHeight;
