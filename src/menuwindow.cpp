@@ -16,6 +16,9 @@ MenuWindow::MenuWindow(QWidget *parent)
     connect(ui->startButton, &QPushButton::clicked, this, &MenuWindow::onStart);
     connect(ui->quitButton, &QPushButton::clicked, this, &MenuWindow::onQuit);
     connect(ui->joinButton, &QPushButton::clicked, this, &MenuWindow::onJoin);
+    if (client) {
+        connect(client, &GameClient::availableSlotsReceived, this, &MenuWindow::onAvailableSlotsReceived);
+    }
 }
 
 MenuWindow::~MenuWindow() {
@@ -23,6 +26,12 @@ MenuWindow::~MenuWindow() {
     delete server;
     delete client;
     delete ui;
+}
+
+void MenuWindow::onAvailableSlotsReceived(const QStringList &slots) {
+    SelectDialog selectDialog(this, QStringList(slots));
+    connect(&selectDialog, &SelectDialog::gameStarted, this, &MenuWindow::onRoleSelected);
+    selectDialog.exec();
 }
 
 void MenuWindow::onStart() {
@@ -44,12 +53,6 @@ void MenuWindow::onStart() {
         client = new GameClient(this);
         client->connectToServer(QHostAddress::LocalHost);  // Connexion locale
     }
-
-    // Ouvre le SelectDialog pour la sélection des rôles
-    SelectDialog *selectDialog = new SelectDialog(this);
-    connect(selectDialog, &SelectDialog::gameStarted, this, &MenuWindow::onRoleSelected);
-    selectDialog->exec();  // Affiche la boîte de dialogue de sélection des rôles
-    delete selectDialog;   // Ne pas oublier de nettoyer l'objet après son utilisation
 }
 
 
@@ -86,10 +89,6 @@ void MenuWindow::onJoin() {
             client->connectToServer(QHostAddress(ip));  // Connexion avec l'IP décodée
         }
 
-        // Ouvre le SelectDialog pour la sélection des rôles
-        SelectDialog selectDialog(this);
-        connect(&selectDialog, &SelectDialog::gameStarted, this, &MenuWindow::onRoleSelected);
-        selectDialog.exec();  // Affiche le dialogue pour que l'utilisateur choisisse son rôle
     }
 }
 QString MenuWindow::generateJoinCode(const QString &ip) {

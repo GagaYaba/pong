@@ -1,12 +1,21 @@
 #include "../include/SelectDialog.h"
 #include <QMessageBox>
 
-SelectDialog::SelectDialog(QWidget *parent) :
+SelectDialog::SelectDialog(QWidget *parent, const QStringList &availableSlots) :
         QDialog(parent),
-        ui(new Ui::SelectDialog),
-        game(nullptr)
+        ui(new Ui::SelectDialog)
 {
     ui->setupUi(this);
+
+    // Désactiver les checkboxes non disponibles
+    if (!availableSlots.contains("p1")) {
+        ui->player1CheckBox->setDisabled(true);
+        ui->player1CheckBox->setText("Player 1 (Non disponible)");
+    }
+    if (!availableSlots.contains("p2")) {
+        ui->player2CheckBox->setDisabled(true);
+        ui->player2CheckBox->setText("Player 2 (Non disponible)");
+    }
 
     // Connexion des signaux aux slots
     connect(ui->player1CheckBox, &QCheckBox::toggled, this, &SelectDialog::onPlayer1ReadyChanged);

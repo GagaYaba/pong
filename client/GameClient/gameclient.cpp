@@ -1,4 +1,5 @@
 #include "gameclient.h"
+#include "../../include/SelectDialog.h"
 #include <QDebug>
 #include <QString>
 #include <QTcpSocket>
@@ -54,7 +55,9 @@ public:
     void handle(GameClient* client, const QString &message) override {
         QStringList parts = message.split(" ");
         parts.removeFirst(); // Supprime le mot-clé
-        qDebug() << "Slots disponibles:" << parts;
+        qDebug() << "Slots disponibles reçus:" << parts;
+
+        emit client->availableSlotsReceived(parts);
     }
 };
 
