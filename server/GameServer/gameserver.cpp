@@ -81,7 +81,7 @@ public:
                 server->roleTaken[chosenRole] = true;
                 server->sendMessageToPlayer(playerId, "ROLE_ASSIGNED " + chosenRole);
                 server->sendMessageToAll("PLAYER_UPDATED " + QString::number(playerId) + " " + chosenRole);
-                // server->updateWaitingRoomForAll();
+                server->updateWaitingRoomForAll();
                 server->checkAndStartGame();
             } else {
                 server->sendMessageToPlayer(playerId, "ERROR Role not available");
@@ -158,6 +158,9 @@ void GameServer::onNewConnection()
     QTcpSocket *clientSocket = tcpServer->nextPendingConnection();
     connect(clientSocket, &QTcpSocket::readyRead, this, &GameServer::onDataReceived);
     connect(clientSocket, &QTcpSocket::disconnected, this, &GameServer::onDisconnected);
+
+    // Pour cette nouvelle connexion, on attendra que le client envoie un message "JOIN"
+    // qui sera traité dans onDataReceived par notre factory.
 }
 
 void GameServer::onDataReceived()
@@ -254,12 +257,12 @@ void GameServer::checkAndStartGame()
             }
         }
         if (allReady) {
-            // sendMessageToAll("GAME_START");
-            // QString gameInfo = "GAME_INFO";
-            // for (auto it = players.begin(); it != players.end(); ++it) {
-            //     gameInfo += " " + QString::number(it.key()) + ":" + it.value().role;
-            // }
-            // sendMessageToAll(gameInfo);
+            sendMessageToAll("GAME_START");
+            QString gameInfo = "GAME_INFO";
+            for (auto it = players.begin(); it != players.end(); ++it) {
+                gameInfo += " " + QString::number(it.key()) + ":" + it.value().role;
+            }
+            sendMessageToAll(gameInfo);
         }
     }
 }
