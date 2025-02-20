@@ -11,12 +11,10 @@
 #include "SelectDialog.h"
 
 #include "config.h"
-#if defined(USE_CMAKE)
-    #include "../src/ui_menuwindow.h"
-#elif defined(USE_QMAKE)
+#if defined(USE_QMAKE)
     #include "./ui_menuwindow.h"
 #else
-    #error "menuwindow.h: Aucun outil de build n'a été défini"
+    #include "../src/ui_menuwindow.h"
 #endif
 
 namespace Ui {
