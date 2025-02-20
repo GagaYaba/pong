@@ -26,6 +26,8 @@ SOURCES += \
     src/utils.cpp \
 
 HEADERS += \
+    client/GameClient/ClientEventHandlerFactory.h \
+    client/GameClient/ClientEventHandler.h \
     client/GameClient/gameclient.h \
     include/SelectDialog.h \
     include/ball.h \
