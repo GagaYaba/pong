@@ -18,12 +18,6 @@ MenuWindow::MenuWindow(QWidget *parent)
     connect(ui->startButton, &QPushButton::clicked, this, &MenuWindow::onStart);
     connect(ui->quitButton, &QPushButton::clicked, this, &MenuWindow::onQuit);
     connect(ui->joinButton, &QPushButton::clicked, this, &MenuWindow::onJoin);
-    if (client) {
-        qDebug() << "Connexion du signal availableSlotsReceived à onAvailableSlotsReceived";
-        connect(client, &GameClient::availableSlotsReceived, this, &MenuWindow::onAvailableSlotsReceived);
-    } else {
-        qDebug() << "client est NULL, impossible de connecter le signal.";
-    }
 
 }
 
@@ -33,13 +27,13 @@ MenuWindow::~MenuWindow() {
     delete client;
     delete ui;
 }
-
-void MenuWindow::onAvailableSlotsReceived(const QStringList &) {
-    qDebug() << "Function triggered!";
+void MenuWindow::onAvailableSlotsReceived(const QStringList &availableSlots) {
+    qDebug() << "Slots reçus:" << availableSlots;
+    SelectDialog *selectDialog = new SelectDialog(this, availableSlots);
+    connect(selectDialog, &SelectDialog::gameStarted, this, &MenuWindow::onRoleSelected);
+    selectDialog->exec();
+    delete selectDialog;
 }
-
-
-
 
 void MenuWindow::onStart() {
     if (!server) {
@@ -99,7 +93,7 @@ void MenuWindow::onJoin() {
         if (client) {
             qDebug() << "Connexion du signal availableSlotsReceived à onAvailableSlotsReceived";
             connect(client, &GameClient::availableSlotsReceived, this, &MenuWindow::onAvailableSlotsReceived);
-        } else {
+            } else {
             qDebug() << "client est NULL, impossible de connecter le signal.";
         }
 
