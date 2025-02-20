@@ -184,6 +184,18 @@ GameClient::GameClient(QObject *parent)
     connect(tcpSocket, &QTcpSocket::readyRead, this, &GameClient::onDataReceived);
 }
 
+void GameClient::sendMessage(const QString &message)
+{
+    QByteArray data = message.toUtf8();
+    if (tcpSocket->state() == QTcpSocket::ConnectedState) {
+        tcpSocket->write(data);
+        tcpSocket->flush();
+        qDebug() << "Message envoyé:" << message;
+    } else {
+        qDebug() << "Erreur: Connexion non établie";
+    }
+}
+
 void GameClient::connectToServer(const QHostAddress &serverAddr)
 {
     this->serverAddress = serverAddr;
@@ -196,6 +208,8 @@ void GameClient::connectToServer(const QHostAddress &serverAddr)
         if (tcpSocket->waitForConnected(3000)) {
             qDebug() << "Connexion établie avec le serveur sur le port" << port;
             connected = true;
+            QString message = "JOIN";
+            sendMessage(message);
             break;
         } else {
             qDebug() << "Impossible de se connecter au serveur sur le port" << port << ", test suivant...";
@@ -204,18 +218,6 @@ void GameClient::connectToServer(const QHostAddress &serverAddr)
 
     if (!connected) {
         qDebug() << "Erreur: impossible de se connecter à un des ports disponibles du serveur.";
-    }
-}
-
-void GameClient::sendMessage(const QString &message)
-{
-    QByteArray data = message.toUtf8();
-    if (tcpSocket->state() == QTcpSocket::ConnectedState) {
-        tcpSocket->write(data);
-        tcpSocket->flush();
-        qDebug() << "Message envoyé:" << message;
-    } else {
-        qDebug() << "Erreur: Connexion non établie";
     }
 }
 
