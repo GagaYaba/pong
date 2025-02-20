@@ -8,6 +8,8 @@
 #include <QAction>
 #include <QHostAddress>
 #include <QMessageBox>
+#include <QDebug>
+#include <QStringList>
 
 MenuWindow::MenuWindow(QWidget *parent)
         : QMainWindow(parent), game(nullptr), server(nullptr), client(nullptr), ui(new Ui::MenuWindow) {
@@ -32,13 +34,10 @@ MenuWindow::~MenuWindow() {
     delete ui;
 }
 
-void MenuWindow::onAvailableSlotsReceived(const QStringList &slots) {
-    qDebug() << "Slots reçus:" << slots; // Ajout de debug
-    SelectDialog *selectDialog = new SelectDialog(this, slots);
-    connect(selectDialog, &SelectDialog::gameStarted, this, &MenuWindow::onRoleSelected);
-    selectDialog->exec();
-    delete selectDialog;
+void MenuWindow::onAvailableSlotsReceived(const QStringList &) {
+    qDebug() << "Function triggered!";
 }
+
 
 
 
