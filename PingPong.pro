@@ -67,7 +67,6 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
     server/GameServer/gameserver.h \
-    src/collision.h
 
 DISTFILES += \
     .gitignore
