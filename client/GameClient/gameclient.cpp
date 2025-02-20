@@ -57,6 +57,7 @@ public:
         parts.removeFirst(); // Supprime le mot-clé
         qDebug() << "Slots disponibles reçus:" << parts;
 
+        qDebug() << "Slots disponibles reçus:" << parts;
         emit client->availableSlotsReceived(parts);
     }
 };
