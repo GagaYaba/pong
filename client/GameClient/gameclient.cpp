@@ -53,10 +53,15 @@ public:
         return message.startsWith("AVAILABLE_SLOTS");
     }
     void handle(GameClient* client, const QString &message) override {
-        QStringList parts = message.split(" ");
-        parts.removeFirst(); // Supprime le mot-clé
-        qDebug() << "Slots disponibles reçus:" << parts;
-        emit client->availableSlotsReceived(parts);
+        QStringList parts = message.split(" ");  // utilise QStringList et non QList<QString>
+        parts.removeFirst();
+        if (client) {
+            qDebug() << "Emission du signal availableSlotsReceived avec" << parts;
+            emit client->availableSlotsReceived(parts);
+        } else {
+            qDebug() << "Erreur: GameClient est NULL";
+        }
+
     }
 };
 

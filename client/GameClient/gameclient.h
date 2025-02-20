@@ -30,8 +30,8 @@ public:
     void sendPaddlePosition(float paddleY);
     int playerId;
 
-    signals:
-            void availableSlotsReceived(const QStringList &slots);
+signals:
+    void availableSlotsReceived(const QStringList &slots);
 
 private slots:
     // Gestion des données reçues du serveur
