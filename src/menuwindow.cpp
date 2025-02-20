@@ -54,6 +54,13 @@ void MenuWindow::onStart() {
         client = new GameClient(this);
         client->connectToServer(QHostAddress::LocalHost);  // Connexion locale
     }
+
+    if (client) {
+        qDebug() << "Connexion du signal availableSlotsReceived à onAvailableSlotsReceived";
+        connect(client, &GameClient::availableSlotsReceived, this, &MenuWindow::onAvailableSlotsReceived);
+    } else {
+        qDebug() << "client est NULL, impossible de connecter le signal.";
+    }
 }
 
 
