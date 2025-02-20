@@ -2,13 +2,7 @@
 #define JOINDIALOG_H
 
 #include <QDialog>
-
-#include "config.h"
-#if defined(USE_QMAKE)
-    #include "./ui_JoinDialog.h"
-#else
-    #include "../src/ui_JoinDialog.h"
-#endif
+#include "../src/ui_JoinDialog.h"
 
 namespace Ui {
     class JoinDialog;
