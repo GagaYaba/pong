@@ -9,13 +9,7 @@
 #include "../server/GameServer/gameserver.h"
 #include "../client/GameClient/gameclient.h"
 #include "SelectDialog.h"
-
-#include "config.h"
-#if defined(USE_QMAKE)
-    #include "./ui_menuwindow.h"
-#else
-    #include "../src/ui_menuwindow.h"
-#endif
+#include "../src/ui_menuwindow.h"
 
 namespace Ui {
     class MenuWindow;

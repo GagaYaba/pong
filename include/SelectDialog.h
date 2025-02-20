@@ -8,13 +8,7 @@
 #include <QMessageBox>
 #include "Game.h"
 #include "menuwindow.h"
-
-#include "config.h"
-#if defined(USE_QMAKE)
-    #include "./ui_SelectDialog.h"
-#else
-    #include "../src/ui_SelectDialog.h"
-#endif
+#include "../src/ui_SelectDialog.h"
 
 namespace Ui {
     class SelectDialog;
