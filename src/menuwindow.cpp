@@ -96,6 +96,13 @@ void MenuWindow::onJoin() {
             client->connectToServer(QHostAddress(ip));  // Connexion avec l'IP décodée
         }
 
+        if (client) {
+            qDebug() << "Connexion du signal availableSlotsReceived à onAvailableSlotsReceived";
+            connect(client, &GameClient::availableSlotsReceived, this, &MenuWindow::onAvailableSlotsReceived);
+        } else {
+            qDebug() << "client est NULL, impossible de connecter le signal.";
+        }
+
     }
 }
 QString MenuWindow::generateJoinCode(const QString &ip) {

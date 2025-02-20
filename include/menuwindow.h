@@ -22,7 +22,7 @@ Q_OBJECT
 public:
     explicit MenuWindow(QWidget *parent = nullptr);
     ~MenuWindow();
-    void onAvailableSlotsReceived(const QStringList &slots);
+    static void onAvailableSlotsReceived(const QStringList &slots);
 
 private slots:
     void onStart();
