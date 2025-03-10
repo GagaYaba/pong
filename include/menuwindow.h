@@ -9,7 +9,7 @@
 #include "../server/GameServer/gameserver.h"
 #include "../client/GameClient/gameclient.h"
 #include "SelectDialog.h"
-#include "../src/ui_menuwindow.h"
+#include "./ui_menuwindow.h"
 
 namespace Ui {
     class MenuWindow;
