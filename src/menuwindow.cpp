@@ -93,7 +93,7 @@ void MenuWindow::onJoin() {
         }
 
         QString ip = decodeJoinCode(code);
-        g_isHost = true;
+        g_isHost = false;
 
         if (ip.isEmpty()) {
             QMessageBox::warning(this, "Erreur", "Le code est invalide !");
