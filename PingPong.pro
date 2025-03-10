@@ -33,13 +33,13 @@ HEADERS += \
     include/ball.h \
     include/boundary.h \
     include/collision.h \
+    include/controls.h \
     include/game.h \
     include/mainwindow.h \
     include/paddle.h \
     include/score.h \
     server/GameServer/gameserver.h \
-    src/collision.h \
-    src/controls.h
+    src/collision.h
 
 DISTFILES += \
     .gitignore
