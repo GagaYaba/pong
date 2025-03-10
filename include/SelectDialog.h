@@ -19,12 +19,13 @@ class SelectDialog : public QDialog
 Q_OBJECT
 
 public:
-    explicit SelectDialog(QWidget *parent, const QStringList &availableSlots);
+    explicit SelectDialog(QWidget *parent, const QStringList &availableSlots, GameClient *client);
     ~SelectDialog();
 
     bool isPlayer1Ready() const;
     bool isPlayer2Ready() const;
     QString getSelectedRole() const;
+    void onRoleConfirmed(const QString &role);
 
 signals:
     void gameStarted(QString role);
@@ -43,6 +44,7 @@ private:
     QCheckBox *player2CheckBox{};
     QLabel *statusLabel{};
     QStringList slotsDisponibles;
+    GameClient *m_client;
 };
 
 #endif // SELECTDIALOG_H

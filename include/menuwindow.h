@@ -22,6 +22,7 @@ Q_OBJECT
 public:
     explicit MenuWindow(QWidget *parent = nullptr);
     ~MenuWindow();
+    void onRoleConfirmed(const QString &role);
 
 private slots:
     void onStart();
@@ -41,6 +42,7 @@ private:
     GameServer *server;
     GameClient *client;
     Ui::MenuWindow *ui;
+
 };
 
 #endif // MENUWINDOW_H
