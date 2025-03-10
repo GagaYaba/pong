@@ -10,24 +10,20 @@ Game::Game(QWidget *parent) : QGraphicsView(parent) {
 
     keysPressed = new QSet<int>();
 
-    // Créer les paddles et les ajouter à la liste
     paddles.append(new Paddle(screenWidth * 0.05, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::P1));
     paddles.append(new Paddle(screenWidth * 0.95 - 10, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::P2));
     paddles.append(new Paddle(screenWidth * 0.2, screenHeight * 0.15, 5, screenHeight, keysPressed, Paddle::P3));
     paddles.append(new Paddle(screenWidth * 0.8 - 10, screenHeight * 0.15, 5, screenHeight, keysPressed, Paddle::P4));
 
-    // Assigner les touches de contrôle pour chaque paddle
-    paddles[0]->setKeys(Qt::Key_S, Qt::Key_W);  // P1
-    paddles[1]->setKeys(Qt::Key_Up, Qt::Key_Down);  // P2
-    paddles[2]->setKeys(Qt::Key_R, Qt::Key_D);  // P3
-    paddles[3]->setKeys(Qt::Key_Left, Qt::Key_Right);  // P4
+    paddles[0]->setKeys(Qt::Key_S, Qt::Key_W);
+    paddles[1]->setKeys(Qt::Key_Up, Qt::Key_Down);
+    paddles[2]->setKeys(Qt::Key_R, Qt::Key_D);
+    paddles[3]->setKeys(Qt::Key_Left, Qt::Key_Right);
 
-    // Ajouter les paddles à la scène
     for (Paddle* paddle : paddles) {
         scene->addItem(paddle);
     }
 
-    // Créer la balle et le score
     ball = new Ball(screenWidth, screenHeight, this);
     scene->addItem(ball);
 

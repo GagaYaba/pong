@@ -13,10 +13,13 @@ SOURCES += \
     src/ball.cpp \
     src/boundary.cpp \
     src/collision.cpp \
-    src/controls.cpp \
+    src/control.cpp \
     src/game.cpp \
+    src/inputKeybord.cpp \
+    src/inputNetwork.cpp \
     src/mainwindow.cpp \
     src/paddle.cpp \
+    src/player.cpp \
     src/score.cpp
 
 
@@ -33,10 +36,13 @@ HEADERS += \
     include/ball.h \
     include/boundary.h \
     include/collision.h \
-    include/controls.h \
+    include/control.h \
     include/game.h \
+    include/inputKeybord.h \
+    include/inputNetwork.h \
     include/mainwindow.h \
     include/paddle.h \
+    include/player.h \
     include/score.h \
     server/GameServer/gameserver.h \
     src/collision.h
