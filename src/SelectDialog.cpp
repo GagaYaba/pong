@@ -4,9 +4,9 @@
 #include "../include/globals.h"
 
 SelectDialog::SelectDialog(QWidget *parent, const QStringList &availableSlots, GameClient *client) :
-    QDialog(parent),
-    ui(new Ui::SelectDialog),
-    m_client(client)
+        QDialog(parent),
+        ui(new Ui::SelectDialog),
+        m_client(client)
 {
     ui->setupUi(this);
 
@@ -23,14 +23,11 @@ SelectDialog::SelectDialog(QWidget *parent, const QStringList &availableSlots, G
     }
 
     // Connexions pour le toggling par le joueur local
-    connect(ui->player1CheckBox, &QCheckBox::toggled, this, [this](bool checked){
-        // Pour un changement local, self est true
-        updateSlot("p1", true, checked);
-        emit roleSelected("p1", true, checked);
+    connect(ui->player1CheckBox, &QCheckBox::stateChanged, this, [this](int state){
+        emit roleSelected("p1", true, state == Qt::Checked);
     });
-    connect(ui->player2CheckBox, &QCheckBox::toggled, this, [this](bool checked){
-        updateSlot("p2", true, checked);
-        emit roleSelected("p2", true, checked);
+    connect(ui->player2CheckBox, &QCheckBox::stateChanged, this, [this](int state){
+        emit roleSelected("p2", true, state == Qt::Checked);
     });
 
     // Seul l'hôte peut lancer la partie
@@ -39,14 +36,14 @@ SelectDialog::SelectDialog(QWidget *parent, const QStringList &availableSlots, G
     // Connexion du signal du client pour confirmer ou libérer un rôle
     if (m_client) {
         qDebug() << "Connexion du signal roleEmit à onRoleConfirmed";
-        // ATTENTION : Assurez-vous que le signal roleEmit émet bien trois paramètres : role, self et join.
+        // Assurez-vous que le signal roleEmit émet bien trois paramètres : role, self et join.
         connect(m_client, &GameClient::roleEmit, this, &SelectDialog::onRoleConfirmed);
     }
 
     // Mise à jour initiale du bouton de démarrage et du label de statut
     ui->startButton->setEnabled(g_isHost);
     ui->statusLabel->setText(g_isHost ? "En attente que tous les joueurs soient prêts..." :
-                                      "En attente que l'hôte lance la partie.");
+                             "En attente que l'hôte lance la partie.");
 }
 
 SelectDialog::~SelectDialog()
@@ -117,7 +114,7 @@ void SelectDialog::updateStartButton() {
 
         ui->startButton->setEnabled(ready);
         ui->statusLabel->setText(ready ? "Tous les joueurs sont prêts ! Cliquez pour démarrer." :
-                                          "En attente que tous les joueurs soient prêts...");
+                                 "En attente que tous les joueurs soient prêts...");
     } else {
         ui->startButton->setEnabled(false);
     }
