@@ -11,12 +11,12 @@ SelectDialog::SelectDialog(QWidget *parent, const QStringList &availableSlots, G
     // Désactiver les checkboxes non disponibles
     if (!availableSlots.contains("p1")) {
         ui->player1CheckBox->setChecked(true);
-        ui->player1CheckBox->setEnabled(false);
+        ui->player1CheckBox->setCheckable(false);
         ui->player1CheckBox->setText("Player 1 (Non disponible)");
     }
     if (!availableSlots.contains("p2")) {
         ui->player2CheckBox->setChecked(true);
-        ui->player1CheckBox->setEnabled(false);
+        ui->player1CheckBox->setCheckable(false);
         ui->player2CheckBox->setText("Player 2 (Non disponible)");
     }
 
