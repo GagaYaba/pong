@@ -96,7 +96,7 @@ public:
 class StartGameEventHandler : public EventHandler {
     public:
         bool canHandle(const QString &message) const override {
-            return message.startsWith("START_GAME ");
+            return message.startsWith("START_GAME");
         }
     
         void handle(GameServer* server, QTcpSocket* clientSocket, const QString &message) override {
