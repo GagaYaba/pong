@@ -254,8 +254,7 @@ void GameServer::checkAndStartGame()
             }
         }
         if (allReady) {
-            QString msgSlots = "AVAILABLE_SLOTS ";
-            sendMessageToAll(playerId, msgSlots);
+            sendMessageToAll("AVAILABLE_SLOTS ");
             // sendMessageToAll("GAME_START");
             // QString gameInfo = "GAME_INFO";
             // for (auto it = players.begin(); it != players.end(); ++it) {
