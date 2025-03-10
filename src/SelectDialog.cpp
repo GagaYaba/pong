@@ -26,20 +26,10 @@ SelectDialog::SelectDialog(QWidget *parent, const QStringList &availableSlots, G
     // Connexion pour la gestion du toggling par le joueur local avec exclusion mutuelle.
     connect(ui->player1CheckBox, &QCheckBox::toggled, this, [this](bool checked)
             {
-        if (checked && ui->player2CheckBox->isChecked()) {
-            {   // On utilise QSignalBlocker pour éviter les signaux indésirables.
-                QSignalBlocker blocker(ui->player2CheckBox);
-                ui->player2CheckBox->setChecked(false);
-            }
-            emit roleSelected("p2", true, false); // On informe la libération du slot p2
-        } });
+        emit roleSelected("p1", true, checked); });
     connect(ui->player2CheckBox, &QCheckBox::toggled, this, [this](bool checked)
             {
-        if (checked && ui->player1CheckBox->isChecked()) {
-            QSignalBlocker blocker(ui->player1CheckBox);
-            ui->player1CheckBox->setChecked(false);
-            emit roleSelected("p1", true, false);
-        } });
+        emit roleSelected("p2", true, checked); });
 
     // Seul l'hôte peut lancer la partie
     connect(ui->startButton, &QPushButton::clicked, this, &SelectDialog::onStartGame);
