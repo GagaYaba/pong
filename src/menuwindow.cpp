@@ -32,7 +32,7 @@ void MenuWindow::onAvailableSlotsReceived(const QStringList &availableSlots) {
     connect(selectDialog, &SelectDialog::roleSelected, this, &MenuWindow::onRoleSelected);
     // connect(selectDialog, &SelectDialog::gameStarted, this, &MenuWindow::onRoleSelected);
     selectDialog->exec();
-    delete selectDialog;
+    delete selectDialog; 
 }
 
 void MenuWindow::onStart() {
