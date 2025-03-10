@@ -10,7 +10,7 @@
 class Paddle : public QObject, public QGraphicsRectItem {
     Q_OBJECT
 public:
-    enum Player { P1 = 1, P2 = 2 };
+    enum Player { P1 = 1, P2 = 2, P3 = 3, P4 = 4 };
 
     Paddle(int x, int y, int speed, int screenHeight, QSet<int>* keysPressed, Player playerId, QObject* parent = nullptr);
 

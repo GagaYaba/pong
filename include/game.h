@@ -13,10 +13,10 @@ class Game : public QGraphicsView {
     Q_OBJECT
 public:
     Game(QWidget *parent = nullptr);
-    void increasePlayer1Score();
-    void increasePlayer2Score();
-    Paddle* getPlayer1();
-    Paddle* getPlayer2();
+
+    void increaseTeam1Score();
+    void increaseTeam2Score();
+    Paddle* getPaddle(int playerIndex);
     Ball* getBall();
 
 protected:
@@ -25,8 +25,7 @@ protected:
 
 private:
     QGraphicsScene* scene;
-    Paddle* player1;
-    Paddle* player2;
+    Paddle* paddles[4];
     Ball* ball;
     QSet<int>* keysPressed;
     Score* score;

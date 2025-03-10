@@ -10,14 +10,19 @@ Game::Game(QWidget *parent) : QGraphicsView(parent) {
 
     keysPressed = new QSet<int>();
 
-    player1 = new Paddle(30, 150, 5, screenHeight, keysPressed, Paddle::P1);
-    player2 = new Paddle(360, 150, 5, screenHeight, keysPressed, Paddle::P2);
+    paddles[0] = new Paddle(30, 150, 5, screenHeight, keysPressed, Paddle::P1);
+    paddles[1] = new Paddle(360, 150, 5, screenHeight, keysPressed, Paddle::P2);
+    paddles[2] = new Paddle(30, 250, 5, screenHeight, keysPressed, Paddle::P3);
+    paddles[3] = new Paddle(360, 250, 5, screenHeight, keysPressed, Paddle::P4);
 
-    player1->setKeys(Qt::Key_S, Qt::Key_W);
-    player2->setKeys(Qt::Key_Up, Qt::Key_Down);
+    paddles[0]->setKeys(Qt::Key_S, Qt::Key_W);
+    paddles[1]->setKeys(Qt::Key_Up, Qt::Key_Down);
+    paddles[2]->setKeys(Qt::Key_R, Qt::Key_D);
+    paddles[3]->setKeys(Qt::Key_Left, Qt::Key_Right);
 
-    scene->addItem(player1);
-    scene->addItem(player2);
+    for (int i = 0; i < 4; ++i) {
+        scene->addItem(paddles[i]);
+    }
 
     ball = new Ball(screenWidth, screenHeight, this);
     scene->addItem(ball);
@@ -36,12 +41,12 @@ Ball* Game::getBall() {
     return ball;
 }
 
-void Game::increasePlayer1Score() {
-    score->increasePlayer1Score();
+void Game::increaseTeam1Score() {
+    score->increaseTeam1Score();
 }
 
-void Game::increasePlayer2Score() {
-    score->increasePlayer2Score();
+void Game::increaseTeam2Score() {
+    score->increaseTeam2Score();
 }
 
 void Game::keyPressEvent(QKeyEvent *event) {
@@ -52,10 +57,9 @@ void Game::keyReleaseEvent(QKeyEvent *event) {
     keysPressed->remove(event->key());
 }
 
-Paddle* Game::getPlayer1() {
-    return player1;
-}
-
-Paddle* Game::getPlayer2() {
-    return player2;
+Paddle* Game::getPaddle(int playerIndex) {
+    if (playerIndex >= 0 && playerIndex < 4) {
+        return paddles[playerIndex];
+    }
+    return nullptr;
 }
