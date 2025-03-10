@@ -57,13 +57,13 @@ QString SelectDialog::getSelectedRole() const
 void SelectDialog::onPlayer1ReadyChanged(bool checked)
 {
     updateStartButton();
-    emit roleSelected("P1", checked);
+    emit roleSelected("p1", checked);
 }
 
 void SelectDialog::onPlayer2ReadyChanged(bool checked)
 {
     updateStartButton();
-    emit roleSelected("P2", checked);
+    emit roleSelected("p2", checked);
 }
 
 void SelectDialog::updateStartButton()
