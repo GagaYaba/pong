@@ -44,6 +44,8 @@ private:
     void handlePaddleHit(Paddle* paddle);
     void reverseXDirection();
     void adjustVerticalSpeed(Paddle* paddle);
+
+    bool hit = false;
 };
 
 #endif // BALL_H

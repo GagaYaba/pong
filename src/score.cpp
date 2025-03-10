@@ -10,7 +10,7 @@ Score::Score(int x, int y, QGraphicsItem *parent)
     updateDisplay();
 
     int textWidth = boundingRect().width();
-    int screenWidth = 400;
+    int screenWidth = 600;
     int xPos = (screenWidth - textWidth) / 2;
 
     setPos(xPos, y);

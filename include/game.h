@@ -25,7 +25,7 @@ protected:
 
 private:
     QGraphicsScene* scene;
-    Paddle* paddles[4];
+    QList<Paddle*> paddles;
     Ball* ball;
     QSet<int>* keysPressed;
     Score* score;
