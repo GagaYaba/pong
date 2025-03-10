@@ -10,11 +10,9 @@ Collision::Collision(Game* game, QObject* parent) : QObject(parent) {
 }
 
 void Collision::paddleHit() {
-    qDebug() << "Collision detected: Paddle hit";
     emit paddleHitSignal();
 }
 
 void Collision::boundaryHit() {
-    qDebug() << "Collision detected: Boundary hit";
     emit boundaryHitSignal();
 }
