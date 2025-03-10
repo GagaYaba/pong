@@ -22,21 +22,20 @@ public:
     explicit SelectDialog(QWidget *parent, const QStringList &availableSlots, GameClient *client);
     ~SelectDialog();
 
+    bool isPlayerReady(const QString &player) const;
     bool isPlayer1Ready() const;
     bool isPlayer2Ready() const;
     QString getSelectedRole() const;
-    void onRoleConfirmed(const QString &role);
+    void onRoleConfirmed(const QString &role, int playerId, bool join);
 
 signals:
-    void roleSelected(QString player, bool selected);
+    void roleSelected(const QString &player, bool self, bool join);
     void gameStarted(QString role);
 
 private slots:
-    void onPlayer1ReadyChanged(bool checked);
-    void onPlayer2ReadyChanged(bool checked);
     void onStartGame();
     void updateStartButton();
-    void onGameStarted();
+    void updateSlot(const QString &player, bool self, bool join);
 
 private:
     Game *game{};  // Variable pour gérer l'instance du jeu

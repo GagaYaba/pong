@@ -3,6 +3,7 @@
 #include "../include/CodeDialog.h"
 #include "../include/utils.h"
 #include "../include/SelectDialog.h"
+#include "../include/globals.h"
 #include <QMenu>
 #include <QAction>
 #include <QHostAddress>
@@ -48,6 +49,8 @@ void MenuWindow::onStart() {
         QString ip = getLocalIPAddress();
         QString joinCode = generateJoinCode(ip);
 
+        g_isHost = true;
+
         CodeDialog *codeDialog = new CodeDialog(joinCode, this);
         if (codeDialog->exec() == QDialog::Accepted) {
             delete codeDialog;  // Assurez-vous que le CodeDialog est bien détruit après son utilisation
@@ -90,6 +93,7 @@ void MenuWindow::onJoin() {
         }
 
         QString ip = decodeJoinCode(code);
+        g_isHost = true;
 
         if (ip.isEmpty()) {
             QMessageBox::warning(this, "Erreur", "Le code est invalide !");

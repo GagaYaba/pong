@@ -22,7 +22,7 @@ Q_OBJECT
 public:
     explicit MenuWindow(QWidget *parent = nullptr);
     ~MenuWindow();
-    void onRoleConfirmed(const QString &role);
+    void onRoleConfirmed(const QString &role, int playerId, bool join);
 
 private slots:
     void onStart();

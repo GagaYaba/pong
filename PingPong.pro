@@ -16,6 +16,7 @@ SOURCES += \
     src/boundary.cpp \
     src/collision.cpp \
     src/game.cpp \
+    src/globals.cpp \
     src/mainwindow.cpp \
     src/menuwindow.cpp \
     src/paddle.cpp \
@@ -34,6 +35,7 @@ HEADERS += \
     include/boundary.h \
     include/collision.h \
     include/game.h \
+    include/globals.h \
     include/mainwindow.h \
     include/menuwindow.h \
     include/paddle.h \
