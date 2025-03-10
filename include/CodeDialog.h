@@ -4,6 +4,7 @@
 #include <QDialog>
 #include "../src/ui_codedialog.h"
 
+
 class CodeDialog : public QDialog
 {
 Q_OBJECT
