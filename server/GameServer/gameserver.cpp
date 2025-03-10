@@ -254,12 +254,14 @@ void GameServer::checkAndStartGame()
             }
         }
         if (allReady) {
-            sendMessageToAll("GAME_START");
-            QString gameInfo = "GAME_INFO";
-            for (auto it = players.begin(); it != players.end(); ++it) {
-                gameInfo += " " + QString::number(it.key()) + ":" + it.value().role;
-            }
-            sendMessageToAll(gameInfo);
+            QString msgSlots = "AVAILABLE_SLOTS ";
+            sendMessageToAll(playerId, msgSlots);
+            // sendMessageToAll("GAME_START");
+            // QString gameInfo = "GAME_INFO";
+            // for (auto it = players.begin(); it != players.end(); ++it) {
+            //     gameInfo += " " + QString::number(it.key()) + ":" + it.value().role;
+            // }
+            // sendMessageToAll(gameInfo);
         }
     }
 }
