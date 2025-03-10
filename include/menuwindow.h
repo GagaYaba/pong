@@ -14,7 +14,7 @@
 namespace Ui {
     class MenuWindow;
 }
-
+class SelectDialog;
 class MenuWindow : public QMainWindow
 {
 Q_OBJECT
@@ -37,7 +37,7 @@ private:
     // Méthodes de gestion du code de connexion
     QString generateJoinCode(const QString &ip);
     QString decodeJoinCode(const QString& code);
-
+    SelectDialog *selectDialog = nullptr;  // Stocke la boîte de dialogue
     Game *game;
     GameServer *server;
     GameClient *client;
