@@ -15,7 +15,8 @@ public:
     bool canHandle(const QString &message) const override {
         return message.startsWith("ROLE_ASSIGNED");
     }
-    void handle(GameClient* client, const QString &message) override {
+
+    void handle(GameClient *client, const QString &message) override {
         qDebug() << "Rôle attribué";
         QStringList parts = message.split(" ");
         if (parts.size() > 1) {
@@ -35,7 +36,8 @@ public:
     bool canHandle(const QString &message) const override {
         return message.startsWith("ASSIGN_ID");
     }
-    void handle(GameClient* client, const QString &message) override {
+
+    void handle(GameClient *client, const QString &message) override {
         QStringList parts = message.split(" ");
         if (parts.size() > 1) {
             client->playerId = parts[1].toInt();
@@ -55,7 +57,8 @@ public:
     bool canHandle(const QString &message) const override {
         return message.startsWith("AVAILABLE_SLOTS");
     }
-    void handle(GameClient* client, const QString &message) override {
+
+    void handle(GameClient *client, const QString &message) override {
         QStringList parts = message.split(" ");  // utilise QStringList et non QList<QString>
         parts.removeFirst();
         if (client) {
@@ -76,7 +79,8 @@ public:
     bool canHandle(const QString &message) const override {
         return message.startsWith("PLAYER_JOINED");
     }
-    void handle(GameClient* client, const QString &message) override {
+
+    void handle(GameClient *client, const QString &message) override {
         QStringList parts = message.split(" ");
         if (parts.size() > 1) {
             int joinedPlayerId = parts[1].toInt();
@@ -93,7 +97,8 @@ public:
     bool canHandle(const QString &message) const override {
         return message.startsWith("PLAYER_UPDATED");
     }
-    void handle(GameClient* client, const QString &message) override {
+
+    void handle(GameClient *client, const QString &message) override {
         QStringList parts = message.split(" ");
         if (parts.size() > 2) {
             int updatedPlayerId = parts[1].toInt();
@@ -113,24 +118,30 @@ public:
 // =====================================================
 // Handler pour "GAME_INFO"
 // =====================================================
-class GameInfoEventHandler : public ClientEventHandler {
-    public:
-        bool canHandle(const QString &message) const override {
-            return message.startsWith("GAME_INFO");
+class GameInfoEventHandler : public QObject, public ClientEventHandler {
+Q_OBJECT
+signals:
+    void gameInfoReceived(const QString &gameMode);
+public:
+    bool canHandle(const QString &message) const override {
+        return message.startsWith("GAME_INFO");
+    }
+
+    void handle(GameClient *client, const QString &message) override {
+        QStringList parts = message.split(" ");
+        if (parts.size() > 1) {
+            QString gameMode = parts[1];
+            g_gameMode = gameMode;
+            qDebug() << "Mode de jeu:" << gameMode;
+            QString message = "READY" + QString::number(client->playerId);
+            client->sendMessage(message);
+            emit gameInfoReceived(parts[1]); // Émet le signal pour fermer le dialog
+
+        } else {
+            qDebug() << "Erreur: message GAME_INFO mal formé";
         }
-        void handle(GameClient* client, const QString &message) override {
-            QStringList parts = message.split(" ");
-            if (parts.size() > 1) {
-                QString gameMode = parts[1];
-                g_gameMode = gameMode;
-                qDebug() << "Mode de jeu:" << gameMode;
-                QString message = "READY" + QString::number(client->playerId);
-                client->sendMessage(message);
-            } else {
-                qDebug() << "Erreur: message GAME_INFO mal formé";
-            }
-        }
-    };
+    }
+};
 
 // =====================================================
 // Handler pour "GAME_START"
@@ -140,7 +151,8 @@ public:
     bool canHandle(const QString &message) const override {
         return message.startsWith("GAME_START");
     }
-    void handle(GameClient* client, const QString &message) override {
+
+    void handle(GameClient *client, const QString &message) override {
         Q_UNUSED(message);
         qDebug() << "La partie commence!";
     }
@@ -154,7 +166,8 @@ public:
     bool canHandle(const QString &message) const override {
         return message.startsWith("FULL");
     }
-    void handle(GameClient* client, const QString &message) override {
+
+    void handle(GameClient *client, const QString &message) override {
         Q_UNUSED(message);
         qDebug() << "Serveur complet, impossible de se connecter";
     }
@@ -169,7 +182,8 @@ public:
         // Toujours vrai en fallback
         return true;
     }
-    void handle(GameClient* client, const QString &message) override {
+
+    void handle(GameClient *client, const QString &message) override {
         qDebug() << "Message inconnu reçu:" << message;
     }
 };
@@ -179,7 +193,7 @@ public:
 // =====================================================
 std::vector<std::unique_ptr<ClientEventHandler>> ClientEventHandlerFactory::createHandlers() {
     std::vector<std::unique_ptr<ClientEventHandler>> handlers;
-    
+
     // Ajout des gestionnaires d'événements spécifiques
     handlers.push_back(std::make_unique<RoleAssignedEventHandler>());
     handlers.push_back(std::make_unique<AssignIdEventHandler>());
@@ -190,7 +204,7 @@ std::vector<std::unique_ptr<ClientEventHandler>> ClientEventHandlerFactory::crea
     handlers.push_back(std::make_unique<GameInfoEventHandler>());
     handlers.push_back(std::make_unique<FullEventHandler>());
     handlers.push_back(std::make_unique<UnknownEventHandler>());  // Handler par défaut
-    
+
     return handlers;
 }
 
@@ -198,15 +212,13 @@ std::vector<std::unique_ptr<ClientEventHandler>> ClientEventHandlerFactory::crea
 // Implémentation de GameClient
 // =====================================================
 GameClient::GameClient(QObject *parent)
-    : QObject(parent),
-      tcpSocket(new QTcpSocket(this)),
-      playerId(-1)
-{
+        : QObject(parent),
+          tcpSocket(new QTcpSocket(this)),
+          playerId(-1) {
     connect(tcpSocket, &QTcpSocket::readyRead, this, &GameClient::onDataReceived);
 }
 
-void GameClient::sendMessage(const QString &message)
-{
+void GameClient::sendMessage(const QString &message) {
     QByteArray data = message.toUtf8();
     if (tcpSocket->state() == QTcpSocket::ConnectedState) {
         tcpSocket->write(data);
@@ -217,14 +229,13 @@ void GameClient::sendMessage(const QString &message)
     }
 }
 
-void GameClient::connectToServer(const QHostAddress &serverAddr)
-{
+void GameClient::connectToServer(const QHostAddress &serverAddr) {
     this->serverAddress = serverAddr;
 
     QList<quint16> ports = {27460, 25518, 27718, 28147, 27808, 26897, 29102, 25499, 27520, 27392};
     bool connected = false;
 
-    for (quint16 port : ports) {
+    for (quint16 port: ports) {
         tcpSocket->connectToHost(serverAddr, port);
         if (tcpSocket->waitForConnected(3000)) {
             qDebug() << "Connexion établie avec le serveur sur le port" << port;
@@ -242,22 +253,19 @@ void GameClient::connectToServer(const QHostAddress &serverAddr)
     }
 }
 
-void GameClient::selectRole(const QString &role)
-{
+void GameClient::selectRole(const QString &role) {
     QString message = "SELECT_ROLE " + role;
     sendMessage(message);
     qDebug() << "Demande de sélection de rôle envoyée:" << role;
 }
 
-void GameClient::startGame()
-{
+void GameClient::startGame() {
     QString message = "START_GAME";
     sendMessage(message);
     qDebug() << "Demande de démarrage de la partie envoyée";
 }
 
-void GameClient::sendPaddlePosition(float paddleY)
-{
+void GameClient::sendPaddlePosition(float paddleY) {
     if (paddleY != lastPaddleY) { // Envoi uniquement en cas de changement
         lastPaddleY = paddleY;
         QString message = "PADDLE " + QString::number(playerId) + " " + QString::number(paddleY);
@@ -265,8 +273,7 @@ void GameClient::sendPaddlePosition(float paddleY)
     }
 }
 
-void GameClient::onDataReceived()
-{
+void GameClient::onDataReceived() {
     QByteArray buffer = tcpSocket->readAll();
     QString data = QString::fromUtf8(buffer);
     qDebug() << "CC (" << playerId << ") | Message brut reçu du serveur:" << data;
@@ -278,9 +285,9 @@ void GameClient::onDataReceived()
     auto handlers = ClientEventHandlerFactory::createHandlers();
 
     // Traitement de chaque message avec le handler approprié
-    for (const QString &message : messages) {
+    for (const QString &message: messages) {
         qDebug() << "CC (" << playerId << ") | Traitement du message:" << message;
-        for (const auto &handler : handlers) {
+        for (const auto &handler: handlers) {
             if (handler->canHandle(message)) {
                 handler->handle(this, message);
                 break; // Dès qu'un handler a traité le message, on sort de la boucle
