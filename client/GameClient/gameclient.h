@@ -32,6 +32,8 @@ public:
 signals:
     void availableSlotsReceived(const QStringList &slots);
     void roleEmit(const QString &role);
+    void gameStartedEmit();  // Signal pour informer que le jeu a commencé
+
 
 private slots:
     // Gestion des données reçues du serveur

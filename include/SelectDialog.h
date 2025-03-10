@@ -36,6 +36,7 @@ private slots:
     void onPlayer2ReadyChanged(bool checked);
     void onStartGame();
     void updateStartButton();
+    void onGameStarted();
 
 private:
     Game *game{};  // Variable pour gérer l'instance du jeu
