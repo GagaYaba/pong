@@ -1,4 +1,3 @@
-// game.cpp
 #include "../include/game.h"
 
 Game::Game(QWidget *parent, GameMode mode)
@@ -12,7 +11,6 @@ Game::Game(QWidget *parent, GameMode mode)
 
     keysPressed = new QSet<int>();
 
-    // Configure les joueurs et les paddles en fonction du mode de jeu
     setupPlayersAndPaddles();
 
     ball = new Ball(screenWidth, screenHeight, this);
@@ -32,12 +30,11 @@ void Game::setupPlayersAndPaddles() {
     int screenWidth = 600;
     int screenHeight = 600;
 
-    // Mode 1v1
     if (gameMode == OneVOne) {
         players.append(new Player(new Paddle(screenWidth * 0.05, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::P1), Qt::Key_S, Qt::Key_W));
         players.append(new Player(new Paddle(screenWidth * 0.95 - 10, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::P2), Qt::Key_Up, Qt::Key_Down));
     }
-    // Mode 2v2
+
     else if (gameMode == TwoVTwo) {
         players.append(new Player(new Paddle(screenWidth * 0.05, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::P1), Qt::Key_S, Qt::Key_W));
         players.append(new Player(new Paddle(screenWidth * 0.95 - 10, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::P2), Qt::Key_Up, Qt::Key_Down));
@@ -45,7 +42,6 @@ void Game::setupPlayersAndPaddles() {
         players.append(new Player(new Paddle(screenWidth * 0.8 - 10, screenHeight * 0.15, 5, screenHeight, keysPressed, Paddle::P4), Qt::Key_Left, Qt::Key_Right));
     }
 
-    // Ajoute les paddles à la scène
     for (Player* player : players) {
         scene->addItem(player->getPaddle());
     }

@@ -1,25 +1,29 @@
 #include <QApplication>
-#include <QDebug>
-#include "include/game.h"
+#include <QInputDialog>
+#include "./include/game.h"
 
-#include "server/GameServer/gameserver.h"
-#include "client/GameClient/gameclient.h"
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
-    auto server = new GameServer(&a);
-    server->startServer(12345, 1, false);
+    bool ok;
+    QStringList modes;
+    modes << "1v1" << "2v2";
+    QString selectedMode = QInputDialog::getItem(nullptr, "Choisir le mode de jeu",
+                                                 "Mode de jeu", modes, 0, false, &ok);
 
-    auto client = new GameClient(&a);
-    // client->connectToServer(QHostAddress("10.31.34.229"), 12345);
-    client->connectToServer(QHostAddress::LocalHost, 12345);
+    Game::GameMode mode = Game::OneVOne;
+    if (ok) {
+        if (selectedMode == "1v1") {
+            mode = Game::OneVOne;
+        } else if (selectedMode == "2v2") {
+            mode = Game::TwoVTwo;
+        }
+    }
 
-    // QTimer::singleShot(3000, [=](){
-    //     client->selectRole("p2");
-    // });
-
-    Game game;
+    Game game(nullptr, mode);
     game.show();
+
     return a.exec();
 }
+

@@ -1,4 +1,3 @@
-// game.h
 #ifndef GAME_H
 #define GAME_H
 
@@ -16,7 +15,7 @@ class Game : public QGraphicsView {
 public:
     enum GameMode { OneVOne, TwoVTwo };
 
-    Game(QWidget *parent = nullptr, GameMode mode = OneVOne);
+    explicit Game(QWidget *parent = nullptr, GameMode mode = OneVOne);
 
     void increaseTeam1Score();
     void increaseTeam2Score();
@@ -28,8 +27,8 @@ protected:
     void keyReleaseEvent(QKeyEvent *event) override;
 
 private:
-    void setupPlayersAndPaddles(); // Nouvelle méthode pour configurer les joueurs et les paddles
-    GameMode gameMode; // Variable pour le mode de jeu
+    void setupPlayersAndPaddles();
+    GameMode gameMode;
 
     QGraphicsScene* scene;
     QList<Player*> players;
