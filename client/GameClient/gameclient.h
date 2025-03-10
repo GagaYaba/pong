@@ -31,7 +31,7 @@ public:
 
 signals:
     void availableSlotsReceived(const QStringList &slots);
-    void roleEmit(const QString &role);
+    void roleEmit(const QString &role, int playerId, bool join);
     void gameStartedEmit();  // Signal pour informer que le jeu a commencé
 
 
