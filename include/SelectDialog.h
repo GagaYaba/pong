@@ -8,7 +8,7 @@
 #include <QMessageBox>
 #include "Game.h"
 #include "menuwindow.h"
-#include "./ui_SelectDialog.h"
+#include "../src/ui_SelectDialog.h"
 
 namespace Ui {
     class SelectDialog;
@@ -36,6 +36,7 @@ private slots:
     void onStartGame();
     void updateStartButton();
     void updateSlot(const QString &player, bool self, bool join);
+    void onGameInfoReceived(const QString &gameMode);
 
 private:
     Game *game{};  // Variable pour gérer l'instance du jeu

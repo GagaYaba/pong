@@ -33,7 +33,7 @@ SelectDialog::SelectDialog(QWidget *parent, const QStringList &availableSlots, G
 
     // Seul l'hôte peut lancer la partie
     connect(ui->startButton, &QPushButton::clicked, this, &SelectDialog::onStartGame);
-
+    connect(m_client, &GameClient::gameInfoReceived, this, &SelectDialog::onGameInfoReceived);
     // Connexion du signal du client pour confirmer ou libérer un rôle
     if (m_client)
     {
@@ -45,6 +45,7 @@ SelectDialog::SelectDialog(QWidget *parent, const QStringList &availableSlots, G
     updateStartButton();
     // Mise à jour initiale du bouton de démarrage et du label de statut
     ui->statusLabel->setText(g_isHost ? "En attente que tous les joueurs soient prêts..." : "En attente que l'hôte lance la partie.");
+    if()
 }
 
 SelectDialog::~SelectDialog()
@@ -186,4 +187,10 @@ void SelectDialog::onRoleConfirmed(const QString &role, int playerId, bool join)
     {
         updateSlot(role, false, join);
     }
+}
+
+void SelectDialog::onGameInfoReceived(const QString &gameMode) {
+    g_gameMode = gameMode;
+    qDebug() << "Mode de jeu reçu:" << gameMode;
+    accept();
 }
