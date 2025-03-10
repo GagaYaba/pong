@@ -8,6 +8,7 @@
 #include "paddle.h"
 #include "ball.h"
 #include "score.h"
+#include "player.h"
 
 class Game : public QGraphicsView {
     Q_OBJECT
@@ -25,7 +26,7 @@ protected:
 
 private:
     QGraphicsScene* scene;
-    QList<Paddle*> paddles;
+    QList<Player*> players;
     Ball* ball;
     QSet<int>* keysPressed;
     Score* score;

@@ -10,18 +10,15 @@ Game::Game(QWidget *parent) : QGraphicsView(parent) {
 
     keysPressed = new QSet<int>();
 
-    paddles.append(new Paddle(screenWidth * 0.05, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::P1));
-    paddles.append(new Paddle(screenWidth * 0.95 - 10, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::P2));
-    paddles.append(new Paddle(screenWidth * 0.2, screenHeight * 0.15, 5, screenHeight, keysPressed, Paddle::P3));
-    paddles.append(new Paddle(screenWidth * 0.8 - 10, screenHeight * 0.15, 5, screenHeight, keysPressed, Paddle::P4));
+    // Création des joueurs avec leurs paddles et touches associées
+    players.append(new Player(new Paddle(screenWidth * 0.05, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::P1), Qt::Key_S, Qt::Key_W));
+    players.append(new Player(new Paddle(screenWidth * 0.95 - 10, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::P2), Qt::Key_Up, Qt::Key_Down));
+    players.append(new Player(new Paddle(screenWidth * 0.2, screenHeight * 0.15, 5, screenHeight, keysPressed, Paddle::P3), Qt::Key_R, Qt::Key_D));
+    players.append(new Player(new Paddle(screenWidth * 0.8 - 10, screenHeight * 0.15, 5, screenHeight, keysPressed, Paddle::P4), Qt::Key_Left, Qt::Key_Right));
 
-    paddles[0]->setKeys(Qt::Key_S, Qt::Key_W);
-    paddles[1]->setKeys(Qt::Key_Up, Qt::Key_Down);
-    paddles[2]->setKeys(Qt::Key_R, Qt::Key_D);
-    paddles[3]->setKeys(Qt::Key_Left, Qt::Key_Right);
-
-    for (Paddle* paddle : paddles) {
-        scene->addItem(paddle);
+    // Ajout des paddles des joueurs à la scène
+    for (Player* player : players) {
+        scene->addItem(player->getPaddle());
     }
 
     ball = new Ball(screenWidth, screenHeight, this);
@@ -36,7 +33,6 @@ Game::Game(QWidget *parent) : QGraphicsView(parent) {
     setFixedSize(screenWidth, screenHeight);
     setFocus();
 }
-
 
 Ball* Game::getBall() {
     return ball;
@@ -59,8 +55,8 @@ void Game::keyReleaseEvent(QKeyEvent *event) {
 }
 
 Paddle* Game::getPaddle(int playerIndex) {
-    if (playerIndex >= 0 && playerIndex < paddles.size()) {
-        return paddles[playerIndex];
+    if (playerIndex >= 0 && playerIndex < players.size()) {
+        return players[playerIndex]->getPaddle();
     }
     return nullptr;
 }
