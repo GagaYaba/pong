@@ -26,9 +26,7 @@ SOURCES += \
     src/SelectDialog.cpp \
     src/CodeDialog.cpp \
     src/utils.cpp \
-    src/player.cpp \
-    src/score.cpp
-
+    src/player.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
