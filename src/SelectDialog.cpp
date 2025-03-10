@@ -96,6 +96,10 @@ void SelectDialog::updateSlot(const QString &player, bool self, bool join)
             {
                 ui->player1CheckBox->setText("Player 1");
             }
+            if (!self)
+            {
+                ui->player1CheckBox->setEnabled(false);
+            }
         }
     }
     else if (player == "p2")
@@ -116,6 +120,10 @@ void SelectDialog::updateSlot(const QString &player, bool self, bool join)
             {
                 ui->player2CheckBox->setText("Player 2");
             }
+            if (!self)
+            {
+                ui->player2CheckBox->setEnabled(false);
+            }
         }
     }
     updateStartButton();
@@ -132,7 +140,7 @@ void SelectDialog::updateStartButton()
         {
             ready = true;
         }
-        
+
         ui->startButton->setEnabled(ready);
         ui->statusLabel->setText(ready ? "Tous les joueurs sont prêts ! Cliquez pour démarrer." : "En attente que tous les joueurs soient prêts...");
     }
