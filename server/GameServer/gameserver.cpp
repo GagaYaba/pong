@@ -81,7 +81,7 @@ public:
                 server->roleTaken[chosenRole] = true;
                 server->sendMessageToPlayer(playerId, "ROLE_ASSIGNED " + chosenRole);
                 server->sendMessageToAll("PLAYER_UPDATED " + QString::number(playerId) + " " + chosenRole);
-                server->updateWaitingRoomForAll();
+                // server->updateWaitingRoomForAll();
                 server->checkAndStartGame();
             } else {
                 server->sendMessageToPlayer(playerId, "ERROR Role not available");
