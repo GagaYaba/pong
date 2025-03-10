@@ -111,6 +111,28 @@ public:
 };
 
 // =====================================================
+// Handler pour "GAME_INFO"
+// =====================================================
+class GameInfoEventHandler : public ClientEventHandler {
+    public:
+        bool canHandle(const QString &message) const override {
+            return message.startsWith("GAME_INFO");
+        }
+        void handle(GameClient* client, const QString &message) override {
+            QStringList parts = message.split(" ");
+            if (parts.size() > 1) {
+                QString gameMode = parts[1];
+                g_gameMode = gameMode;
+                qDebug() << "Mode de jeu:" << gameMode;
+                QString message = "READY" + QString::number(client->playerId);
+                client->sendMessage(message);
+            } else {
+                qDebug() << "Erreur: message GAME_INFO mal formé";
+            }
+        }
+    };
+
+// =====================================================
 // Handler pour "GAME_START"
 // =====================================================
 class GameStartEventHandler : public ClientEventHandler {
@@ -121,24 +143,6 @@ public:
     void handle(GameClient* client, const QString &message) override {
         Q_UNUSED(message);
         qDebug() << "La partie commence!";
-    }
-};
-
-// =====================================================
-// Handler pour "GAME_INFO"
-// =====================================================
-class GameInfoEventHandler : public ClientEventHandler {
-public:
-    bool canHandle(const QString &message) const override {
-        return message.startsWith("GAME_INFO");
-    }
-    void handle(GameClient* client, const QString &message) override {
-        QStringList parts = message.split(" ");
-        parts.removeFirst(); // Retire le préfixe "GAME_INFO"
-        qDebug() << "Informations de la partie:";
-        for (const QString &info : parts) {
-            qDebug() << info;
-        }
     }
 };
 
@@ -243,6 +247,13 @@ void GameClient::selectRole(const QString &role)
     QString message = "SELECT_ROLE " + role;
     sendMessage(message);
     qDebug() << "Demande de sélection de rôle envoyée:" << role;
+}
+
+void GameClient::startGame()
+{
+    QString message = "START_GAME";
+    sendMessage(message);
+    qDebug() << "Demande de démarrage de la partie envoyée";
 }
 
 void GameClient::sendPaddlePosition(float paddleY)

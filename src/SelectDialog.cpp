@@ -163,8 +163,7 @@ void SelectDialog::onStartGame()
 
         if (ready)
         {
-            QString role = getSelectedRole();
-            emit gameStarted(role);
+            emit gameStarted();
             accept();
         }
         else

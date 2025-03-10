@@ -35,6 +35,7 @@ void MenuWindow::onAvailableSlotsReceived(const QStringList &availableSlots) {
 
     selectDialog = new SelectDialog(this, availableSlots, client);
     connect(selectDialog, &SelectDialog::roleSelected, this, &MenuWindow::onRoleSelected);
+    connect(selectDialog, &SelectDialog::gameStarted, this, &MenuWindow::onGameStarted);
 
     selectDialog->show();
 }
@@ -155,4 +156,9 @@ void MenuWindow::onRoleSelected(const QString &player, bool selected) {
     }
 }
 
-
+void MenuWindow::onGameStarted() {
+    if (client) {
+        client->startGame();
+        qDebug() << "Jeu démarré!";
+    }
+}

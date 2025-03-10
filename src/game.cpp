@@ -14,7 +14,7 @@ Game::Game(QWidget *parent, GameMode mode)
     keysPressed = new QSet<int>();
 
     // Configure les joueurs et les paddles en fonction du mode de jeu
-    setupPlayersAndPaddles("TwoVTwo");
+    setupPlayersAndPaddles("OneVOne");
 
     ball = new Ball(screenWidth, screenHeight, this);
     scene->addItem(ball);

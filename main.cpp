@@ -10,6 +10,6 @@ int main(int argc, char *argv[]) {
     window.show();
 
     Game game;
-    game.show();
+    // game.show();
     return app.exec();
 }

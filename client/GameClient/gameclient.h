@@ -19,7 +19,7 @@ public:
 
     // Connexion au serveur
     void connectToServer(const QHostAddress &serverAddr);
-
+    void startGame();
     // Envoi de messages au serveur
     void sendMessage(const QString &message);
 
@@ -32,6 +32,7 @@ public:
 signals:
     void availableSlotsReceived(const QStringList &slots);
     void roleEmit(const QString &role, int playerId, bool join);
+    void gameStarted();
     void gameStartedEmit();  // Signal pour informer que le jeu a commencé
 
 

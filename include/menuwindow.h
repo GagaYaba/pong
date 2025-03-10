@@ -30,6 +30,7 @@ private slots:
     void onJoin();
     void onGameClosed();
     void onRoleSelected(const QString &role, bool selected);
+    void onGameStarted();
     void onAvailableSlotsReceived(const QStringList &availableSlots);
 
 

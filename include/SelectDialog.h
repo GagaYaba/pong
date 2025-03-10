@@ -30,7 +30,7 @@ public:
 
 signals:
     void roleSelected(const QString &player, bool self, bool join);
-    void gameStarted(QString role);
+    void gameStarted();
 
 private slots:
     void onStartGame();

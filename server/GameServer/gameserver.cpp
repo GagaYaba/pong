@@ -91,6 +91,20 @@ public:
 };
 
 // ============================================
+// Handler pour l'événement "START_GAME"
+// ============================================
+class StartGameEventHandler : public EventHandler {
+    public:
+        bool canHandle(const QString &message) const override {
+            return message.startsWith("START_GAME ");
+        }
+    
+        void handle(GameServer* server, QTcpSocket* clientSocket, const QString &message) override {
+            server->sendMessageToAll("GAME_INFO OneVOne");
+        }
+    };
+
+// ============================================
 // Factory pour créer les EventHandlers
 // ============================================
 class EventHandlerFactory {
@@ -99,6 +113,7 @@ public:
         std::vector<std::unique_ptr<EventHandler>> handlers;
         handlers.push_back(std::make_unique<JoinEventHandler>());
         handlers.push_back(std::make_unique<SelectRoleEventHandler>());
+        handlers.push_back(std::make_unique<StartGameEventHandler>());
         // On peut ajouter ici d'autres handlers pour de nouveaux types d'évènements
         return handlers;
     }

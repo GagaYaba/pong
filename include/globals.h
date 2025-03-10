@@ -3,6 +3,7 @@
 
 #include <QString>
 
+extern QString g_gameMode;
 extern QString g_playerRole;
 extern int g_playerId;
 extern bool g_isHost;
