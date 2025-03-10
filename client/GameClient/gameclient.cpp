@@ -15,10 +15,12 @@ public:
         return message.startsWith("ROLE_ASSIGNED");
     }
     void handle(GameClient* client, const QString &message) override {
+        qDebug() << "Rôle attribué";
         QStringList parts = message.split(" ");
         if (parts.size() > 1) {
             QString role = parts[1];
             qDebug() << "Rôle attribué:" << role;
+            emit client->roleEmit(role);
         } else {
             qDebug() << "Erreur: message ROLE_ASSIGNED mal formé";
         }
@@ -233,8 +235,6 @@ void GameClient::selectRole(const QString &role)
     QString message = "SELECT_ROLE " + role;
     sendMessage(message);
     qDebug() << "Demande de sélection de rôle envoyée:" << role;
-
-    emit roleEmit(role);
 }
 
 void GameClient::sendPaddlePosition(float paddleY)
@@ -269,3 +269,5 @@ void GameClient::onDataReceived()
         }
     }
 }
+
+
