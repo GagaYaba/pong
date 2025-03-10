@@ -28,6 +28,7 @@ public:
     void onRoleConfirmed(const QString &role);
 
 signals:
+    void roleSelected(QString player, bool selected);
     void gameStarted(QString role);
 
 private slots:

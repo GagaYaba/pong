@@ -234,7 +234,7 @@ void GameClient::selectRole(const QString &role)
     sendMessage(message);
     qDebug() << "Demande de sélection de rôle envoyée:" << role;
 
-    emit roleSelected(role);
+    emit roleEmit(role);
 }
 
 void GameClient::sendPaddlePosition(float paddleY)

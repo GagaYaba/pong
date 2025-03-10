@@ -31,7 +31,7 @@ public:
 
 signals:
     void availableSlotsReceived(const QStringList &slots);
-    void roleSelected(const QString &role);
+    void roleEmit(const QString &role);
 
 private slots:
     // Gestion des données reçues du serveur
