@@ -1,9 +1,10 @@
 #include "../include/SelectDialog.h"
 #include <QMessageBox>
 
-SelectDialog::SelectDialog(QWidget *parent, const QStringList &availableSlots) :
+SelectDialog::SelectDialog(QWidget *parent, const QStringList &availableSlots, GameClient *client) :
         QDialog(parent),
-        ui(new Ui::SelectDialog)
+        ui(new Ui::SelectDialog),
+        m_client(client)
 {
     ui->setupUi(this);
 
@@ -17,12 +18,12 @@ SelectDialog::SelectDialog(QWidget *parent, const QStringList &availableSlots) :
         ui->player2CheckBox->setText("Player 2 (Non disponible)");
     }
 
-    // Connexion des signaux aux slots
     connect(ui->player1CheckBox, &QCheckBox::toggled, this, &SelectDialog::onPlayer1ReadyChanged);
     connect(ui->player2CheckBox, &QCheckBox::toggled, this, &SelectDialog::onPlayer2ReadyChanged);
     connect(ui->startButton, &QPushButton::clicked, this, &SelectDialog::onStartGame);
-
-    // Assurer que le bouton "Start" est désactivé au début
+    if (m_client) {
+        connect(m_client, &GameClient::roleSelected, this, &SelectDialog::onRoleConfirmed);
+    }
     ui->startButton->setEnabled(false);
 }
 
@@ -83,5 +84,14 @@ void SelectDialog::onStartGame()
         accept();
     } else {
         QMessageBox::warning(this, "Erreur", "Both players must be ready before starting the game!");
+    }
+}
+
+void SelectDialog::onRoleConfirmed(const QString &role) {
+    qDebug() << "Rôle confirmé pour le joueur:" << role;
+    if(role == "Joueur1") {
+        ui->player1CheckBox->setChecked(true);
+    } else if (role == "Joueur2"){
+        ui->player2CheckBox->setChecked(true);
     }
 }
