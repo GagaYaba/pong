@@ -25,13 +25,13 @@ public:
 
     // Sélectionner un rôle
     void selectRole(const QString &role);
-
     // Envoyer la position de la raquette
     void sendPaddlePosition(float paddleY);
     int playerId;
 
 signals:
     void availableSlotsReceived(const QStringList &slots);
+    void roleSelected(const QString &role);
 
 private slots:
     // Gestion des données reçues du serveur

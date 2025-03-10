@@ -18,7 +18,6 @@ MenuWindow::MenuWindow(QWidget *parent)
     connect(ui->startButton, &QPushButton::clicked, this, &MenuWindow::onStart);
     connect(ui->quitButton, &QPushButton::clicked, this, &MenuWindow::onQuit);
     connect(ui->joinButton, &QPushButton::clicked, this, &MenuWindow::onJoin);
-
 }
 
 MenuWindow::~MenuWindow() {
@@ -29,7 +28,7 @@ MenuWindow::~MenuWindow() {
 }
 void MenuWindow::onAvailableSlotsReceived(const QStringList &availableSlots) {
     qDebug() << "Slots reçus:" << availableSlots;
-    SelectDialog *selectDialog = new SelectDialog(this, availableSlots);
+    SelectDialog *selectDialog = new SelectDialog(this, availableSlots, client);
     connect(selectDialog, &SelectDialog::gameStarted, this, &MenuWindow::onRoleSelected);
     selectDialog->exec();
     delete selectDialog;
@@ -146,3 +145,5 @@ void MenuWindow::onRoleSelected(const QString &role) {
         qDebug() << "Rôle sélectionné:" << role;
     }
 }
+
+
