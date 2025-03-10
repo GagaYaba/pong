@@ -3,7 +3,7 @@
 #include "../include/CodeDialog.h"
 #include "../include/utils.h"
 #include "../include/SelectDialog.h"
-#include <QMenuBar>
+#include "../include/globals.h"
 #include <QMenu>
 #include <QAction>
 #include <QHostAddress>
@@ -28,12 +28,17 @@ MenuWindow::~MenuWindow() {
 }
 void MenuWindow::onAvailableSlotsReceived(const QStringList &availableSlots) {
     qDebug() << "Slots reçus:" << availableSlots;
-    SelectDialog *selectDialog = new SelectDialog(this, availableSlots, client);
+
+    if (selectDialog) {
+        delete selectDialog;
+    }
+
+    selectDialog = new SelectDialog(this, availableSlots, client);
     connect(selectDialog, &SelectDialog::roleSelected, this, &MenuWindow::onRoleSelected);
-    // connect(selectDialog, &SelectDialog::gameStarted, this, &MenuWindow::onRoleSelected);
-    selectDialog->exec();
-    delete selectDialog; 
+
+    selectDialog->show();
 }
+
 
 void MenuWindow::onStart() {
     if (!server) {
@@ -43,6 +48,8 @@ void MenuWindow::onStart() {
 
         QString ip = getLocalIPAddress();
         QString joinCode = generateJoinCode(ip);
+
+        g_isHost = true;
 
         CodeDialog *codeDialog = new CodeDialog(joinCode, this);
         if (codeDialog->exec() == QDialog::Accepted) {
@@ -86,6 +93,7 @@ void MenuWindow::onJoin() {
         }
 
         QString ip = decodeJoinCode(code);
+        g_isHost = true;
 
         if (ip.isEmpty()) {
             QMessageBox::warning(this, "Erreur", "Le code est invalide !");

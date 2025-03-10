@@ -1,5 +1,6 @@
 #include "gameclient.h"
 #include "../../include/SelectDialog.h"
+#include "../../include/globals.h"
 #include <QDebug>
 #include <QString>
 #include <QTcpSocket>
@@ -20,7 +21,6 @@ public:
         if (parts.size() > 1) {
             QString role = parts[1];
             qDebug() << "Rôle attribué:" << role;
-            emit client->roleEmit(role);
         } else {
             qDebug() << "Erreur: message ROLE_ASSIGNED mal formé";
         }
@@ -39,6 +39,7 @@ public:
         QStringList parts = message.split(" ");
         if (parts.size() > 1) {
             client->playerId = parts[1].toInt();
+            g_playerId = client->playerId;
             qDebug() << "ID attribué:" << client->playerId;
         } else {
             qDebug() << "Erreur: message ASSIGN_ID mal formé";
@@ -97,6 +98,13 @@ public:
         if (parts.size() > 2) {
             int updatedPlayerId = parts[1].toInt();
             QString role = parts[2];
+
+            if (updatedPlayerId == client->playerId) {
+                g_playerRole = role;
+            }
+
+            emit client->roleEmit(role, updatedPlayerId, false);
+
             qDebug() << "Joueur" << updatedPlayerId << "mis à jour avec le rôle:" << role;
         }
     }
