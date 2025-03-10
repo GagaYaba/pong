@@ -10,17 +10,6 @@ SelectDialog::SelectDialog(QWidget *parent, const QStringList &availableSlots, G
 {
     ui->setupUi(this);
 
-    // Mise à jour des slots disponibles selon les données reçues
-//    if (!availableSlots.contains("p1")) {
-//        ui->player1CheckBox->setChecked(false);
-//        ui->player1CheckBox->setEnabled(false);
-//        ui->player1CheckBox->setText("Player 1 (Non disponible)");
-//    }
-//    if (!availableSlots.contains("p2")) {
-//        ui->player2CheckBox->setChecked(false);
-//        ui->player2CheckBox->setEnabled(false);
-//        ui->player2CheckBox->setText("Player 2 (Non disponible)");
-//    }
     if (!availableSlots.contains("p1")) {
         ui->player1CheckBox->setChecked(false);
         ui->player1CheckBox->setEnabled(false);
@@ -32,31 +21,22 @@ SelectDialog::SelectDialog(QWidget *parent, const QStringList &availableSlots, G
         ui->player2CheckBox->setText("Player 2 (Non disponible)");
     }
 
-    // Connexion pour la gestion du toggling par le joueur local avec exclusion mutuelle.
     connect(ui->player1CheckBox, &QCheckBox::toggled, this, [this](bool checked){
-        // Pour un changement local, self est true
-        updateSlot("p1", true, checked);
         emit roleSelected("p1", true, checked);
     });
     connect(ui->player2CheckBox, &QCheckBox::toggled, this, [this](bool checked){
-        updateSlot("p2", true, checked);
         emit roleSelected("p2", true, checked);
     });
 
-    // Seul l'hôte peut lancer la partie
     connect(ui->startButton, &QPushButton::clicked, this, &SelectDialog::onStartGame);
 
-    // Connexion du signal du client pour confirmer ou libérer un rôle
     if (m_client) {
         qDebug() << "Connexion du signal roleEmit à onRoleConfirmed";
-        // ATTENTION : Assurez-vous que le signal roleEmit émet bien trois paramètres : role, playerId et join.
         connect(m_client, &GameClient::roleEmit, this, &SelectDialog::onRoleConfirmed);
     }
 
-    // Mise à jour initiale du bouton de démarrage et du label de statut
     ui->startButton->setEnabled(g_isHost);
-    ui->statusLabel->setText(g_isHost ? "En attente que tous les joueurs soient prêts..." :
-                                      "En attente que l'hôte lance la partie.");
+    ui->statusLabel->setText(g_isHost ? "En attente que tous les joueurs soient prêts..." : "En attente que l'hôte lance la partie.");
 }
 
 SelectDialog::~SelectDialog()
@@ -64,7 +44,6 @@ SelectDialog::~SelectDialog()
     delete ui;
 }
 
-// Vérifie si le slot pour le joueur donné est activé et prêt
 bool SelectDialog::isPlayerReady(const QString &player) const {
     if (player == "p1")
         return ui->player1CheckBox->isChecked();
@@ -73,7 +52,6 @@ bool SelectDialog::isPlayerReady(const QString &player) const {
     return false;
 }
 
-// Renvoie le rôle sélectionné (devrait être unique grâce à l'exclusion mutuelle)
 QString SelectDialog::getSelectedRole() const {
     if (isPlayerReady("p1"))
         return "p1";
