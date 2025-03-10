@@ -1,4 +1,0 @@
-#ifndef INPUTKEYBORD_H
-#define INPUTKEYBORD_H
-
-#endif // INPUTKEYBORD_H
