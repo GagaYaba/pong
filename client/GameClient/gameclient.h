@@ -10,10 +10,6 @@
 #include "ClientEventHandler.h"
 #include "ClientEventHandlerFactory.h"
 
-#include <QTimer>
-#include <QDataStream>
-
-
 class GameClient : public QObject
 {
     Q_OBJECT
@@ -31,9 +27,6 @@ public:
     void selectRole(const QString &role);
     // Envoyer la position de la raquette
     void sendPaddlePosition(float paddleY);
-    void sendPaddlePositionBinary(float paddleY);
-    void startPaddleSimulation(); // si vous voulez démarrer explicitement la simulation
-
     int playerId;
 
 signals:
@@ -43,16 +36,12 @@ signals:
 private slots:
     // Gestion des données reçues du serveur
     void onDataReceived();
-    void simulatePaddleData();
 
 
 private:
     QTcpSocket *tcpSocket;
     QHostAddress serverAddress;
-
-    float lastPaddleY { -1.0f }; // valeur initiale
-    QTimer *simulationTimer;
-    float simulationPaddleY { 0.0f };
+    float lastPaddleY = -1;
 
     // Liste des gestionnaires d'événements
     std::vector<std::unique_ptr<ClientEventHandler>> handlers;

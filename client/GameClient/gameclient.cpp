@@ -191,39 +191,6 @@ GameClient::GameClient(QObject *parent)
       playerId(-1)
 {
     connect(tcpSocket, &QTcpSocket::readyRead, this, &GameClient::onDataReceived);
-    // Démarrer la simulation d'envoi du paddle
-    simulationTimer = new QTimer(this);
-    connect(simulationTimer, &QTimer::timeout, this, &GameClient::simulatePaddleData);
-    simulationTimer->start(500); // toutes les 500 ms
-}
-
-void GameClient::simulatePaddleData() {
-    // Exemple de simulation : incrémente la position et revient à 0 quand on dépasse 500
-    simulationPaddleY += 5.0f;
-    if (simulationPaddleY > 500.0f)
-        simulationPaddleY = 0.0f;
-    sendPaddlePositionBinary(simulationPaddleY);
-}
-
-void GameClient::sendPaddlePositionBinary(float paddleY) {
-    // On n'envoie que si la position a changé
-    if (paddleY != lastPaddleY) {
-        lastPaddleY = paddleY;
-        QByteArray data;
-        QDataStream stream(&data, QIODevice::WriteOnly);
-        stream.setByteOrder(QDataStream::BigEndian); // pour le réseau
-        quint8 messageType = 1; // 1 indique un message paddle binaire
-        stream << messageType;
-        stream << static_cast<qint32>(playerId);
-        stream << paddleY;
-        if (tcpSocket->state() == QTcpSocket::ConnectedState) {
-            tcpSocket->write(data);
-            tcpSocket->flush();
-            qDebug() << "Message binaire paddle envoyé:" << data.toHex();
-        } else {
-            qDebug() << "Erreur: Connexion non établie lors de l'envoi du paddle binaire";
-        }
-    }
 }
 
 void GameClient::sendMessage(const QString &message)
