@@ -34,6 +34,7 @@ signals:
     void roleEmit(const QString &role, int playerId, bool join);
     void gameStarted();
     void gameStartedEmit();  // Signal pour informer que le jeu a commencé
+    void gameInfoReceived(const QString &gameMode);
 
 
 private slots:

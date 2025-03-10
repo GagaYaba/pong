@@ -118,10 +118,7 @@ public:
 // =====================================================
 // Handler pour "GAME_INFO"
 // =====================================================
-class GameInfoEventHandler : public QObject, public ClientEventHandler {
-Q_OBJECT
-signals:
-    void gameInfoReceived(const QString &gameMode);
+class GameInfoEventHandler : public ClientEventHandler {
 public:
     bool canHandle(const QString &message) const override {
         return message.startsWith("GAME_INFO");
@@ -135,7 +132,7 @@ public:
             qDebug() << "Mode de jeu:" << gameMode;
             QString message = "READY" + QString::number(client->playerId);
             client->sendMessage(message);
-            emit gameInfoReceived(parts[1]); // Émet le signal pour fermer le dialog
+            emit client->gameInfoReceived(parts[1]); // Émet le signal pour fermer le dialog
 
         } else {
             qDebug() << "Erreur: message GAME_INFO mal formé";

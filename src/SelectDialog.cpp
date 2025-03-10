@@ -45,7 +45,6 @@ SelectDialog::SelectDialog(QWidget *parent, const QStringList &availableSlots, G
     updateStartButton();
     // Mise à jour initiale du bouton de démarrage et du label de statut
     ui->statusLabel->setText(g_isHost ? "En attente que tous les joueurs soient prêts..." : "En attente que l'hôte lance la partie.");
-    if()
 }
 
 SelectDialog::~SelectDialog()
