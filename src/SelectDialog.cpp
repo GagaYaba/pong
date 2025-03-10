@@ -22,7 +22,8 @@ SelectDialog::SelectDialog(QWidget *parent, const QStringList &availableSlots, G
     connect(ui->player2CheckBox, &QCheckBox::toggled, this, &SelectDialog::onPlayer2ReadyChanged);
     connect(ui->startButton, &QPushButton::clicked, this, &SelectDialog::onStartGame);
     if (m_client) {
-        connect(m_client, &GameClient::roleSelected, this, &SelectDialog::onRoleConfirmed);
+        qDebug() << "Connexion du signal roleEmit à onRoleConfirmed";
+        connect(m_client, &GameClient::roleEmit, this, &SelectDialog::onRoleConfirmed);
     }
     ui->startButton->setEnabled(false);
 }
@@ -56,11 +57,13 @@ QString SelectDialog::getSelectedRole() const
 void SelectDialog::onPlayer1ReadyChanged(bool checked)
 {
     updateStartButton();
+    emit roleSelected("P1", checked);
 }
 
 void SelectDialog::onPlayer2ReadyChanged(bool checked)
 {
     updateStartButton();
+    emit roleSelected("P2", checked);
 }
 
 void SelectDialog::updateStartButton()
@@ -89,9 +92,9 @@ void SelectDialog::onStartGame()
 
 void SelectDialog::onRoleConfirmed(const QString &role) {
     qDebug() << "Rôle confirmé pour le joueur:" << role;
-    if(role == "Joueur1") {
+    if(role == "p1") {
         ui->player1CheckBox->setChecked(true);
-    } else if (role == "Joueur2"){
+    } else if (role == "p2"){
         ui->player2CheckBox->setChecked(true);
     }
 }
