@@ -3,6 +3,7 @@
 #include "../include/CodeDialog.h"
 #include "../include/utils.h"
 #include "../include/SelectDialog.h"
+#include <QMenuBar>
 #include <QMenu>
 #include <QAction>
 #include <QHostAddress>
@@ -27,17 +28,12 @@ MenuWindow::~MenuWindow() {
 }
 void MenuWindow::onAvailableSlotsReceived(const QStringList &availableSlots) {
     qDebug() << "Slots reçus:" << availableSlots;
-
-    if (selectDialog) {
-        delete selectDialog;
-    }
-
-    selectDialog = new SelectDialog(this, availableSlots, client);
+    SelectDialog *selectDialog = new SelectDialog(this, availableSlots, client);
     connect(selectDialog, &SelectDialog::roleSelected, this, &MenuWindow::onRoleSelected);
-
-    selectDialog->show();
+    // connect(selectDialog, &SelectDialog::gameStarted, this, &MenuWindow::onRoleSelected);
+    selectDialog->exec();
+    delete selectDialog; 
 }
-
 
 void MenuWindow::onStart() {
     if (!server) {
