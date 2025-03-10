@@ -143,7 +143,7 @@ QString MenuWindow::decodeJoinCode(const QString &code) {
 void MenuWindow::onRoleSelected(const QString &player, bool selected) {
     if (client) {
         client->selectRole(player);
-        qDebug() << "Rôle sélectionné:" << role;
+        qDebug() << "Rôle sélectionné:" << player;
     }
 }
 
