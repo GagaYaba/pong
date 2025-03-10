@@ -29,7 +29,7 @@ private slots:
     void onQuit();
     void onJoin();
     void onGameClosed();
-    void onRoleSelected(const QString &role);  // Slot pour la sélection de rôle
+    void onRoleSelected(const QString &role, bool selected);
     void onAvailableSlotsReceived(const QStringList &availableSlots);
 
 
