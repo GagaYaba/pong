@@ -160,56 +160,23 @@ void GameServer::onNewConnection()
     connect(clientSocket, &QTcpSocket::disconnected, this, &GameServer::onDisconnected);
 }
 
-// void GameServer::onDataReceived()
-// {
-//     QTcpSocket *clientSocket = qobject_cast<QTcpSocket *>(sender());
-//     if (clientSocket) {
-//         QByteArray buffer = clientSocket->readAll();
-//         QString message = QString::fromUtf8(buffer).trimmed();
-//         qDebug() << "SS | Reçu:" << message
-//                  << "de" << clientSocket->peerAddress().toString()
-//                  << ":" << clientSocket->peerPort();
-
-//         // Récupère la liste des handlers depuis la factory
-//         auto handlers = EventHandlerFactory::createHandlers();
-//         // Parcours de chaque handler dans une boucle for
-//         for (const auto &handler : handlers) {
-//             if (handler->canHandle(message)) {
-//                 handler->handle(this, clientSocket, message);
-//                 break; // On arrête dès qu'un handler a traité l'évènement
-//             }
-//         }
-//     }
-// }
 void GameServer::onDataReceived()
 {
     QTcpSocket *clientSocket = qobject_cast<QTcpSocket *>(sender());
     if (clientSocket) {
         QByteArray buffer = clientSocket->readAll();
-        if (!buffer.isEmpty() && static_cast<quint8>(buffer.at(0)) == 1) {
-            QDataStream stream(buffer);
-            stream.setByteOrder(QDataStream::BigEndian);
-            quint8 messageType;
-            stream >> messageType;
-            if (messageType == 1) {
-                qint32 playerId;
-                float paddleY;
-                stream >> playerId;
-                stream >> paddleY;
-                qDebug() << "SS | Reçu binaire paddle data: PlayerID:" << playerId << "paddleY:" << paddleY;
-            }
-        } else {
-            QString message = QString::fromUtf8(buffer).trimmed();
-            qDebug() << "SS | Reçu:" << message
-                     << "de" << clientSocket->peerAddress().toString()
-                     << ":" << clientSocket->peerPort();
+        QString message = QString::fromUtf8(buffer).trimmed();
+        qDebug() << "SS | Reçu:" << message
+                 << "de" << clientSocket->peerAddress().toString()
+                 << ":" << clientSocket->peerPort();
 
-            auto handlers = EventHandlerFactory::createHandlers();
-            for (const auto &handler : handlers) {
-                if (handler->canHandle(message)) {
-                    handler->handle(this, clientSocket, message);
-                    break;
-                }
+        // Récupère la liste des handlers depuis la factory
+        auto handlers = EventHandlerFactory::createHandlers();
+        // Parcours de chaque handler dans une boucle for
+        for (const auto &handler : handlers) {
+            if (handler->canHandle(message)) {
+                handler->handle(this, clientSocket, message);
+                break; // On arrête dès qu'un handler a traité l'évènement
             }
         }
     }
