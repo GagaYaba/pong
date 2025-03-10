@@ -46,7 +46,6 @@ public:
                 for (const QString &r : server->rolesList) {
                     if (!server->roleTaken[r]) {
                         server->players[playerId].role = r;
-                        server->players[playerId].ready = true;
                         server->roleTaken[r] = true;
                         server->sendMessageToPlayer(playerId, "ROLE_ASSIGNED " + r);
                         server->sendMessageToAll("PLAYER_UPDATED " + QString::number(playerId) + " " + r);
@@ -77,7 +76,6 @@ public:
         if (playerId != -1) {
             if (!server->roleTaken.value(chosenRole, true)) {
                 server->players[playerId].role = chosenRole;
-                server->players[playerId].ready = true;
                 server->roleTaken[chosenRole] = true;
                 server->sendMessageToPlayer(playerId, "ROLE_ASSIGNED " + chosenRole);
                 server->sendMessageToAll("PLAYER_UPDATED " + QString::number(playerId) + " " + chosenRole);
@@ -94,15 +92,38 @@ public:
 // Handler pour l'événement "START_GAME"
 // ============================================
 class StartGameEventHandler : public EventHandler {
-    public:
-        bool canHandle(const QString &message) const override {
-            return message.startsWith("START_GAME");
+public:
+    bool canHandle(const QString &message) const override {
+        return message.startsWith("START_GAME");
+    }
+
+    void handle(GameServer* server, QTcpSocket* clientSocket, const QString &message) override {
+        QString gameModeString = (server->gameMode == 1) ? "OneVOne" : "TwoVTwo";
+        QString messageGameInfo = "GAME_INFO " + gameModeString;
+
+        server->sendMessageToAll(messageGameInfo);
+    }
+};
+
+
+// ============================================
+// Handler pour l'événement "READY"
+// ============================================
+class ReadyEventHandler : public EventHandler {
+public:
+    bool canHandle(const QString &message) const override {
+        return message.startsWith("READY ");
+    }
+
+    void handle(GameServer* server, QTcpSocket* clientSocket, const QString &message) override {
+        QString playerIdSec = message.section(' ', 1, 1); // ex: "p1"
+        int playerId = server->findPlayerId(clientSocket->peerAddress(), clientSocket->peerPort());
+        if (playerId != -1 && playerId == playerIdSec.toInt()) {
+            server->players[playerId].ready = true;
+            server->checkAndStartGame();
         }
-    
-        void handle(GameServer* server, QTcpSocket* clientSocket, const QString &message) override {
-            server->sendMessageToAll("GAME_INFO OneVOne");
-        }
-    };
+    }
+};
 
 // ============================================
 // Factory pour créer les EventHandlers
@@ -155,7 +176,7 @@ void GameServer::startServer(int mode, bool autoAssign)
 
     for (quint16 port : ports) {
         if (tcpServer->listen(QHostAddress::Any, port)) {
-            qDebug() << "Serveur TCP démarré sur le port" << port << "Mode:" << ((mode == 1) ? "1vs1" : "2vs2");
+            qDebug() << "Serveur TCP démarré sur le port" << port << "Mode:" << ((mode == 1) ? "OneVOne" : "TwoVTwo");
             serverStarted = true;
             break;
         } else {
@@ -269,12 +290,7 @@ void GameServer::checkAndStartGame()
             }
         }
         if (allReady) {
-            // sendMessageToAll("GAME_START");
-            // QString gameInfo = "GAME_INFO";
-            // for (auto it = players.begin(); it != players.end(); ++it) {
-            //     gameInfo += " " + QString::number(it.key()) + ":" + it.value().role;
-            // }
-            // sendMessageToAll(gameInfo);
+            sendMessageToAll("GAME_START");
         }
     }
 }

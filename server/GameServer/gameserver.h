@@ -32,6 +32,7 @@ public:
     QMap<int, PlayerInfo> players;
     QMap<QString, bool> roleTaken;
     QStringList rolesList;
+    int gameMode;
 
 private slots:
     void onNewConnection();
@@ -41,7 +42,6 @@ private slots:
 private:
     QTcpServer* tcpServer;
 
-    int gameMode;
 
 };
 

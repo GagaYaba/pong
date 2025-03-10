@@ -124,7 +124,7 @@ class GameInfoEventHandler : public ClientEventHandler {
                 QString gameMode = parts[1];
                 g_gameMode = gameMode;
                 qDebug() << "Mode de jeu:" << gameMode;
-                QString message = "READY" + QString::number(client->playerId);
+                QString message = "READY " + QString::number(client->playerId);
                 client->sendMessage(message);
             } else {
                 qDebug() << "Erreur: message GAME_INFO mal formé";
