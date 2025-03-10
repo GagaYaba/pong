@@ -31,7 +31,7 @@ private:
     QElapsedTimer timer;
     float deltaTime;
 
-    enum LastTouchedBy { P1, P2, None };
+    enum LastTouchedBy { P1, P2, P3, P4, None };
     LastTouchedBy lastTouchedByPlayer;
 
     void handleCollisions();
@@ -44,6 +44,8 @@ private:
     void handlePaddleHit(Paddle* paddle);
     void reverseXDirection();
     void adjustVerticalSpeed(Paddle* paddle);
+
+    bool hit = false;
 };
 
 #endif // BALL_H

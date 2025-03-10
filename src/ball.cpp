@@ -69,19 +69,21 @@ void Ball::handleBoundaryCollision() {
 }
 
 void Ball::processGoal() {
-    if (x() <= 0) {
-        if (lastTouchedByPlayer == P1) {
-            qDebug() << "P1 OWN GOAL / NO POINT";
-        } else if (lastTouchedByPlayer == P2) {
-            game->increasePlayer2Score();
-            qDebug() << "P2 +1 POINT";
-        }
-    } else {
-        if (lastTouchedByPlayer == P2) {
-            qDebug() << "P2 OWN GOAL / NO POINT";
-        } else if (lastTouchedByPlayer == P1) {
-            game->increasePlayer1Score();
-            qDebug() << "P1 +1 POINT";
+    if (hit) {
+        if (x() <= 0) {
+            if (lastTouchedByPlayer == P1 || lastTouchedByPlayer == P3) {
+                qDebug() << "TEAM 1 OWN GOAL / NO POINT";
+            } else if (lastTouchedByPlayer == P2 || lastTouchedByPlayer == P4) {
+                game->increaseTeam2Score();
+                qDebug() << "TEAM 2 +1 POINT";
+            }
+        } else {
+            if (lastTouchedByPlayer == P2 || lastTouchedByPlayer == P4) {
+                qDebug() << "TEAM 2 OWN GOAL / NO POINT";
+            } else if (lastTouchedByPlayer == P1 || lastTouchedByPlayer == P3) {
+                game->increaseTeam1Score();
+                qDebug() << "TEAM 1 +1 POINT";
+            }
         }
     }
 }
@@ -91,13 +93,18 @@ void Ball::resetBall() {
     direction = -direction;
     dx = 2;
     dy = 0;
+    hit = false;
 }
 
 void Ball::handlePaddleHit(Paddle* paddle) {
-    if (paddle == game->getPlayer1()) {
-        lastTouchedByPlayer = P1;
-    } else if (paddle == game->getPlayer2()) {
-        lastTouchedByPlayer = P2;
+    if (!hit) {
+        hit = true;
+    }
+
+    if (paddle == game->getPaddle(0) || paddle == game->getPaddle(2)) {
+        lastTouchedByPlayer = (paddle == game->getPaddle(0)) ? P1 : P3;
+    } else if (paddle == game->getPaddle(1) || paddle == game->getPaddle(3)) {
+        lastTouchedByPlayer = (paddle == game->getPaddle(1)) ? P2 : P4;
     }
 }
 

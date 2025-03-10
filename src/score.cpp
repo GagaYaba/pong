@@ -2,7 +2,7 @@
 #include <QFont>
 
 Score::Score(int x, int y, QGraphicsItem *parent)
-    : QGraphicsTextItem(parent), player1Score(0), player2Score(0) {
+    : QGraphicsTextItem(parent), team1Score(0), team2Score(0) {
 
     setDefaultTextColor(Qt::black);
     setFont(QFont("Arial", 16));
@@ -10,22 +10,22 @@ Score::Score(int x, int y, QGraphicsItem *parent)
     updateDisplay();
 
     int textWidth = boundingRect().width();
-    int screenWidth = 400;
+    int screenWidth = 600;
     int xPos = (screenWidth - textWidth) / 2;
 
     setPos(xPos, y);
 }
 
-void Score::increasePlayer1Score() {
-    player1Score++;
+void Score::increaseTeam1Score() {
+    team1Score++;
     updateDisplay();
 }
 
-void Score::increasePlayer2Score() {
-    player2Score++;
+void Score::increaseTeam2Score() {
+    team2Score++;
     updateDisplay();
 }
 
 void Score::updateDisplay() {
-    setPlainText(QString("%1   |   %2").arg(player1Score).arg(player2Score));
+    setPlainText(QString("%1   |   %2").arg(team1Score).arg(team2Score));
 }

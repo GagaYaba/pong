@@ -2,11 +2,9 @@ QT = core widgets network
 
 CONFIG += c++17 cmdline
 
-QT += gui
-QT += widgets
-QT += network
-
-DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
+# You can make your code fail to compile if it uses deprecated APIs.
+# In order to do so, uncomment the following line.
+#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
     client/GameClient/gameclient.cpp \
@@ -15,7 +13,10 @@ SOURCES += \
     src/ball.cpp \
     src/boundary.cpp \
     src/collision.cpp \
+    src/control.cpp \
     src/game.cpp \
+    src/inputKeybord.cpp \
+    src/inputNetwork.cpp \
     src/globals.cpp \
     src/mainwindow.cpp \
     src/menuwindow.cpp \
@@ -25,6 +26,17 @@ SOURCES += \
     src/SelectDialog.cpp \
     src/CodeDialog.cpp \
     src/utils.cpp \
+    src/player.cpp \
+    src/score.cpp
+
+
+# Default rules for deployment.
+qnx: target.path = /tmp/$${TARGET}/bin
+else: unix:!android: target.path = /opt/$${TARGET}/bin
+!isEmpty(target.path): INSTALLS += target
+
+FORMS += \
+    src/mainwindow.ui
 
 HEADERS += \
     client/GameClient/ClientEventHandlerFactory.h \
@@ -34,11 +46,15 @@ HEADERS += \
     include/ball.h \
     include/boundary.h \
     include/collision.h \
+    include/control.h \
     include/game.h \
     include/globals.h \
+    include/inputKeybord.h \
+    include/inputNetwork.h \
     include/mainwindow.h \
     include/menuwindow.h \
     include/paddle.h \
+    include/player.h \
     include/score.h \
     server/GameServer/gameserver.h \
     include/utils.h \

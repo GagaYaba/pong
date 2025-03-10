@@ -1,3 +1,4 @@
+// game.h
 #ifndef GAME_H
 #define GAME_H
 
@@ -8,15 +9,18 @@
 #include "paddle.h"
 #include "ball.h"
 #include "score.h"
+#include "player.h"
 
 class Game : public QGraphicsView {
     Q_OBJECT
 public:
-    Game(QWidget *parent = nullptr);
-    void increasePlayer1Score();
-    void increasePlayer2Score();
-    Paddle* getPlayer1();
-    Paddle* getPlayer2();
+    enum GameMode { OneVOne, TwoVTwo };
+
+    Game(QWidget *parent = nullptr, GameMode mode = OneVOne);
+
+    void increaseTeam1Score();
+    void increaseTeam2Score();
+    Paddle* getPaddle(int playerIndex);
     Ball* getBall();
 
 protected:
@@ -24,9 +28,11 @@ protected:
     void keyReleaseEvent(QKeyEvent *event) override;
     void closeEvent(QCloseEvent *event) override;
 private:
+    void setupPlayersAndPaddles(); // Nouvelle méthode pour configurer les joueurs et les paddles
+    GameMode gameMode; // Variable pour le mode de jeu
+
     QGraphicsScene* scene;
-    Paddle* player1;
-    Paddle* player2;
+    QList<Player*> players;
     Ball* ball;
     QSet<int>* keysPressed;
     Score* score;

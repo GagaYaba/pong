@@ -1,0 +1,4 @@
+#ifndef INPUTNETWORK_H
+#define INPUTNETWORK_H
+
+#endif // INPUTNETWORK_H

@@ -1,8 +1,10 @@
+// game.cpp
 #include "../include/game.h"
 
-Game::Game(QWidget *parent) : QGraphicsView(parent) {
-    int screenWidth = 400;
-    int screenHeight = 400;
+Game::Game(QWidget *parent, GameMode mode)
+    : QGraphicsView(parent), gameMode(mode) {
+    int screenWidth = 600;
+    int screenHeight = 600;
 
     scene = new QGraphicsScene();
     scene->setSceneRect(0, 0, screenWidth, screenHeight);
@@ -10,14 +12,8 @@ Game::Game(QWidget *parent) : QGraphicsView(parent) {
 
     keysPressed = new QSet<int>();
 
-    player1 = new Paddle(30, 150, 5, screenHeight, keysPressed, Paddle::P1);
-    player2 = new Paddle(360, 150, 5, screenHeight, keysPressed, Paddle::P2);
-
-    player1->setKeys(Qt::Key_S, Qt::Key_W);
-    player2->setKeys(Qt::Key_Up, Qt::Key_Down);
-
-    scene->addItem(player1);
-    scene->addItem(player2);
+    // Configure les joueurs et les paddles en fonction du mode de jeu
+    setupPlayersAndPaddles();
 
     ball = new Ball(screenWidth, screenHeight, this);
     scene->addItem(ball);
@@ -32,16 +28,39 @@ Game::Game(QWidget *parent) : QGraphicsView(parent) {
     setFocus();
 }
 
+void Game::setupPlayersAndPaddles() {
+    int screenWidth = 600;
+    int screenHeight = 600;
+
+    // Mode 1v1
+    if (gameMode == OneVOne) {
+        players.append(new Player(new Paddle(screenWidth * 0.05, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::P1), Qt::Key_S, Qt::Key_W));
+        players.append(new Player(new Paddle(screenWidth * 0.95 - 10, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::P2), Qt::Key_Up, Qt::Key_Down));
+    }
+    // Mode 2v2
+    else if (gameMode == TwoVTwo) {
+        players.append(new Player(new Paddle(screenWidth * 0.05, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::P1), Qt::Key_S, Qt::Key_W));
+        players.append(new Player(new Paddle(screenWidth * 0.95 - 10, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::P2), Qt::Key_Up, Qt::Key_Down));
+        players.append(new Player(new Paddle(screenWidth * 0.2, screenHeight * 0.15, 5, screenHeight, keysPressed, Paddle::P3), Qt::Key_R, Qt::Key_D));
+        players.append(new Player(new Paddle(screenWidth * 0.8 - 10, screenHeight * 0.15, 5, screenHeight, keysPressed, Paddle::P4), Qt::Key_Left, Qt::Key_Right));
+    }
+
+    // Ajoute les paddles à la scène
+    for (Player* player : players) {
+        scene->addItem(player->getPaddle());
+    }
+}
+
 Ball* Game::getBall() {
     return ball;
 }
 
-void Game::increasePlayer1Score() {
-    score->increasePlayer1Score();
+void Game::increaseTeam1Score() {
+    score->increaseTeam1Score();
 }
 
-void Game::increasePlayer2Score() {
-    score->increasePlayer2Score();
+void Game::increaseTeam2Score() {
+    score->increaseTeam2Score();
 }
 
 void Game::keyPressEvent(QKeyEvent *event) {
@@ -52,10 +71,9 @@ void Game::keyReleaseEvent(QKeyEvent *event) {
     keysPressed->remove(event->key());
 }
 
-Paddle* Game::getPlayer1() {
-    return player1;
-}
-
-Paddle* Game::getPlayer2() {
-    return player2;
+Paddle* Game::getPaddle(int playerIndex) {
+    if (playerIndex >= 0 && playerIndex < players.size()) {
+        return players[playerIndex]->getPaddle();
+    }
+    return nullptr;
 }
