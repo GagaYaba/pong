@@ -16,6 +16,8 @@ public:
 
     void setKeys(int upKey, int downKey);
 
+    void moveUp();
+    void moveDown();
 public slots:
     void updatePosition();
     Player getPlayerId() const;

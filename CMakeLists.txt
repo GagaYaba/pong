@@ -22,6 +22,7 @@ qt_add_executable(sans_titre
         server/GameServer/gameserver.h server/GameServer/gameserver.cpp
         client/GameClient/ClientEventHandler.h client/GameClient/ClientEventHandlerFactory.h
         include/globals.h src/globals.cpp
+        include/player.h src/player.cpp
 )
 
 

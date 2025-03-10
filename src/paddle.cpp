@@ -30,3 +30,15 @@ void Paddle::updatePosition() {
 Paddle::Player Paddle::getPlayerId() const {
     return playerId;
 }
+
+void Paddle::moveUp() {
+    if (y() > 0) {
+        setY(y() - speed);
+    }
+}
+
+void Paddle::moveDown() {
+    if (y() + rect().height() < screenHeight) {
+        setY(y() + speed);
+    }
+}
