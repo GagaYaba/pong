@@ -1,5 +1,7 @@
 #include "../include/paddle.h"
+
 #include <QKeyEvent>
+#include <QDebug>
 
 Paddle::Paddle(int x, int y, int speed, int screenHeight, QSet<int>* keysPressed, Player playerId, QObject* parent)
     : QObject(parent), speed(speed), screenHeight(screenHeight), keysPressed(keysPressed), playerId(playerId) {

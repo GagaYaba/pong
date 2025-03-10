@@ -14,7 +14,6 @@ public:
 
     Side side() const;
     void setTeam(int teamId);
-
     int team() const;
 
 signals:

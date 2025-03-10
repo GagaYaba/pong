@@ -32,6 +32,10 @@ Game::Game(QWidget *parent) : QGraphicsView(parent) {
     setFocus();
 }
 
+Ball* Game::getBall() {
+    return ball;
+}
+
 void Game::increasePlayer1Score() {
     score->increasePlayer1Score();
 }

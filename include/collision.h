@@ -3,14 +3,20 @@
 
 #include <QObject>
 
+#include "game.h"
+
 class Collision : public QObject {
     Q_OBJECT
 public:
-    explicit Collision(QObject* parent = nullptr);
+    explicit Collision(Game* game, QObject* parent = nullptr);
 
 signals:
-    void boundaryHit();
+    void boundaryHitSignal();
+    void paddleHitSignal();
+
+private slots:
     void paddleHit();
+    void boundaryHit();
 };
 
 #endif // COLLISION_H

@@ -18,8 +18,10 @@ public:
 
 public slots:
     void updatePosition();
-
     Player getPlayerId() const;
+
+signals:
+    void touchedByBall();
 
 private:
     int upKey, downKey;
