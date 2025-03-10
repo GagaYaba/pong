@@ -103,7 +103,7 @@ public:
                 g_playerRole = role;
             }
 
-            emit client->roleEmit(role, updatedPlayerId, false);
+            emit client->roleEmit(role, updatedPlayerId, true);
 
             qDebug() << "Joueur" << updatedPlayerId << "mis à jour avec le rôle:" << role;
         }

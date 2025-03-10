@@ -10,6 +10,8 @@ SelectDialog::SelectDialog(QWidget *parent, const QStringList &availableSlots, G
 {
     ui->setupUi(this);
 
+    qDebug() << "availableSlots " << availableSlots;
+
     if (!availableSlots.contains("p1")) {
         ui->player1CheckBox->setChecked(false);
         ui->player1CheckBox->setEnabled(false);
