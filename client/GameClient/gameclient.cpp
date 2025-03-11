@@ -2,6 +2,7 @@
 #include "../../include/SelectDialog.h"
 #include "../../include/globals.h"
 #include "../../include/game.h"
+#include "BinaryClientEventHandler.h"
 #include <QDebug>
 #include <QTimer>
 #include <QString>
@@ -251,7 +252,9 @@ std::vector<std::unique_ptr<ClientEventHandler>> ClientEventHandlerFactory::crea
     return handlers;
 }
 
-// BinaryPlayer1EventHandler.h
+// =====================================================
+// Handler pour "BINARY_PLAYER1"
+// =====================================================
 class BinaryPlayer1EventHandler : public BinaryClientEventHandler
 {
 public:
@@ -275,11 +278,13 @@ public:
         stream >> paddleY;
 
         qDebug() << "Handler binaire joueur 1 | ID:" << senderId << "Paddle Y:" << paddleY;
-        // Traitez ici le message (mise à jour de l'affichage, de la logique, etc.)
+        // Traitez ici le message pour le joueur 1
     }
 };
 
-
+// =====================================================
+// Handler pour "BINARY_PLAYER2"
+// =====================================================
 class BinaryPlayer2EventHandler : public BinaryClientEventHandler
 {
 public:
@@ -303,16 +308,18 @@ public:
         stream >> paddleY;
 
         qDebug() << "Handler binaire joueur 2 | ID:" << senderId << "Paddle Y:" << paddleY;
-        // Traitez ici le message (mise à jour de l'affichage, de la logique, etc.)
+        // Traitez ici le message pour le joueur 2
     }
 };
 
-
+// =====================================================
+// Handler pour "BINARY_PLAYER3"
+// =====================================================
 class BinaryPlayer3EventHandler : public BinaryClientEventHandler
 {
 public:
     bool canHandle(quint8 msgType) const override
-    
+    {
         return msgType == 3;
     }
 
@@ -331,11 +338,13 @@ public:
         stream >> paddleY;
 
         qDebug() << "Handler binaire joueur 3 | ID:" << senderId << "Paddle Y:" << paddleY;
-        // Traitez ici le message (mise à jour de l'affichage, de la logique, etc.)
+        // Traitez ici le message pour le joueur 3
     }
 };
 
-
+// =====================================================
+// Handler pour "BINARY_PLAYER4"
+// =====================================================
 class BinaryPlayer4EventHandler : public BinaryClientEventHandler
 {
 public:
@@ -359,33 +368,43 @@ public:
         stream >> paddleY;
 
         qDebug() << "Handler binaire joueur 4 | ID:" << senderId << "Paddle Y:" << paddleY;
-        // Traitez ici le message (mise à jour de l'affichage, de la logique, etc.)
+        // Traitez ici le message pour le joueur 4
     }
 };
 
-class BinaryEventHandlerFactory
+// =====================================================
+// Handler par défaut pour les messages binaires inconnus
+// =====================================================
+class BinaryUnknownEventHandler : public BinaryClientEventHandler
 {
 public:
-    static std::vector<std::unique_ptr<BinaryClientEventHandler>> createHandlers()
+    bool canHandle(quint8 msgType) const override
     {
+        // Toujours vrai en fallback
+        return true;
+    }
+
+    void handle(GameClient *client, const QByteArray &data) override
+    {
+        qDebug() << "Message binaire inconnu reçu:" << data.toHex();
+    }
+};
+
+// =====================================================
+// Factory pour créer les handlers binaires côté client
+// =====================================================
+std::vector<std::unique_ptr<BinaryClientEventHandler>> BinaryEventHandlerFactory::createHandlers()
+{
         std::vector<std::unique_ptr<BinaryClientEventHandler>> handlers;
+
+        // Ajout des gestionnaires d'événements spécifiques
         handlers.push_back(std::make_unique<BinaryPlayer1EventHandler>());
         handlers.push_back(std::make_unique<BinaryPlayer2EventHandler>());
         handlers.push_back(std::make_unique<BinaryPlayer3EventHandler>());
         handlers.push_back(std::make_unique<BinaryPlayer4EventHandler>());
-        return handlers;
-    }
-};
+        handlers.push_back(std::make_unique<BinaryUnknownEventHandler>()); // Handler par défaut
 
-// BinaryClientEventHandler.h
-class BinaryClientEventHandler
-{
-public:
-    virtual ~BinaryClientEventHandler() = default;
-    // Renvoie true si ce handler est responsable de traiter un message du type msgType
-    virtual bool canHandle(quint8 msgType) const = 0;
-    // Traitement du message binaire reçu
-    virtual void handle(GameClient *client, const QByteArray &data) = 0;
+        return handlers;
 };
 
 // =====================================================

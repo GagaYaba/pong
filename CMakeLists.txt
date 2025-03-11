@@ -23,6 +23,7 @@ qt_add_executable(sans_titre
         client/GameClient/ClientEventHandler.h client/GameClient/ClientEventHandlerFactory.h
         include/globals.h src/globals.cpp
         include/player.h src/player.cpp
+        client/GameClient/BinaryClientEventHandler.h    client/GameClient/BinaryEventHandlerFactory.h
 )
 
 

@@ -10,6 +10,8 @@
 
 #include "ClientEventHandler.h"
 #include "ClientEventHandlerFactory.h"
+#include "BinaryClientEventHandler.h"
+#include "BinaryEventHandlerFactory.h"
 
 class GameClient : public QObject
 {
