@@ -1,6 +1,7 @@
 #include "gameclient.h"
 #include "../../include/SelectDialog.h"
 #include "../../include/globals.h"
+#include "../../include/game.h"
 #include <QDebug>
 #include <QString>
 #include <QTcpSocket>
@@ -151,7 +152,8 @@ public:
     void handle(GameClient *client, const QString &message) override {
         Q_UNUSED(message);
         qDebug() << "La partie commence!";
-        emit client->gameStart();
+        Game *game = new Game;
+        game->show();
     }
 };
 

@@ -17,6 +17,7 @@ public:
     enum GameMode { OneVOne, TwoVTwo };
 
     Game(QWidget *parent = nullptr, GameMode mode = OneVOne);
+    void initGame();
     void startGame();
     void increaseTeam1Score();
     void increaseTeam2Score();

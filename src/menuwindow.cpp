@@ -2,6 +2,7 @@
 #include "../include/JoinDialog.h"
 #include "../include/CodeDialog.h"
 #include "../include/utils.h"
+#include "../include/CodeDialog.h"
 #include "../include/SelectDialog.h"
 #include "../include/globals.h"
 #include <QMenu>

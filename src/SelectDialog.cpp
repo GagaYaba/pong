@@ -2,6 +2,7 @@
 #include <QMessageBox>
 #include <QDebug>
 #include "../include/globals.h"
+#include "../include/game.h"
 
 SelectDialog::SelectDialog(QWidget *parent, const QStringList &availableSlots, GameClient *client) : QDialog(parent),
                                                                                                      ui(new Ui::SelectDialog),

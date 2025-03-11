@@ -16,8 +16,6 @@ Game::Game(QWidget *parent, GameMode mode)
 
     keysPressed = new QSet<int>();
 
-    connect(g_client, &GameClient::gameStart, this, &Game::startGame);
-
     // Configure les joueurs et les paddles en fonction du mode de jeu
     setupPlayersAndPaddles();
 
@@ -39,6 +37,7 @@ Game::Game(QWidget *parent, GameMode mode)
 }
 
 void Game::startGame() {
+    qDebug() << "Démarrage du jeu...";
     Game game;
     game.show();
 }
