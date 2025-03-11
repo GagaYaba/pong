@@ -13,6 +13,16 @@ Paddle::Paddle(int x, int y, int speed, int screenHeight, QSet<int>* keysPressed
     movementTimer->start(16);
 }
 
+PaddleNetwork::PaddleNetwork(int x, int y, int speed, int screenHeight, Player playerId, QObject* parent)
+    : QObject(parent), speed(speed), screenHeight(screenHeight), playerId(playerId) {
+    setRect(0, 0, 10, 60);
+    setPos(x, y);
+}
+
+void PaddleNetwork::updatePosition(float y) {
+    setY(y);
+}
+
 void Paddle::setKeys(int upKey, int downKey) {
     this->upKey = upKey;
     this->downKey = downKey;

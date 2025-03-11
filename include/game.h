@@ -23,6 +23,7 @@ public:
     Ball* getBall();
     void updateGame();
     QList<Player*> players;
+    QList<PlayerNetwork*> playersNetwork;
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;

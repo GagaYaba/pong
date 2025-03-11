@@ -42,12 +42,16 @@ void Game::setupPlayersAndPaddles() {
     // Vérifier quel joueur est ce client
     if (g_playerRole == "p1") {
         players.append(new Player(
-                new Paddle(screenWidth * 0.05, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::p1),
+                new Paddle(screenWidth * 0.05, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::p1), g_playerRole,
                 Qt::Key_S, Qt::Key_W, keysPressed));
+        playersNetwork.append(new PlayerNetwork(
+                new PaddleNetwork(screenWidth * 0.95 - 10, screenHeight * 0.25, 5, screenHeight, PaddleNetwork::p2), "p2"));
     } else if (g_playerRole == "p2") {
         players.append(new Player(
-                new Paddle(screenWidth * 0.95 - 10, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::p2),
+                new Paddle(screenWidth * 0.95 - 10, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::p2), g_playerRole,
                 Qt::Key_Up, Qt::Key_Down, keysPressed));
+        playersNetwork.append(new PlayerNetwork(
+                new PaddleNetwork(screenWidth * 0.05, screenHeight * 0.25, 5, screenHeight, PaddleNetwork::p1), "p1"));
         //    } else if (g_playerRole == "p3" && g_gameMode == "TwoVTwo") {
         //        players.append(new Player(new Paddle(screenWidth * 0.2, screenHeight * 0.15, 5, screenHeight, keysPressed, Paddle::p3), Qt::Key_R, Qt::Key_D, keysPressed));
         //    } else if (g_playerRole == "p4" && g_gameMode == "TwoVTwo") {
@@ -103,6 +107,8 @@ void Game::closeEvent(QCloseEvent *event) {
 
 void Game::updateGame() {
     for (Player *player: players) {
-        player->update();
+        if (player->type == "Player") {
+            player->update();
+        }
     }
 }

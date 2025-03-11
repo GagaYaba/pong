@@ -34,4 +34,25 @@ private:
     Player playerId;
 };
 
+class PaddleNetwork : public QObject, public QGraphicsRectItem {
+    Q_OBJECT
+public:
+    enum Player { p1 = 1, p2 = 2, p3 = 3, p4 = 4 };
+
+    PaddleNetwork(int x, int y, int speed, int screenHeight, Player playerId, QObject* parent = nullptr);
+
+
+public slots:
+    void updatePosition(float y);
+
+signals:
+    void touchedByBall();
+
+private:
+    int speed;
+    int screenHeight;
+    Player playerId;
+};
+
+
 #endif // PADDLE_H
