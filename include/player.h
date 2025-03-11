@@ -26,7 +26,7 @@ private:
 class PlayerNetwork {
 public:
     PlayerNetwork(PaddleNetwork* paddle, QString role);
-    PaddleNetwork* getPaddle() const; // Retourne un PaddleNetwork* correctement
+    virtual PaddleNetwork* getPaddleNetwork() const; // Retourne un Paddle*
     void updatePaddlePosition(float y);
     QString type;
     QString role;

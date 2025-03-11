@@ -18,8 +18,8 @@ PlayerNetwork::PlayerNetwork(PaddleNetwork* paddle, QString role) {
 Paddle* Player::getPaddle() const {
     return paddle;
 }
-PaddleNetwork* PlayerNetwork::getPaddle() const {
-    return static_cast<PaddleNetwork*>(paddle);
+PaddleNetwork* PlayerNetwork::getPaddleNetwork() const {
+    return paddle;
 }
 
 void Player::update() {

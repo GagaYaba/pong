@@ -59,13 +59,20 @@ void Game::setupPlayersAndPaddles() {
         //    }
     }
 
-        // Ajouter uniquement le paddle du joueur local à la scène
         if (!players.isEmpty())
         {
-            scene->addItem(players[0]->getPaddle());
+            for (Player *player : players)
+            {
+                scene->addItem(player->getPaddle());
+            }
         }
-        if (!playersNetwork.isEmpty()) {
-            scene->addItem(playersNetwork[0]->getPaddle());
+
+        if (!playersNetwork.isEmpty())
+        {
+            for (PlayerNetwork *playerNetwork : playersNetwork)
+            {
+                scene->addItem(playerNetwork->getPaddleNetwork());
+            }
         }
 
 }
@@ -96,6 +103,14 @@ Paddle *Game::getPaddle(int playerIndex) {
     }
     return nullptr;
 }
+
+PaddleNetwork *Game::getPaddleNetwork(int playerIndex) {
+    if (playerIndex >= 0 && playerIndex < playersNetwork.size()) {
+        return playersNetwork[playerIndex]->getPaddleNetwork();
+    }
+    return nullptr;
+}
+
 
 void Game::closeEvent(QCloseEvent *event) {
     int ret = QMessageBox::question(this, "Quitter", "Voulez-vous vraiment quitter ?",

@@ -20,6 +20,7 @@ public:
     void increaseTeam1Score();
     void increaseTeam2Score();
     Paddle* getPaddle(int playerIndex);
+    PaddleNetwork* getPaddleNetwork(int playerIndex);
     Ball* getBall();
     void updateGame();
     QList<Player*> players;
