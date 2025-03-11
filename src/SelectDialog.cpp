@@ -33,13 +33,13 @@ SelectDialog::SelectDialog(QWidget *parent, const QStringList &availableSlots, G
 
     // Seul l'hôte peut lancer la partie
     connect(ui->startButton, &QPushButton::clicked, this, &SelectDialog::onStartGame);
-    connect(m_client, &GameClient::gameInfoReceived, this, &SelectDialog::onGameInfoReceived);
+    connect(g_client, &GameClient::gameInfoReceived, this, &SelectDialog::onGameInfoReceived);
     // Connexion du signal du client pour confirmer ou libérer un rôle
-    if (m_client)
+    if (g_client)
     {
         qDebug() << "Connexion du signal roleEmit à onRoleConfirmed";
         // ATTENTION : Assurez-vous que le signal roleEmit émet bien trois paramètres : role, playerId et join.
-        connect(m_client, &GameClient::roleEmit, this, &SelectDialog::onRoleConfirmed);
+        connect(g_client, &GameClient::roleEmit, this, &SelectDialog::onRoleConfirmed);
     }
 
     updateStartButton();
