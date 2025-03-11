@@ -480,7 +480,6 @@ void GameServer::sendBallPosition(int playerId, float ballY, float ballX) {
     stream.setByteOrder(QDataStream::BigEndian);
     stream.setVersion(QDataStream::Qt_6_0);
 
-    stream << static_cast<qint32>(playerId); // ID du joueur
     stream << ballY; // Position Y de la balle
     stream << ballX; // Position X de la balle
 
