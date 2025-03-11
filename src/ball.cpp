@@ -114,7 +114,7 @@ void Ball::reverseXDirection() {
 
 void Ball::adjustVerticalSpeed(Paddle* paddle) {
     float hitPosition = (y() + rect().height() / 2) - (paddle->y() + paddle->rect().height() / 2);
-    dy += hitPosition * 0.1;
+    dy += hitPosition * 0.2;
 }
 
 void Ball::adjustSpeed() {

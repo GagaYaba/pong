@@ -1,5 +1,6 @@
 #include "../include/score.h"
 #include <QFont>
+#include <QMessageBox>
 
 Score::Score(int x, int y, QGraphicsItem *parent)
     : QGraphicsTextItem(parent), team1Score(0), team2Score(0) {
@@ -17,15 +18,37 @@ Score::Score(int x, int y, QGraphicsItem *parent)
 }
 
 void Score::increaseTeam1Score() {
-    team1Score++;
-    updateDisplay();
+    if (team1Score < 3 && team2Score < 3) {
+        team1Score++;
+        updateDisplay();
+        checkGameOver();
+    }
 }
 
 void Score::increaseTeam2Score() {
-    team2Score++;
-    updateDisplay();
+    if (team1Score < 3 && team2Score < 3) {
+        team2Score++;
+        updateDisplay();
+        checkGameOver();
+    }
 }
 
 void Score::updateDisplay() {
     setPlainText(QString("%1   |   %2").arg(team1Score).arg(team2Score));
+}
+
+void Score::checkGameOver() {
+    if (team1Score == 3) {
+        QMessageBox::information(nullptr, "Fin de partie", "TEAM ONE WIN !");
+        resetScore();
+    } else if (team2Score == 3) {
+        QMessageBox::information(nullptr, "Fin de partie", "TEAM TWO WIN !");
+        resetScore();
+    }
+}
+
+void Score::resetScore() {
+    team1Score = 0;
+    team2Score = 0;
+    updateDisplay();
 }

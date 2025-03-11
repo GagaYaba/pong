@@ -10,8 +10,11 @@ public:
     void increaseTeam1Score();
     void increaseTeam2Score();
     void updateDisplay();
+    void resetScore();  // Nouvelle méthode pour réinitialiser le score
 
 private:
+    void checkGameOver();
+
     int team1Score;
     int team2Score;
 };
