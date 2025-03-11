@@ -15,7 +15,7 @@ Game::Game(QWidget *parent, GameMode mode)
     keysPressed = new QSet<int>();
 
     // Configure les joueurs et les paddles en fonction du mode de jeu
-    setupPlayersAndPaddles("OneVOne", );
+    setupPlayersAndPaddles();
 
     ball = new Ball(screenWidth, screenHeight, this);
     scene->addItem(ball);
@@ -39,10 +39,15 @@ void Game::setupPlayersAndPaddles() {
     int screenHeight = 600;
 
     // Vérifier quel joueur est ce client
-    if (g_playerRole == "p1") {
+    if (g_playerRole == "p1" ) {
         players.append(new Player(new Paddle(screenWidth * 0.05, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::p1), Qt::Key_S, Qt::Key_W, keysPressed));
     } else if (g_playerRole == "p2") {
         players.append(new Player(new Paddle(screenWidth * 0.95 - 10, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::p2), Qt::Key_Up, Qt::Key_Down, keysPressed));
+//    } else if (g_playerRole == "p3" && g_gameMode == "TwoVTwo") {
+//        players.append(new Player(new Paddle(screenWidth * 0.2, screenHeight * 0.15, 5, screenHeight, keysPressed, Paddle::p3), Qt::Key_R, Qt::Key_D, keysPressed));
+//    } else if (g_playerRole == "p4" && g_gameMode == "TwoVTwo") {
+//        players.append(new Player(new Paddle(screenWidth * 0.8 - 10, screenHeight * 0.15, 5, screenHeight, keysPressed, Paddle::p4), Qt::Key_Left, Qt::Key_Right, keysPressed));
+//    }
 
     // Ajouter uniquement le paddle du joueur local à la scène
     if (!players.isEmpty()) {
