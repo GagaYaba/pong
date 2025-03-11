@@ -240,7 +240,7 @@ void GameClient::simulatePaddleData() {
 void GameClient::checkPaddlePosition() {
     lastPaddleY = -1;
     if (g_game) {
-        float paddleY = g_game->players[g_playerRole]->getPaddle()->y();
+        float paddleY = g_game->players[g_playerId]->getPaddle()->y();
         if (paddleY != lastPaddleY) {
             lastPaddleY = paddleY;
             sendPaddlePositionBinary(paddleY);
@@ -275,11 +275,12 @@ void GameClient::sendPaddlePositionBinary(float paddleY) {
 }
 
 void GameClient::sendMessage(const QString &message) {
-    QByteArray data = message.toUtf8();
+    QString messageToSend = message + "\n";
+    QByteArray data = messageToSend.toUtf8();
     if (tcpSocket->state() == QTcpSocket::ConnectedState) {
         tcpSocket->write(data);
         tcpSocket->flush();
-        qDebug() << "Message envoyé:" << message;
+        qDebug() << "Message envoyé:" << messageToSend;
     } else {
         qDebug() << "Erreur: Connexion non établie";
     }
@@ -343,31 +344,3 @@ void GameClient::onDataReceived() {
         }
     }
 }
-void GameClient::sendPaddlePositionBinary(float paddleY) {
-    // Vérifier si la position a changé avant d'envoyer
-    if (paddleY != lastPaddleY) {
-        lastPaddleY = paddleY;
-
-        QByteArray data;
-        QDataStream stream(&data, QIODevice::WriteOnly);
-        stream.setByteOrder(QDataStream::BigEndian); // Format réseau
-        stream.setVersion(QDataStream::Qt_6_0);
-
-        quint8 messageType = 1; // Identifiant de message "Paddle Move"
-        stream << messageType;
-        stream << static_cast<qint32>(playerId); // ID du joueur
-        stream << paddleY; // Position Y du paddle
-
-        // Vérifier si le socket est bien connecté avant d'envoyer
-        if (tcpSocket->state() == QTcpSocket::ConnectedState) {
-            tcpSocket->write(data);
-            tcpSocket->flush();
-            qDebug() << "Client | Message binaire envoyé:" << data.toHex();
-        } else {
-            qDebug() << "Client | Erreur: Connexion non établie";
-        }
-    }
-}
-
-
-

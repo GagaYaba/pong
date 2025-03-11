@@ -22,6 +22,8 @@ public:
     Paddle* getPaddle(int playerIndex);
     Ball* getBall();
     void updateGame();
+    QList<Player*> players;
+
 protected:
     void keyPressEvent(QKeyEvent *event) override;
     void keyReleaseEvent(QKeyEvent *event) override;
@@ -31,7 +33,6 @@ private:
     GameMode gameMode; // Variable pour le mode de jeu
 
     QGraphicsScene* scene;
-    QList<Player*> players;
     Ball* ball;
     QSet<int>* keysPressed;
     Score* score;
