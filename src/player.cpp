@@ -1,33 +1,3 @@
-// #include "../include/player.h"
-
-// Player::Player(Paddle* paddle, QString role, int upKey, int downKey, QSet<int>* keysPressed) {
-//     this->paddle = paddle;
-//     this->type = "Player";
-//     this->role = role;
-//     this->upKey = upKey;
-//     this->downKey = downKey;
-//     this->keysPressed = keysPressed;
-// }
-
-// Player::PlayerNetwork(Paddle* paddle, QString role) {
-//     this->paddle = paddle;
-//     this->type = "PlayerNetwork";
-//     this->role = role;
-// }
-
-// Paddle* Player::getPaddle() const {
-//     return paddle;
-// }
-
-// void Player::update() {
-//     if (keysPressed->contains(upKey)) {
-//         paddle->moveUp();
-//     }
-//     if (keysPressed->contains(downKey)) {
-//         paddle->moveDown();
-//     }
-// }
-
 #include "../include/player.h"
 
 Player::Player(Paddle* paddle, QString role, int upKey, int downKey, QSet<int>* keysPressed) {
@@ -48,6 +18,9 @@ PlayerNetwork::PlayerNetwork(PaddleNetwork* paddle, QString role) {
 Paddle* Player::getPaddle() const {
     return paddle;
 }
+PaddleNetwork* PlayerNetwork::getPaddle() const {
+    return static_cast<PaddleNetwork*>(paddle);
+}
 
 void Player::update() {
     if (keysPressed->contains(upKey)) {
@@ -56,4 +29,9 @@ void Player::update() {
     if (keysPressed->contains(downKey)) {
         paddle->moveDown();
     }
+}
+
+// Ajout de la mise à jour du paddle réseau
+void PlayerNetwork::updatePaddlePosition(float y) {
+    paddle->updatePosition(y);
 }

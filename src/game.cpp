@@ -64,8 +64,10 @@ void Game::setupPlayersAndPaddles() {
         {
             scene->addItem(players[0]->getPaddle());
         }
+        if (!playersNetwork.isEmpty()) {
+            scene->addItem(playersNetwork[0]->getPaddle());
+        }
 
-        // Les autres joueurs seront mis à jour via le réseau (ex: setPaddlePosition)
 }
 
 Ball *Game::getBall() {
@@ -106,9 +108,11 @@ void Game::closeEvent(QCloseEvent *event) {
 }
 
 void Game::updateGame() {
-    for (Player *player: players) {
+    // Mise à jour des joueurs locaux
+    for (Player *player : players) {
         if (player->type == "Player") {
             player->update();
         }
     }
 }
+

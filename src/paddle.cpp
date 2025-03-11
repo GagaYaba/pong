@@ -14,7 +14,7 @@ Paddle::Paddle(int x, int y, int speed, int screenHeight, QSet<int>* keysPressed
 }
 
 PaddleNetwork::PaddleNetwork(int x, int y, int speed, int screenHeight, Player playerId, QObject* parent)
-    : QObject(parent), speed(speed), screenHeight(screenHeight), playerId(playerId) {
+    : QObject(parent), QGraphicsRectItem(), speed(speed), screenHeight(screenHeight), playerId(playerId) {
     setRect(0, 0, 10, 60);
     setPos(x, y);
 }
@@ -35,6 +35,11 @@ void Paddle::updatePosition() {
     if (keysPressed->contains(downKey) && y() + rect().height() < screenHeight) {
         setY(y() + speed);
     }
+}
+
+
+void PaddleNetwork::updatePositionFromNetwork(float y) {
+    setY(y);
 }
 
 Paddle::Player Paddle::getPlayerId() const {
