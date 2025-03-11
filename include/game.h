@@ -17,7 +17,7 @@ public:
     enum GameMode { OneVOne, TwoVTwo };
 
     Game(QWidget *parent = nullptr, GameMode mode = OneVOne);
-        void increaseTeam1Score();
+    void increaseTeam1Score();
     void increaseTeam2Score();
     Paddle* getPaddle(int playerIndex);
     Ball* getBall();
@@ -32,7 +32,6 @@ protected:
 private:
     void setupPlayersAndPaddles(); // Nouvelle méthode pour configurer les joueurs et les paddles
     GameMode gameMode; // Variable pour le mode de jeu
-
     QGraphicsScene* scene;
     Ball* ball;
     QSet<int>* keysPressed;

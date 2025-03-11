@@ -8,8 +8,10 @@ class Player {
 public:
     Player(Paddle* paddle, QString role, int upKey, int downKey, QSet<int>* keysPressed);
 
-    void update(); // Ajout de la méthode pour bouger le paddle
-    Paddle* getPaddle() const;
+    virtual ~Player() = default;
+    virtual Paddle* getPaddle() const; // Retourne un Paddle*
+    virtual void update();
+
     QString type;
     QString role;
 
@@ -23,7 +25,9 @@ private:
 
 class PlayerNetwork {
 public:
-    explicit PlayerNetwork(PaddleNetwork* paddle, QString role);
+    PlayerNetwork(PaddleNetwork* paddle, QString role);
+    PaddleNetwork* getPaddle() const; // Retourne un PaddleNetwork* correctement
+    void updatePaddlePosition(float y);
     QString type;
     QString role;
 

@@ -44,6 +44,7 @@ public:
 
 public slots:
     void updatePosition(float y);
+    void updatePositionFromNetwork(float y);
 
 signals:
     void touchedByBall();
