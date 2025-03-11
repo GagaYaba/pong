@@ -409,6 +409,9 @@ public:
         stream >> ballX;
 
         qDebug() << "Handler binaire balle | Ball Y:" << ballY << "Ball X:" << ballX;
+        if (!g_isHost) {
+            g_game->getBall()->setPos(ballX, ballY);
+        }
         // Traitez ici le message pour la balle
     }
 };

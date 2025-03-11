@@ -14,6 +14,7 @@ class Ball : public QObject, public QGraphicsEllipseItem {
     Q_OBJECT
 public:
     Ball(int screenWidth, int screenHeight, Game* game, QObject* parent = nullptr);
+    void setPos(int x, int y);
 
 public slots:
     void move();

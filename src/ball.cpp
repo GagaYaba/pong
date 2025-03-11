@@ -18,11 +18,12 @@ Ball::Ball(int screenWidth, int screenHeight, Game* game, QObject* parent)
     dy = 0;
     direction = -1;
 
-    movementTimer = new QTimer(this);
-    connect(movementTimer, &QTimer::timeout, this, &Ball::move);
-    movementTimer->start(16);
-
-    timer.start();
+    if (g_isHost) {
+        movementTimer = new QTimer(this);
+        connect(movementTimer, &QTimer::timeout, this, &Ball::move);
+        movementTimer->start(16);
+        timer.start();
+    }
 }
 
 void Ball::move() {
@@ -33,6 +34,11 @@ void Ball::move() {
     setY(y() + dy * deltaTime);
 
     handleCollisions();
+}
+
+void Ball::setPos(int x, int y) {
+    setX(x);
+    setY(y);
 }
 
 void Ball::handleCollisions() {
