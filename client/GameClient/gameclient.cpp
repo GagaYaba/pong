@@ -281,7 +281,6 @@ public:
         float paddleY;
         stream >> paddleY;
 
-        qDebug() << "Handler binaire joueur 1 | ID:" << senderId << "Paddle Y:" << paddleY;
         int id = senderId;
         PlayerNetwork *player = g_game->playersNetwork[0];
         player->updatePaddlePosition(paddleY);
@@ -313,13 +312,9 @@ public:
         stream >> senderId;
         float paddleY;
         stream >> paddleY;
-        qDebug() << "playersNetwork size:" << g_game->playersNetwork.size();
 
-        qDebug() << "Handler binaire joueur 2 | ID:" << senderId << "Paddle Y:" << paddleY;
         int id = senderId;
         PlayerNetwork *player = g_game->playersNetwork[0];
-        qDebug() << "Paddle Y:" << paddleY;
-        qDebug() << "ID:" << id;
         player->updatePaddlePosition(paddleY);
     }
 };
@@ -379,7 +374,6 @@ public:
         float paddleY;
         stream >> paddleY;
 
-        qDebug() << "Handler binaire joueur 4 | ID:" << senderId << "Paddle Y:" << paddleY;
         // Traitez ici le message pour le joueur 4
     }
 };
@@ -408,7 +402,6 @@ public:
         float ballX;
         stream >> ballX;
 
-        qDebug() << "Handler binaire balle | Ball Y:" << ballY << "Ball X:" << ballX;
         if (!g_isHost) {
             g_game->getBall()->setPos(ballX, ballY);
         }
@@ -472,14 +465,14 @@ void GameClient::startCheckPaddleTimer()
 {
     checkPaddleTimer = new QTimer(this);
     connect(checkPaddleTimer, &QTimer::timeout, this, &GameClient::checkPaddlePosition);
-    checkPaddleTimer->start(1);
+    checkPaddleTimer->start(100);
 }
 
 void GameClient::startCheckBallTimer()
 {
     checkBallTimer = new QTimer(this);
     connect(checkBallTimer, &QTimer::timeout, this, &GameClient::checkBallPosition);
-    checkBallTimer->start(1);
+    checkBallTimer->start(100);
 }
 
 void GameClient::simulatePaddleData()

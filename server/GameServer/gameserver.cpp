@@ -43,8 +43,6 @@ public:
         stream >> playerId;
         stream >> paddleY;
 
-        qDebug() << "Serveur | Reçu Paddle Move binaire - PlayerID:" << playerId << "Position Y:" << paddleY;
-
         server->sendPaddlePosition(playerId, paddleY);
     }
 };
@@ -72,8 +70,6 @@ public:
         stream >> playerId;
         stream >> ballY;
         stream >> ballX;
-
-        qDebug() << "Serveur | Reçu Ball Move binaire - PlayerID:" << playerId << "Position Y:" << ballY << "Position X:" << ballX;
 
         server->sendBallPosition(playerId, ballY, ballX);
     }
@@ -131,7 +127,6 @@ public:
             info.ready = false;
             server->players[playerId] = info;
             server->currentPlayers++;
-            qDebug() << "Nouveau joueur assigné:" << playerId;
 
             server->sendMessageToPlayer(playerId, "ASSIGN_ID " + QString::number(playerId));
             server->sendWaitingRoomInfo(playerId);
@@ -444,8 +439,6 @@ void GameServer::sendBinaryToPlayer(int playerId, quint8 messageType, const QByt
 
     clientSocket->write(data);
     clientSocket->flush();
-
-    qDebug() << "Serveur | Message binaire envoyé (Type:" << messageType << ") au joueur" << playerId;
 }
 
 void GameServer::sendBinaryToAllExcept(int excludedPlayerId, quint8 messageType, const QByteArray &payload) {
