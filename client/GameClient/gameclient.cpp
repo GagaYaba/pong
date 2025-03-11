@@ -227,7 +227,7 @@ GameClient::GameClient(QObject *parent)
 void GameClient::startCheckPaddleTimer() {
     checkPaddleTimer = new QTimer(this);
     connect(checkPaddleTimer, &QTimer::timeout, this, &GameClient::checkPaddlePosition);
-    checkPaddleTimer->start(5);
+    checkPaddleTimer->start(10);
 }
 
 void GameClient::simulatePaddleData() {
@@ -238,19 +238,51 @@ void GameClient::simulatePaddleData() {
 }
 
 void GameClient::checkPaddlePosition() {
-    lastPaddleY = -1;
     if (g_game) {
-        float paddleY = g_game->players[g_playerId]->getPaddle()->y();
-        if (paddleY != lastPaddleY) {
-            lastPaddleY = paddleY;
-            sendPaddlePositionBinary(paddleY);
-        }
+        float paddleY = g_game->players[0]->getPaddle()->y();
+        sendPaddlePositionBinary(paddleY);
     }
 }
+
+// void GameClient::checkPaddlePosition() {
+//     lastPaddleY = -1;
+
+//     qDebug() << g_playerId;
+
+
+//     if (!g_game) {
+//         qDebug() << "Erreur: g_game est NULL";
+//         return;
+//     }
+
+//     if (g_playerId < 0 || g_playerId >= g_game->players.size()) {
+//         qDebug() << "Erreur: g_playerId (" << g_playerId << ") hors limites";
+//         return;
+//     }
+
+//     Player* player = g_game->players[g_playerId];  // Récupérer le joueur
+//     if (!player) {
+//         qDebug() << "Erreur: Player est NULL";
+//         return;
+//     }
+
+//     Paddle* paddle = player->getPaddle();  // Récupérer le paddle
+//     if (!paddle) {
+//         qDebug() << "Erreur: Paddle est NULL";
+//         return;
+//     }
+
+//     float paddleY = paddle->y();
+//     if (paddleY != lastPaddleY) {
+//         lastPaddleY = paddleY;
+//         sendPaddlePositionBinary(paddleY);
+//     }
+// }
 
 void GameClient::sendPaddlePositionBinary(float paddleY) {
     // Vérifier si la position a changé avant d'envoyer
     if (paddleY != lastPaddleY) {
+        qDebug() << "Client | Position du paddle:" << paddleY;
         lastPaddleY = paddleY;
 
         QByteArray data;
