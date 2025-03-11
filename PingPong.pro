@@ -13,10 +13,7 @@ SOURCES += \
     src/ball.cpp \
     src/boundary.cpp \
     src/collision.cpp \
-    src/control.cpp \
     src/game.cpp \
-    src/inputKeybord.cpp \
-    src/inputNetwork.cpp \
     src/globals.cpp \
     src/mainwindow.cpp \
     src/menuwindow.cpp \
@@ -44,11 +41,8 @@ HEADERS += \
     include/ball.h \
     include/boundary.h \
     include/collision.h \
-    include/control.h \
     include/game.h \
     include/globals.h \
-    include/inputKeybord.h \
-    include/inputNetwork.h \
     include/mainwindow.h \
     include/menuwindow.h \
     include/paddle.h \

@@ -151,8 +151,7 @@ public:
     void handle(GameClient *client, const QString &message) override {
         Q_UNUSED(message);
         qDebug() << "La partie commence!";
-        Game game;
-        game.show();
+        emit client->gameStart();
     }
 };
 
