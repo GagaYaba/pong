@@ -278,6 +278,9 @@ public:
         stream >> paddleY;
 
         qDebug() << "Handler binaire joueur 1 | ID:" << senderId << "Paddle Y:" << paddleY;
+        int id = senderId;
+        PlayerNetwork *player = g_game->playersNetwork[0];
+        player->updatePaddlePosition(paddleY);
         // Traitez ici le message pour le joueur 1
     }
 };
@@ -306,9 +309,14 @@ public:
         stream >> senderId;
         float paddleY;
         stream >> paddleY;
+        qDebug() << "playersNetwork size:" << g_game->playersNetwork.size();
 
         qDebug() << "Handler binaire joueur 2 | ID:" << senderId << "Paddle Y:" << paddleY;
-        // Traitez ici le message pour le joueur 2
+        int id = senderId;
+        PlayerNetwork *player = g_game->playersNetwork[0];
+        qDebug() << "Paddle Y:" << paddleY;
+        qDebug() << "ID:" << id;
+        player->updatePaddlePosition(paddleY);
     }
 };
 
