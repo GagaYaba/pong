@@ -5,8 +5,7 @@
 #include "../client/GameClient/gameclient.h"
 
 Game::Game(QWidget *parent, GameMode mode)
-    : QGraphicsView(parent), gameMode(mode)
-{
+        : QGraphicsView(parent), gameMode(mode) {
     int screenWidth = 600;
     int screenHeight = 600;
 
@@ -36,19 +35,19 @@ Game::Game(QWidget *parent, GameMode mode)
     setFocus();
 }
 
-void Game::setupPlayersAndPaddles()
-{
+void Game::setupPlayersAndPaddles() {
     int screenWidth = 600;
     int screenHeight = 600;
 
     // Vérifier quel joueur est ce client
-    if (g_playerRole == "p1")
-    {
-        players.append(new Player(new Paddle(screenWidth * 0.05, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::p1), Qt::Key_S, Qt::Key_W, keysPressed));
-    }
-    else if (g_playerRole == "p2")
-    {
-        players.append(new Player(new Paddle(screenWidth * 0.95 - 10, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::p2), Qt::Key_Up, Qt::Key_Down, keysPressed));
+    if (g_playerRole == "p1") {
+        players.append(new Player(
+                new Paddle(screenWidth * 0.05, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::p1),
+                Qt::Key_S, Qt::Key_W, keysPressed));
+    } else if (g_playerRole == "p2") {
+        players.append(new Player(
+                new Paddle(screenWidth * 0.95 - 10, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::p2),
+                Qt::Key_Up, Qt::Key_Down, keysPressed));
         //    } else if (g_playerRole == "p3" && g_gameMode == "TwoVTwo") {
         //        players.append(new Player(new Paddle(screenWidth * 0.2, screenHeight * 0.15, 5, screenHeight, keysPressed, Paddle::p3), Qt::Key_R, Qt::Key_D, keysPressed));
         //    } else if (g_playerRole == "p4" && g_gameMode == "TwoVTwo") {
@@ -65,58 +64,45 @@ void Game::setupPlayersAndPaddles()
         // Les autres joueurs seront mis à jour via le réseau (ex: setPaddlePosition)
 }
 
-Ball *Game::getBall()
-{
+Ball *Game::getBall() {
     return ball;
 }
 
-void Game::increaseTeam1Score()
-{
+void Game::increaseTeam1Score() {
     score->increaseTeam1Score();
 }
 
-void Game::increaseTeam2Score()
-{
+void Game::increaseTeam2Score() {
     score->increaseTeam2Score();
 }
 
-void Game::keyPressEvent(QKeyEvent *event)
-{
+void Game::keyPressEvent(QKeyEvent *event) {
     keysPressed->insert(event->key());
 }
 
-void Game::keyReleaseEvent(QKeyEvent *event)
-{
+void Game::keyReleaseEvent(QKeyEvent *event) {
     keysPressed->remove(event->key());
 }
 
-Paddle *Game::getPaddle(int playerIndex)
-{
-    if (playerIndex >= 0 && playerIndex < players.size())
-    {
+Paddle *Game::getPaddle(int playerIndex) {
+    if (playerIndex >= 0 && playerIndex < players.size()) {
         return players[playerIndex]->getPaddle();
     }
     return nullptr;
 }
 
-void Game::closeEvent(QCloseEvent *event)
-{
+void Game::closeEvent(QCloseEvent *event) {
     int ret = QMessageBox::question(this, "Quitter", "Voulez-vous vraiment quitter ?",
                                     QMessageBox::Yes | QMessageBox::No);
-    if (ret == QMessageBox::Yes)
-    {
+    if (ret == QMessageBox::Yes) {
         event->accept();
-    }
-    else
-    {
+    } else {
         event->ignore();
     }
 }
 
-void Game::updateGame()
-{
-    for (Player *player : players)
-    {
+void Game::updateGame() {
+    for (Player *player: players) {
         player->update();
     }
 }

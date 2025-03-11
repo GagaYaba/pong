@@ -28,6 +28,7 @@ public:
     // Envoyer la position de la raquette
     void sendPaddlePosition(float paddleY);
     int playerId;
+    void sendPaddlePositionBinary(float paddleY);
 
 signals:
     void availableSlotsReceived(const QStringList &slots);

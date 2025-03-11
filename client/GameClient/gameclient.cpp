@@ -295,5 +295,31 @@ void GameClient::onDataReceived() {
         }
     }
 }
+void GameClient::sendPaddlePositionBinary(float paddleY) {
+    // Vérifier si la position a changé avant d'envoyer
+    if (paddleY != lastPaddleY) {
+        lastPaddleY = paddleY;
+
+        QByteArray data;
+        QDataStream stream(&data, QIODevice::WriteOnly);
+        stream.setByteOrder(QDataStream::BigEndian); // Format réseau
+        stream.setVersion(QDataStream::Qt_6_0);
+
+        quint8 messageType = 1; // Identifiant de message "Paddle Move"
+        stream << messageType;
+        stream << static_cast<qint32>(playerId); // ID du joueur
+        stream << paddleY; // Position Y du paddle
+
+        // Vérifier si le socket est bien connecté avant d'envoyer
+        if (tcpSocket->state() == QTcpSocket::ConnectedState) {
+            tcpSocket->write(data);
+            tcpSocket->flush();
+            qDebug() << "Client | Message binaire envoyé:" << data.toHex();
+        } else {
+            qDebug() << "Client | Erreur: Connexion non établie";
+        }
+    }
+}
+
 
 
