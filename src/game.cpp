@@ -36,12 +36,6 @@ Game::Game(QWidget *parent, GameMode mode)
     setFocus();
 }
 
-void Game::startGame() {
-    qDebug() << "Démarrage du jeu...";
-    Game game;
-    game.show();
-}
-
 void Game::setupPlayersAndPaddles()
 {
     int screenWidth = 600;
