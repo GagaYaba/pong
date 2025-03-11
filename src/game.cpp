@@ -1,6 +1,7 @@
 // game.cpp
 #include <QMessageBox>
 #include "../include/game.h"
+#include "../include/globals.h"
 
 Game::Game(QWidget *parent, GameMode mode)
     : QGraphicsView(parent), gameMode(mode) {
@@ -14,7 +15,7 @@ Game::Game(QWidget *parent, GameMode mode)
     keysPressed = new QSet<int>();
 
     // Configure les joueurs et les paddles en fonction du mode de jeu
-    setupPlayersAndPaddles("OneVOne");
+    setupPlayersAndPaddles("OneVOne", );
 
     ball = new Ball(screenWidth, screenHeight, this);
     scene->addItem(ball);
@@ -33,25 +34,22 @@ Game::Game(QWidget *parent, GameMode mode)
     setFocus();
 }
 
-void Game::setupPlayersAndPaddles(QString role) {
+void Game::setupPlayersAndPaddles() {
     int screenWidth = 600;
     int screenHeight = 600;
 
-    // Mode 1v1
-    if (role == "OneVOne") {
+    // Vérifier quel joueur est ce client
+    if (g_playerRole == "p1") {
         players.append(new Player(new Paddle(screenWidth * 0.05, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::p1), Qt::Key_S, Qt::Key_W, keysPressed));
+    } else if (g_playerRole == "p2") {
         players.append(new Player(new Paddle(screenWidth * 0.95 - 10, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::p2), Qt::Key_Up, Qt::Key_Down, keysPressed));
-    }
-    else if (role == "TwoVTwo") {
-        players.append(new Player(new Paddle(screenWidth * 0.05, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::p1), Qt::Key_S, Qt::Key_W, keysPressed));
-        players.append(new Player(new Paddle(screenWidth * 0.95 - 10, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::p2), Qt::Key_Up, Qt::Key_Down, keysPressed));
-        players.append(new Player(new Paddle(screenWidth * 0.2, screenHeight * 0.15, 5, screenHeight, keysPressed, Paddle::p3), Qt::Key_R, Qt::Key_D, keysPressed));
-        players.append(new Player(new Paddle(screenWidth * 0.8 - 10, screenHeight * 0.15, 5, screenHeight, keysPressed, Paddle::p4), Qt::Key_Left, Qt::Key_Right, keysPressed));
+
+    // Ajouter uniquement le paddle du joueur local à la scène
+    if (!players.isEmpty()) {
+        scene->addItem(players[0]->getPaddle());
     }
 
-    for (Player* player : players) {
-        scene->addItem(player->getPaddle());
-    }
+    // Les autres joueurs seront mis à jour via le réseau (ex: setPaddlePosition)
 }
 
 Ball* Game::getBall() {

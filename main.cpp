@@ -9,7 +9,5 @@ int main(int argc, char *argv[]) {
     window.resize(400, 300);
     window.show();
 
-    Game game;
-    // game.show();
     return app.exec();
 }

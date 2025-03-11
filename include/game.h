@@ -28,7 +28,7 @@ protected:
     void keyReleaseEvent(QKeyEvent *event) override;
     void closeEvent(QCloseEvent *event) override;
 private:
-    void setupPlayersAndPaddles(QString role); // Nouvelle méthode pour configurer les joueurs et les paddles
+    void setupPlayersAndPaddles(); // Nouvelle méthode pour configurer les joueurs et les paddles
     GameMode gameMode; // Variable pour le mode de jeu
 
     QGraphicsScene* scene;

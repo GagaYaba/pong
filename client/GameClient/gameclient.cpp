@@ -133,7 +133,6 @@ public:
             QString message = "READY " + QString::number(client->playerId);
             client->sendMessage(message);
             emit client->gameInfoReceived(parts[1]); // Émet le signal pour fermer le dialog
-
         } else {
             qDebug() << "Erreur: message GAME_INFO mal formé";
         }
@@ -152,6 +151,8 @@ public:
     void handle(GameClient *client, const QString &message) override {
         Q_UNUSED(message);
         qDebug() << "La partie commence!";
+        Game game;
+        game.show();
     }
 };
 
