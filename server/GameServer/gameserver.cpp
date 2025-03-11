@@ -6,12 +6,12 @@
 #include <vector>
 
 // ==============================
-// Interface du BinaryEventHandler
+// Interface du BinaryEventHandlerS
 // ==============================
-class BinaryEventHandler
+class BinaryEventHandlerS
 {
 public:
-    virtual ~BinaryEventHandler() {}
+    virtual ~BinaryEventHandlerS() {}
     // Retourne vrai si ce handler peut traiter le message contenu dans le flux
     virtual bool canHandle(QDataStream &stream) const = 0;
     // Traite l'événement en passant le GameServer, le socket client et le flux de données
@@ -21,7 +21,7 @@ public:
 // ============================================
 // Handler pour le message binaire "Paddle Move"
 // ============================================
-class PaddleMoveBinaryEventHandler : public BinaryEventHandler
+class PaddleMoveBinaryEventHandler : public BinaryEventHandlerS
 {
 public:
     bool canHandle(QDataStream &stream) const override
@@ -50,14 +50,14 @@ public:
 };
 
 // ============================================
-// Factory pour créer les BinaryEventHandlers
+// Factory pour créer les BinaryEventHandlerS
 // ============================================
-class BinaryEventHandlerFactory
+class BinaryEventHandlerFactoryS
 {
 public:
-    static std::vector<std::unique_ptr<BinaryEventHandler>> createHandlers()
+    static std::vector<std::unique_ptr<BinaryEventHandlerS>> createHandlers()
     {
-        std::vector<std::unique_ptr<BinaryEventHandler>> handlers;
+        std::vector<std::unique_ptr<BinaryEventHandlerS>> handlers;
         handlers.push_back(std::make_unique<PaddleMoveBinaryEventHandler>());
         // Vous pouvez ajouter d'autres handlers binaires ici
         return handlers;
@@ -327,7 +327,7 @@ void GameServer::onDataReceived()
             stream.setVersion(QDataStream::Qt_6_0);
 
             // Récupère la liste des handlers binaires depuis la factory dédiée
-            auto binaryHandlers = BinaryEventHandlerFactory::createHandlers();
+            auto binaryHandlers = BinaryEventHandlerFactoryS::createHandlers();
             bool handled = false;
             for (const auto &handler : binaryHandlers)
             {
