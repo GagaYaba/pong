@@ -54,6 +54,7 @@ void Game::setupPlayersAndPaddles()
         //    } else if (g_playerRole == "p4" && g_gameMode == "TwoVTwo") {
         //        players.append(new Player(new Paddle(screenWidth * 0.8 - 10, screenHeight * 0.15, 5, screenHeight, keysPressed, Paddle::p4), Qt::Key_Left, Qt::Key_Right, keysPressed));
         //    }
+    }
 
         // Ajouter uniquement le paddle du joueur local à la scène
         if (!players.isEmpty())
@@ -62,7 +63,6 @@ void Game::setupPlayersAndPaddles()
         }
 
         // Les autres joueurs seront mis à jour via le réseau (ex: setPaddlePosition)
-    }
 }
 
 Ball *Game::getBall()
