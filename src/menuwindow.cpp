@@ -63,11 +63,11 @@ void MenuWindow::onStart() {
         g_client ->connectToServer(QHostAddress::LocalHost);  // Connexion locale
     }
 
-    if (client) {
+    if (g_client) {
         qDebug() << "Connexion du signal availableSlotsReceived à onAvailableSlotsReceived";
-        connect(client, &GameClient::availableSlotsReceived, this, &MenuWindow::onAvailableSlotsReceived);
+        connect(g_client, &GameClient::availableSlotsReceived, this, &MenuWindow::onAvailableSlotsReceived);
     } else {
-        qDebug() << "client est NULL, impossible de connecter le signal.";
+        qDebug() << "g_client est NULL, impossible de connecter le signal.";
     }
 }
 
@@ -101,16 +101,16 @@ void MenuWindow::onJoin() {
             return;
         }
 
-        if (!client) {
-            client = new GameClient(this);
-            client->connectToServer(QHostAddress(ip));  // Connexion avec l'IP décodée
+        if (!g_client) {
+            g_client = new GameClient(this);
+            g_client->connectToServer(QHostAddress(ip));  // Connexion avec l'IP décodée
         }
 
-        if (client) {
+        if (g_client) {
             qDebug() << "Connexion du signal availableSlotsReceived à onAvailableSlotsReceived";
-            connect(client, &GameClient::availableSlotsReceived, this, &MenuWindow::onAvailableSlotsReceived);
+            connect(g_client, &GameClient::availableSlotsReceived, this, &MenuWindow::onAvailableSlotsReceived);
             } else {
-            qDebug() << "client est NULL, impossible de connecter le signal.";
+            qDebug() << "g_client est NULL, impossible de connecter le signal.";
         }
 
     }
@@ -150,15 +150,15 @@ QString MenuWindow::decodeJoinCode(const QString &code) {
 }
 
 void MenuWindow::onRoleSelected(const QString &player, bool selected) {
-    if (client) {
-        client->selectRole(player);
+    if (g_client) {
+        g_client->selectRole(player);
         qDebug() << "Rôle sélectionné:" << player;
     }
 }
 
 void MenuWindow::onGameStarted() {
-    if (client) {
-        client->startGame();
+    if (g_client) {
+        g_client->startGame();
         qDebug() << "Jeu démarré!";
     }
 }
