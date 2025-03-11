@@ -49,6 +49,36 @@ public:
     }
 };
 
+class BallMoveBinaryEventHandler : public BinaryEventHandlerS
+{   
+public:
+    bool canHandle(QDataStream &stream) const override
+    {
+        // Sauvegarde de la position courante du flux pour ne pas consommer les données
+        qint64 pos = stream.device()->pos();
+        quint8 messageType;
+        stream >> messageType;
+        stream.device()->seek(pos);
+        return messageType == 2; // 2 correspond au type "Ball Move"
+    }
+
+    void handle(GameServer *server, QTcpSocket *clientSocket, QDataStream &stream) override
+    {
+        quint8 messageType;
+        stream >> messageType;
+        qint32 playerId;
+        float ballY;
+        float ballX;
+        stream >> playerId;
+        stream >> ballY;
+        stream >> ballX;
+
+        qDebug() << "Serveur | Reçu Ball Move binaire - PlayerID:" << playerId << "Position Y:" << ballY << "Position X:" << ballX;
+
+        server->sendBallPosition(playerId, ballY, ballX);
+    }
+};
+
 // ============================================
 // Factory pour créer les BinaryEventHandlerS
 // ============================================
@@ -59,6 +89,7 @@ public:
     {
         std::vector<std::unique_ptr<BinaryEventHandlerS>> handlers;
         handlers.push_back(std::make_unique<PaddleMoveBinaryEventHandler>());
+        handlers.push_back(std::make_unique<BallMoveBinaryEventHandler>());
         // Vous pouvez ajouter d'autres handlers binaires ici
         return handlers;
     }
@@ -441,6 +472,19 @@ void GameServer::sendPaddlePosition(int playerId, float paddleY) {
     stream << paddleY; // Position Y du paddle
 
     sendBinaryToAllExcept(playerId, playerId, payload);
+}
+
+void GameServer::sendBallPosition(int playerId, float ballY, float ballX) {
+    QByteArray payload;
+    QDataStream stream(&payload, QIODevice::WriteOnly);
+    stream.setByteOrder(QDataStream::BigEndian);
+    stream.setVersion(QDataStream::Qt_6_0);
+
+    stream << static_cast<qint32>(playerId); // ID du joueur
+    stream << ballY; // Position Y de la balle
+    stream << ballX; // Position X de la balle
+
+    sendBinaryToAllExcept(playerId, 5, payload);
 }
 
 void GameServer::sendWaitingRoomInfo(int playerId)

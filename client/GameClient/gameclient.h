@@ -34,6 +34,12 @@ public:
     void checkPaddlePosition();
     void startCheckPaddleTimer();
     QTimer *checkPaddleTimer;
+    void startCheckBallTimer();
+    void checkBallPosition();
+    QTimer *checkBallTimer;
+    void sendBallPositionBinary(float ballY, float ballX);
+
+
 
     int playerId;
 
@@ -55,6 +61,8 @@ private:
     float lastPaddleY = -1;
     QTimer *simulationTimer;
     float simulationPaddleY { 0.0f };
+    float lastBallY = -1;
+    float lastBallX = -1;
 
     // Liste des gestionnaires d'événements
     

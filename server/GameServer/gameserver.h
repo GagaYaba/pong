@@ -26,6 +26,7 @@ public:
     void sendBinaryToPlayer(int playerId, quint8 messageType, const QByteArray &payload);
     void broadcastBinaryData(quint8 messageType, const QByteArray &payload);
     void sendPaddlePosition(int playerId, float paddleY);
+    void sendBallPosition(int playerId, float ballY, float ballX);
     void sendWaitingRoomInfo(int playerId);
     void updateWaitingRoomForAll();
     void checkAndStartGame();
@@ -37,6 +38,8 @@ public:
     QMap<QString, bool> roleTaken;
     QStringList rolesList;
     int gameMode;
+
+    
 
 private slots:
     void onNewConnection();

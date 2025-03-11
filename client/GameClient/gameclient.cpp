@@ -191,6 +191,10 @@ public:
         qDebug() << "La partie commence!";
         g_game = new Game;
         g_game->show();
+        if (g_isHost)
+        {
+            client->startCheckBallTimer();
+        }
         client->startCheckPaddleTimer();
     }
 };
@@ -381,6 +385,37 @@ public:
 };
 
 // =====================================================
+// Handler pour "BINARY_BALL"
+// =====================================================
+class BinaryBall5EventHandler : public BinaryClientEventHandler
+{
+public:
+    bool canHandle(quint8 msgType) const override
+    {
+        return msgType == 5;
+    }
+    void handle(GameClient *client, const QByteArray &data) override
+    {
+        QDataStream stream(data);
+        stream.setByteOrder(QDataStream::BigEndian);
+        stream.setVersion(QDataStream::Qt_6_0);
+
+        // On lit le type (déjà vérifié) puis les autres données
+        quint8 type;
+        stream >> type;
+        qint32 senderId;
+        stream >> senderId;
+        float ballY;
+        stream >> ballY;
+        float ballX;
+        stream >> ballX;
+
+        qDebug() << "Handler binaire balle | ID:" << senderId << "Ball Y:" << ballY << "Ball X:" << ballX;
+        // Traitez ici le message pour la balle
+    }
+};
+
+// =====================================================
 // Handler par défaut pour les messages binaires inconnus
 // =====================================================
 class BinaryUnknownEventHandler : public BinaryClientEventHandler
@@ -410,6 +445,7 @@ std::vector<std::unique_ptr<BinaryClientEventHandler>> BinaryEventHandlerFactory
         handlers.push_back(std::make_unique<BinaryPlayer2EventHandler>());
         handlers.push_back(std::make_unique<BinaryPlayer3EventHandler>());
         handlers.push_back(std::make_unique<BinaryPlayer4EventHandler>());
+        handlers.push_back(std::make_unique<BinaryBall5EventHandler>());
         handlers.push_back(std::make_unique<BinaryUnknownEventHandler>()); // Handler par défaut
 
         return handlers;
@@ -437,6 +473,13 @@ void GameClient::startCheckPaddleTimer()
     checkPaddleTimer->start(1);
 }
 
+void GameClient::startCheckBallTimer()
+{
+    checkBallTimer = new QTimer(this);
+    connect(checkBallTimer, &QTimer::timeout, this, &GameClient::checkBallPosition);
+    checkBallTimer->start(1);
+}
+
 void GameClient::simulatePaddleData()
 {
     simulationPaddleY += 5.0f;
@@ -451,6 +494,16 @@ void GameClient::checkPaddlePosition()
     {
         float paddleY = g_game->players[0]->getPaddle()->y();
         sendPaddlePositionBinary(paddleY);
+    }
+}
+
+void GameClient::checkBallPosition()
+{
+    if (g_game)
+    {
+        float ballY = g_game->getBall()->y();
+        float ballX = g_game->getBall()->x();
+        sendBallPositionBinary(ballY, ballX);
     }
 }
 
@@ -505,6 +558,40 @@ void GameClient::sendPaddlePositionBinary(float paddleY)
         stream << messageType;
         stream << static_cast<qint32>(playerId); // ID du joueur
         stream << paddleY;                       // Position Y du paddle
+
+        // Vérifier si le socket est bien connecté avant d'envoyer
+        if (tcpSocket->state() == QTcpSocket::ConnectedState)
+        {
+            tcpSocket->write(data);
+            tcpSocket->flush();
+            qDebug() << "Client | Message binaire envoyé:" << data.toHex();
+        }
+        else
+        {
+            qDebug() << "Client | Erreur: Connexion non établie";
+        }
+    }
+}
+
+void GameClient::sendBallPositionBinary(float ballY, float ballX)
+{
+    // Vérifier si la position a changé avant d'envoyer
+    if (ballY != lastBallY || ballX != lastBallX)
+    {
+        qDebug() << "Client | Position de la balle:" << ballY << ballX;
+        lastBallY = ballY;
+        lastBallX = ballX;
+
+        QByteArray data;
+        QDataStream stream(&data, QIODevice::WriteOnly);
+        stream.setByteOrder(QDataStream::BigEndian); // Format réseau
+        stream.setVersion(QDataStream::Qt_6_0);
+
+        quint8 messageType = 2; // Identifiant de message "Ball Move"
+        stream << messageType;
+        stream << static_cast<qint32>(playerId); // ID du joueur
+        stream << ballY;                         // Position Y de la balle
+        stream << ballX;                         // Position X de la balle
 
         // Vérifier si le socket est bien connecté avant d'envoyer
         if (tcpSocket->state() == QTcpSocket::ConnectedState)
