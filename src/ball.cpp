@@ -122,7 +122,7 @@ void Ball::adjustSpeed() {
 }
 
 void Ball::limitMaxSpeed() {
-    float maxSpeed = 6.0f;
+    float maxSpeed = 8.0f;
     if (std::abs(dx) > maxSpeed) {
         dx = (dx > 0 ? 1 : -1) * maxSpeed;
     }
