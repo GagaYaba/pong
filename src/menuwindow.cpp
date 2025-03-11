@@ -58,9 +58,9 @@ void MenuWindow::onStart() {
         }
     }
 
-    if (!client) {
-        client = new GameClient(this);
-        client->connectToServer(QHostAddress::LocalHost);  // Connexion locale
+    if (!g_client) {
+        g_client = new GameClient(this);
+        g_client ->connectToServer(QHostAddress::LocalHost);  // Connexion locale
     }
 
     if (client) {

@@ -2,6 +2,7 @@
 #include <QMessageBox>
 #include "../include/game.h"
 #include "../include/globals.h"
+#include "../client/GameClient/gameclient.h"
 
 Game::Game(QWidget *parent, GameMode mode)
     : QGraphicsView(parent), gameMode(mode)
@@ -15,7 +16,7 @@ Game::Game(QWidget *parent, GameMode mode)
 
     keysPressed = new QSet<int>();
 
-    connect(g_client, &GameClient::gameStart, this, &Game::startGame);
+    connect(scene, &GameClient::gameStart, this, &Game::startGame);
 
     // Configure les joueurs et les paddles en fonction du mode de jeu
     setupPlayersAndPaddles();
