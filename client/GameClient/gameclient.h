@@ -30,10 +30,10 @@ public:
     void sendPaddlePositionBinary(float paddleY);
     void simulatePaddleData();
     void checkPaddlePosition();
+    void startCheckPaddleTimer();
     QTimer *checkPaddleTimer;
 
     int playerId;
-    void sendPaddlePositionBinary(float paddleY);
 
 signals:
     void availableSlotsReceived(const QStringList &slots);

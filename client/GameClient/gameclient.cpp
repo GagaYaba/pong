@@ -155,10 +155,7 @@ public:
         qDebug() << "La partie commence!";
         g_game = new Game;
         g_game->show();
-        
-        checkPaddleTimer = new QTimer(this);
-        connect(checkPaddleTimer, &QTimer::timeout, this, &GameClient::checkPaddlePosition);
-        checkPaddleTimer->start(10);
+        client->startCheckPaddleTimer();
     }
 };
 
@@ -225,6 +222,12 @@ GameClient::GameClient(QObject *parent)
     // simulationTimer = new QTimer(this);
     // connect(simulationTimer, &QTimer::timeout, this, &GameClient::simulatePaddleData);
     // simulationTimer->start(5);
+}
+
+void GameClient::startCheckPaddleTimer() {
+    checkPaddleTimer = new QTimer(this);
+    connect(checkPaddleTimer, &QTimer::timeout, this, &GameClient::checkPaddlePosition);
+    checkPaddleTimer->start(5);
 }
 
 void GameClient::simulatePaddleData() {
