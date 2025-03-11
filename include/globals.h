@@ -5,8 +5,10 @@
 #include <QHostAddress>
 
 class GameClient;
+class Game;
 
 extern GameClient *g_client;
+extern Game *g_game;
 extern QString g_gameMode;
 extern QString g_playerRole;
 extern int g_playerId;

@@ -152,8 +152,9 @@ public:
     void handle(GameClient *client, const QString &message) override {
         Q_UNUSED(message);
         qDebug() << "La partie commence!";
-        Game *game = new Game;
-        game->show();
+        g_game = new Game;
+        g_game->show();
+
     }
 };
 
