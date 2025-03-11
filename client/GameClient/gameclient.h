@@ -55,6 +55,7 @@ private:
     float simulationPaddleY { 0.0f };
 
     // Liste des gestionnaires d'événements
+    
     std::vector<std::unique_ptr<ClientEventHandler>> handlers;
 };
 

@@ -45,17 +45,7 @@ public:
 
         qDebug() << "Serveur | Reçu Paddle Move binaire - PlayerID:" << playerId << "Position Y:" << paddleY;
 
-        // Création du message de diffusion sous forme binaire
-        QByteArray response;
-        QDataStream responseStream(&response, QIODevice::WriteOnly);
-        responseStream.setByteOrder(QDataStream::BigEndian);
-        responseStream.setVersion(QDataStream::Qt_6_0);
-
-        responseStream << static_cast<quint8>(2); // 2 = "Update Paddle"
-        responseStream << playerId;
-        responseStream << paddleY;
-
-        // Diffuser le message aux autres clients
+        server->sendPaddlePosition(playerId, paddleY);
     }
 };
 
@@ -399,6 +389,58 @@ void GameServer::sendMessageToPlayer(int playerId, const QString &message)
         QByteArray data = message.toUtf8();
         players[playerId].socket->write(data + "\n");
     }
+}
+
+void GameServer::sendBinaryToPlayer(int playerId, quint8 messageType, const QByteArray &payload) {
+    if (!players.contains(playerId)) {
+        qDebug() << "Serveur | Erreur: Joueur" << playerId << "non trouvé.";
+        return;
+    }
+
+    QTcpSocket *clientSocket = players[playerId].socket;
+    if (!clientSocket || clientSocket->state() != QTcpSocket::ConnectedState) {
+        qDebug() << "Serveur | Erreur: Socket du joueur" << playerId << "non connectée.";
+        return;
+    }
+
+    QByteArray data;
+    QDataStream stream(&data, QIODevice::WriteOnly);
+    stream.setByteOrder(QDataStream::BigEndian);
+    stream.setVersion(QDataStream::Qt_6_0);
+
+    stream << messageType;  // Type du message
+    data.append(payload);   // Ajouter la charge utile (payload)
+
+    clientSocket->write(data);
+    clientSocket->flush();
+
+    qDebug() << "Serveur | Message binaire envoyé (Type:" << messageType << ") au joueur" << playerId;
+}
+
+void GameServer::sendBinaryToAllExcept(int excludedPlayerId, quint8 messageType, const QByteArray &payload) {
+    for (auto playerId : players.keys()) {
+        if (playerId != excludedPlayerId) {
+            sendBinaryToPlayer(playerId, messageType, payload);
+        }
+    }
+}
+
+void GameServer::broadcastBinaryData(quint8 messageType, const QByteArray &payload) {
+    for (auto playerId : players.keys()) {
+        sendBinaryToPlayer(playerId, messageType, payload);
+    }
+}
+
+void GameServer::sendPaddlePosition(int playerId, float paddleY) {
+    QByteArray payload;
+    QDataStream stream(&payload, QIODevice::WriteOnly);
+    stream.setByteOrder(QDataStream::BigEndian);
+    stream.setVersion(QDataStream::Qt_6_0);
+
+    stream << static_cast<qint32>(playerId); // ID du joueur
+    stream << paddleY; // Position Y du paddle
+
+    sendBinaryToAllExcept(playerId, playerId, payload);
 }
 
 void GameServer::sendWaitingRoomInfo(int playerId)

@@ -22,6 +22,10 @@ public:
     void startServer(int mode, bool autoAssign);
     void sendMessageToAll(const QString &message);
     void sendMessageToPlayer(int playerId, const QString &message);
+    void sendBinaryToAllExcept(int excludedPlayerId, quint8 messageType, const QByteArray &payload);
+    void sendBinaryToPlayer(int playerId, quint8 messageType, const QByteArray &payload);
+    void broadcastBinaryData(quint8 messageType, const QByteArray &payload);
+    void sendPaddlePosition(int playerId, float paddleY);
     void sendWaitingRoomInfo(int playerId);
     void updateWaitingRoomForAll();
     void checkAndStartGame();
