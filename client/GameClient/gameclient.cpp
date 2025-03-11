@@ -400,20 +400,19 @@ public:
         stream.setByteOrder(QDataStream::BigEndian);
         stream.setVersion(QDataStream::Qt_6_0);
 
-        // On lit le type (déjà vérifié) puis les autres données
+        // On lit le type (déjà vérifié) puis les données de la balle
         quint8 type;
         stream >> type;
-        qint32 senderId;
-        stream >> senderId;
         float ballY;
         stream >> ballY;
         float ballX;
         stream >> ballX;
 
-        qDebug() << "Handler binaire balle | ID:" << senderId << "Ball Y:" << ballY << "Ball X:" << ballX;
+        qDebug() << "Handler binaire balle | Ball Y:" << ballY << "Ball X:" << ballX;
         // Traitez ici le message pour la balle
     }
 };
+
 
 // =====================================================
 // Handler par défaut pour les messages binaires inconnus
