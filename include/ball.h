@@ -41,9 +41,9 @@ private:
     void resetBall();
     void adjustSpeed();
     void limitMaxSpeed();
-    void handlePaddleHit(Paddle* paddle);
+    void handlePaddleHit(Paddle* paddle, PaddleNetwork* paddleNetwork);
     void reverseXDirection();
-    void adjustVerticalSpeed(Paddle* paddle);
+    void adjustVerticalSpeed(Paddle* paddle, PaddleNetwork* paddleNetwork);
 
     bool hit = false;
 };

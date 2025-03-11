@@ -2,6 +2,7 @@
 #include "../include/boundary.h"
 #include "../include/paddle.h"
 #include "../include/game.h"
+#include "../include/globals.h"
 
 #include <QGraphicsScene>
 #include <QList>
@@ -43,10 +44,12 @@ void Ball::handlePaddleCollision() {
     QList<QGraphicsItem*> collidingItemsList = collidingItems();
     for (QGraphicsItem* item : collidingItemsList) {
         Paddle* paddle = dynamic_cast<Paddle*>(item);
-        if (paddle) {
-            handlePaddleHit(paddle);
+        PaddleNetwork* paddleNetwork = dynamic_cast<PaddleNetwork*>(item);
+        if (paddle || paddleNetwork) {
+            handlePaddleHit(paddle, paddleNetwork);
             reverseXDirection();
-            adjustVerticalSpeed(paddle);
+            adjustVerticalSpeed(paddle, paddleNetwork);
+
             adjustSpeed();
             limitMaxSpeed();
             qDebug() << "Ball hit the paddle!";
@@ -96,15 +99,23 @@ void Ball::resetBall() {
     hit = false;
 }
 
-void Ball::handlePaddleHit(Paddle* paddle) {
+void Ball::handlePaddleHit(Paddle* paddle, PaddleNetwork* paddleNetwork) {
     if (!hit) {
         hit = true;
     }
 
-    if (paddle == game->getPaddle(0) || paddle == game->getPaddle(2)) {
-        lastTouchedByPlayer = (paddle == game->getPaddle(0)) ? P1 : P3;
-    } else if (paddle == game->getPaddle(1) || paddle == game->getPaddle(3)) {
-        lastTouchedByPlayer = (paddle == game->getPaddle(1)) ? P2 : P4;
+    if (g_playerRole == "p1") {
+        if (paddle == game->getPaddle(0)) {
+            lastTouchedByPlayer = P1;
+        } else if (paddleNetwork == game->getPaddleNetwork(0)) {
+            lastTouchedByPlayer =  P2;
+        }
+    } else if (g_playerRole == "p2") {
+        if (paddle == game->getPaddle(0)) {
+            lastTouchedByPlayer = P2;
+        } else if (paddleNetwork == game->getPaddleNetwork(0)) {
+            lastTouchedByPlayer = P1;
+        }
     }
 }
 
@@ -112,9 +123,14 @@ void Ball::reverseXDirection() {
     dx = -dx;
 }
 
-void Ball::adjustVerticalSpeed(Paddle* paddle) {
-    float hitPosition = (y() + rect().height() / 2) - (paddle->y() + paddle->rect().height() / 2);
-    dy += hitPosition * 0.1;
+void Ball::adjustVerticalSpeed(Paddle* paddle, PaddleNetwork* paddleNetwork) {
+    if (paddle) {
+        float hitPosition = (y() + rect().height() / 2) - (paddle->y() + paddle->rect().height() / 2);
+        dy += hitPosition * 0.1;
+    } else if (paddleNetwork) {
+        float hitPosition = (y() + rect().height() / 2) - (paddleNetwork->y() + paddleNetwork->rect().height() / 2);
+        dy += hitPosition * 0.1;
+    }
 }
 
 void Ball::adjustSpeed() {

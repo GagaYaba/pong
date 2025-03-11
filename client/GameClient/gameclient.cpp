@@ -434,7 +434,7 @@ void GameClient::startCheckPaddleTimer()
 {
     checkPaddleTimer = new QTimer(this);
     connect(checkPaddleTimer, &QTimer::timeout, this, &GameClient::checkPaddlePosition);
-    checkPaddleTimer->start(10);
+    checkPaddleTimer->start(1);
 }
 
 void GameClient::simulatePaddleData()
