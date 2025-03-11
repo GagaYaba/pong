@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QTcpSocket>
 #include <QHostAddress>
+#include <QTimer>
 #include <memory>
 #include <vector>
 
@@ -26,7 +27,11 @@ public:
     // Sélectionner un rôle
     void selectRole(const QString &role);
     // Envoyer la position de la raquette
-    void sendPaddlePosition(float paddleY);
+    void sendPaddlePositionBinary(float paddleY);
+    void simulatePaddleData();
+    void checkPaddlePosition();
+    QTimer *checkPaddleTimer;
+
     int playerId;
     void sendPaddlePositionBinary(float paddleY);
 
@@ -46,6 +51,8 @@ private:
     QTcpSocket *tcpSocket;
     QHostAddress serverAddress;
     float lastPaddleY = -1;
+    QTimer *simulationTimer;
+    float simulationPaddleY { 0.0f };
 
     // Liste des gestionnaires d'événements
     std::vector<std::unique_ptr<ClientEventHandler>> handlers;

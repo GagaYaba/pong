@@ -6,29 +6,103 @@
 #include <vector>
 
 // ==============================
+// Interface du BinaryEventHandler
+// ==============================
+class BinaryEventHandler
+{
+public:
+    virtual ~BinaryEventHandler() {}
+    // Retourne vrai si ce handler peut traiter le message contenu dans le flux
+    virtual bool canHandle(QDataStream &stream) const = 0;
+    // Traite l'événement en passant le GameServer, le socket client et le flux de données
+    virtual void handle(GameServer *server, QTcpSocket *clientSocket, QDataStream &stream) = 0;
+};
+
+// ============================================
+// Handler pour le message binaire "Paddle Move"
+// ============================================
+class PaddleMoveBinaryEventHandler : public BinaryEventHandler
+{
+public:
+    bool canHandle(QDataStream &stream) const override
+    {
+        // Sauvegarde de la position courante du flux pour ne pas consommer les données
+        qint64 pos = stream.device()->pos();
+        quint8 messageType;
+        stream >> messageType;
+        stream.device()->seek(pos);
+        return messageType == 1; // 1 correspond au type "Paddle Move"
+    }
+
+    void handle(GameServer *server, QTcpSocket *clientSocket, QDataStream &stream) override
+    {
+        quint8 messageType;
+        stream >> messageType;
+        qint32 playerId;
+        float paddleY;
+        stream >> playerId;
+        stream >> paddleY;
+
+        qDebug() << "Serveur | Reçu Paddle Move binaire - PlayerID:" << playerId << "Position Y:" << paddleY;
+
+        // Création du message de diffusion sous forme binaire
+        QByteArray response;
+        QDataStream responseStream(&response, QIODevice::WriteOnly);
+        responseStream.setByteOrder(QDataStream::BigEndian);
+        responseStream.setVersion(QDataStream::Qt_6_0);
+
+        responseStream << static_cast<quint8>(2); // 2 = "Update Paddle"
+        responseStream << playerId;
+        responseStream << paddleY;
+
+        // Diffuser le message aux autres clients
+    }
+};
+
+// ============================================
+// Factory pour créer les BinaryEventHandlers
+// ============================================
+class BinaryEventHandlerFactory
+{
+public:
+    static std::vector<std::unique_ptr<BinaryEventHandler>> createHandlers()
+    {
+        std::vector<std::unique_ptr<BinaryEventHandler>> handlers;
+        handlers.push_back(std::make_unique<PaddleMoveBinaryEventHandler>());
+        // Vous pouvez ajouter d'autres handlers binaires ici
+        return handlers;
+    }
+};
+
+// ==============================
 // Interface de l'EventHandler
 // ==============================
-class EventHandler {
+class EventHandler
+{
 public:
     virtual ~EventHandler() {}
     // Retourne vrai si ce handler peut traiter le message
     virtual bool canHandle(const QString &message) const = 0;
     // Traite l'événement en passant le GameServer, le socket client et le message
-    virtual void handle(GameServer* server, QTcpSocket* clientSocket, const QString &message) = 0;
+    virtual void handle(GameServer *server, QTcpSocket *clientSocket, const QString &message) = 0;
 };
 
 // =====================================
 // Handler pour l'événement "JOIN"
 // =====================================
-class JoinEventHandler : public EventHandler {
+class JoinEventHandler : public EventHandler
+{
 public:
-    bool canHandle(const QString &message) const override {
+    bool canHandle(const QString &message) const override
+    {
         return message.trimmed() == "JOIN";
     }
 
-    void handle(GameServer* server, QTcpSocket* clientSocket, const QString & /*message*/) override {
+    void handle(GameServer *server, QTcpSocket *clientSocket, const QString & /*message*/) override
+    {
         // Code repris de la branche "JOIN" d'origine
-        if (server->currentPlayers < server->maxPlayers) {
+        if (server->currentPlayers < server->maxPlayers)
+        {
             int playerId = server->currentPlayers + 1;
             PlayerInfo info;
             info.socket = clientSocket;
@@ -42,9 +116,12 @@ public:
             server->sendWaitingRoomInfo(playerId);
             server->sendMessageToAll("PLAYER_JOINED " + QString::number(playerId));
 
-            if (server->autoAssignRoles) {
-                for (const QString &r : server->rolesList) {
-                    if (!server->roleTaken[r]) {
+            if (server->autoAssignRoles)
+            {
+                for (const QString &r : server->rolesList)
+                {
+                    if (!server->roleTaken[r])
+                    {
                         server->players[playerId].role = r;
                         server->roleTaken[r] = true;
                         server->sendMessageToPlayer(playerId, "ROLE_ASSIGNED " + r);
@@ -54,7 +131,9 @@ public:
                 }
                 server->checkAndStartGame();
             }
-        } else {
+        }
+        else
+        {
             clientSocket->write("FULL");
             clientSocket->disconnectFromHost();
         }
@@ -64,24 +143,31 @@ public:
 // ============================================
 // Handler pour l'événement "SELECT_ROLE"
 // ============================================
-class SelectRoleEventHandler : public EventHandler {
+class SelectRoleEventHandler : public EventHandler
+{
 public:
-    bool canHandle(const QString &message) const override {
+    bool canHandle(const QString &message) const override
+    {
         return message.startsWith("SELECT_ROLE ");
     }
 
-    void handle(GameServer* server, QTcpSocket* clientSocket, const QString &message) override {
+    void handle(GameServer *server, QTcpSocket *clientSocket, const QString &message) override
+    {
         QString chosenRole = message.section(' ', 1, 1); // ex: "p1"
         int playerId = server->findPlayerId(clientSocket->peerAddress(), clientSocket->peerPort());
-        if (playerId != -1) {
-            if (!server->roleTaken.value(chosenRole, true)) {
+        if (playerId != -1)
+        {
+            if (!server->roleTaken.value(chosenRole, true))
+            {
                 server->players[playerId].role = chosenRole;
                 server->roleTaken[chosenRole] = true;
                 server->sendMessageToPlayer(playerId, "ROLE_ASSIGNED " + chosenRole);
                 server->sendMessageToAll("PLAYER_UPDATED " + QString::number(playerId) + " " + chosenRole);
                 // server->updateWaitingRoomForAll();
                 server->checkAndStartGame();
-            } else {
+            }
+            else
+            {
                 server->sendMessageToPlayer(playerId, "ERROR Role not available");
             }
         }
@@ -91,13 +177,16 @@ public:
 // ============================================
 // Handler pour l'événement "START_GAME"
 // ============================================
-class StartGameEventHandler : public EventHandler {
+class StartGameEventHandler : public EventHandler
+{
 public:
-    bool canHandle(const QString &message) const override {
+    bool canHandle(const QString &message) const override
+    {
         return message.startsWith("START_GAME");
     }
 
-    void handle(GameServer* server, QTcpSocket* clientSocket, const QString &message) override {
+    void handle(GameServer *server, QTcpSocket *clientSocket, const QString &message) override
+    {
         QString gameModeString = (server->gameMode == 1) ? "OneVOne" : "TwoVTwo";
         QString messageGameInfo = "GAME_INFO " + gameModeString;
 
@@ -105,20 +194,23 @@ public:
     }
 };
 
-
 // ============================================
 // Handler pour l'événement "READY"
 // ============================================
-class ReadyEventHandler : public EventHandler {
+class ReadyEventHandler : public EventHandler
+{
 public:
-    bool canHandle(const QString &message) const override {
+    bool canHandle(const QString &message) const override
+    {
         return message.startsWith("READY ");
     }
 
-    void handle(GameServer* server, QTcpSocket* clientSocket, const QString &message) override {
+    void handle(GameServer *server, QTcpSocket *clientSocket, const QString &message) override
+    {
         QString playerIdSec = message.section(' ', 1, 1); // ex: "p1"
         int playerId = server->findPlayerId(clientSocket->peerAddress(), clientSocket->peerPort());
-        if (playerId != -1 && playerId == playerIdSec.toInt()) {
+        if (playerId != -1 && playerId == playerIdSec.toInt())
+        {
             server->players[playerId].ready = true;
             server->checkAndStartGame();
         }
@@ -128,9 +220,11 @@ public:
 // ============================================
 // Factory pour créer les EventHandlers
 // ============================================
-class EventHandlerFactory {
+class EventHandlerFactory
+{
 public:
-    static std::vector<std::unique_ptr<EventHandler>> createHandlers() {
+    static std::vector<std::unique_ptr<EventHandler>> createHandlers()
+    {
         std::vector<std::unique_ptr<EventHandler>> handlers;
         handlers.push_back(std::make_unique<JoinEventHandler>());
         handlers.push_back(std::make_unique<SelectRoleEventHandler>());
@@ -146,11 +240,11 @@ public:
 // ==============================
 GameServer::GameServer(QObject *parent)
     : QObject(parent),
-    tcpServer(new QTcpServer(this)),
-    maxPlayers(2),
-    currentPlayers(0),
-    gameMode(1),
-    autoAssignRoles(false)
+      tcpServer(new QTcpServer(this)),
+      maxPlayers(2),
+      currentPlayers(0),
+      gameMode(1),
+      autoAssignRoles(false)
 {
     connect(tcpServer, &QTcpServer::newConnection, this, &GameServer::onNewConnection);
 }
@@ -163,29 +257,38 @@ void GameServer::startServer(int mode, bool autoAssign)
 
     rolesList.clear();
     roleTaken.clear();
-    if (mode == 1) {
+    if (mode == 1)
+    {
         rolesList << "p1" << "p2";
-    } else {
+    }
+    else
+    {
         rolesList << "p1" << "p2" << "p3" << "p4";
     }
-    for (const QString &r : rolesList) {
+    for (const QString &r : rolesList)
+    {
         roleTaken[r] = false;
     }
 
     QList<quint16> ports = {27460, 25518, 27718, 28147, 27808, 26897, 29102, 25499, 27520, 27392};
     bool serverStarted = false;
 
-    for (quint16 port : ports) {
-        if (tcpServer->listen(QHostAddress::Any, port)) {
+    for (quint16 port : ports)
+    {
+        if (tcpServer->listen(QHostAddress::Any, port))
+        {
             qDebug() << "Serveur TCP démarré sur le port" << port << "Mode:" << ((mode == 1) ? "OneVOne" : "TwoVTwo");
             serverStarted = true;
             break;
-        } else {
+        }
+        else
+        {
             qDebug() << "Le port" << port << "n'est pas disponible, test suivant...";
         }
     }
 
-    if (!serverStarted) {
+    if (!serverStarted)
+    {
         qDebug() << "Erreur: aucun des ports disponibles n'a pu être utilisé.";
     }
 }
@@ -200,20 +303,54 @@ void GameServer::onNewConnection()
 void GameServer::onDataReceived()
 {
     QTcpSocket *clientSocket = qobject_cast<QTcpSocket *>(sender());
-    if (clientSocket) {
-        QByteArray buffer = clientSocket->readAll();
-        QString message = QString::fromUtf8(buffer).trimmed();
-        qDebug() << "SS | Reçu:" << message
-                 << "de" << clientSocket->peerAddress().toString()
-                 << ":" << clientSocket->peerPort();
+    if (clientSocket)
+    {
+        // On regarde le contenu sans le retirer de la file d'attente
+        QByteArray peekBuffer = clientSocket->peek(clientSocket->bytesAvailable());
 
-        // Récupère la liste des handlers depuis la factory
-        auto handlers = EventHandlerFactory::createHandlers();
-        // Parcours de chaque handler dans une boucle for
-        for (const auto &handler : handlers) {
-            if (handler->canHandle(message)) {
-                handler->handle(this, clientSocket, message);
-                break; // On arrête dès qu'un handler a traité l'évènement
+        if (peekBuffer.endsWith('\n'))
+        {
+            // Traitement du message en chaîne de caractères
+            QByteArray buffer = clientSocket->readAll();
+            QString message = QString::fromUtf8(buffer).trimmed();
+            qDebug() << "Serveur | Reçu (string):" << message
+                     << "de" << clientSocket->peerAddress().toString()
+                     << ":" << clientSocket->peerPort();
+
+            // Récupère la liste des handlers string depuis la factory existante
+            auto handlers = EventHandlerFactory::createHandlers();
+            for (const auto &handler : handlers)
+            {
+                if (handler->canHandle(message))
+                {
+                    handler->handle(this, clientSocket, message);
+                    break; // On arrête dès qu'un handler a traité l'évènement
+                }
+            }
+        }
+        else
+        {
+            // Traitement du message binaire
+            QByteArray buffer = clientSocket->readAll();
+            QDataStream stream(buffer);
+            stream.setByteOrder(QDataStream::BigEndian);
+            stream.setVersion(QDataStream::Qt_6_0);
+
+            // Récupère la liste des handlers binaires depuis la factory dédiée
+            auto binaryHandlers = BinaryEventHandlerFactory::createHandlers();
+            bool handled = false;
+            for (const auto &handler : binaryHandlers)
+            {
+                if (handler->canHandle(stream))
+                {
+                    handler->handle(this, clientSocket, stream);
+                    handled = true;
+                    break;
+                }
+            }
+            if (!handled)
+            {
+                qDebug() << "Serveur | Message binaire non reconnu";
             }
         }
     }
@@ -222,9 +359,11 @@ void GameServer::onDataReceived()
 void GameServer::onDisconnected()
 {
     QTcpSocket *clientSocket = qobject_cast<QTcpSocket *>(sender());
-    if (clientSocket) {
+    if (clientSocket)
+    {
         int playerId = findPlayerId(clientSocket->peerAddress(), clientSocket->peerPort());
-        if (playerId != -1) {
+        if (playerId != -1)
+        {
             players.remove(playerId);
             currentPlayers--;
             qDebug() << "Joueur déconnecté:" << playerId;
@@ -240,7 +379,8 @@ void GameServer::sendMessageToAll(const QString &message)
     qDebug() << "  ";
     qDebug() << "Envoi à tous:" << message;
     QByteArray data = message.toUtf8();
-    for (auto it = players.begin(); it != players.end(); ++it) {
+    for (auto it = players.begin(); it != players.end(); ++it)
+    {
         qDebug() << "Envoi à" << it.key() << "->" << data;
         it.value().socket->write(data + "\n");
     }
@@ -254,7 +394,8 @@ void GameServer::sendMessageToPlayer(int playerId, const QString &message)
     qDebug() << "  ";
     qDebug() << "Envoi au joueur" << playerId << "->" << message;
     qDebug() << "  ";
-    if (players.contains(playerId)) {
+    if (players.contains(playerId))
+    {
         QByteArray data = message.toUtf8();
         players[playerId].socket->write(data + "\n");
     }
@@ -263,7 +404,8 @@ void GameServer::sendMessageToPlayer(int playerId, const QString &message)
 void GameServer::sendWaitingRoomInfo(int playerId)
 {
     QStringList available;
-    for (const QString &r : rolesList) {
+    for (const QString &r : rolesList)
+    {
         if (!roleTaken[r])
             available << r;
     }
@@ -273,8 +415,10 @@ void GameServer::sendWaitingRoomInfo(int playerId)
 
 void GameServer::updateWaitingRoomForAll()
 {
-    for (auto it = players.begin(); it != players.end(); ++it) {
-        if (!it.value().ready) {
+    for (auto it = players.begin(); it != players.end(); ++it)
+    {
+        if (!it.value().ready)
+        {
             sendWaitingRoomInfo(it.key());
         }
     }
@@ -282,15 +426,19 @@ void GameServer::updateWaitingRoomForAll()
 
 void GameServer::checkAndStartGame()
 {
-    if (players.size() == maxPlayers) {
+    if (players.size() == maxPlayers)
+    {
         bool allReady = true;
-        for (const PlayerInfo &info : players) {
-            if (!info.ready) {
+        for (const PlayerInfo &info : players)
+        {
+            if (!info.ready)
+            {
                 allReady = false;
                 break;
             }
         }
-        if (allReady) {
+        if (allReady)
+        {
             sendMessageToAll("GAME_START");
         }
     }
@@ -298,7 +446,8 @@ void GameServer::checkAndStartGame()
 
 int GameServer::findPlayerId(const QHostAddress &ip, quint16 port)
 {
-    for (auto it = players.begin(); it != players.end(); ++it) {
+    for (auto it = players.begin(); it != players.end(); ++it)
+    {
         if (it.value().socket->peerAddress() == ip && it.value().socket->peerPort() == port)
             return it.key();
     }

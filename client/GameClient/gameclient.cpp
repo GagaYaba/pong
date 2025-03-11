@@ -3,6 +3,7 @@
 #include "../../include/globals.h"
 #include "../../include/game.h"
 #include <QDebug>
+#include <QTimer>
 #include <QString>
 #include <QTcpSocket>
 #include <memory>
@@ -154,7 +155,10 @@ public:
         qDebug() << "La partie commence!";
         g_game = new Game;
         g_game->show();
-
+        
+        checkPaddleTimer = new QTimer(this);
+        connect(checkPaddleTimer, &QTimer::timeout, this, &GameClient::checkPaddlePosition);
+        checkPaddleTimer->start(10);
     }
 };
 
@@ -212,10 +216,59 @@ std::vector<std::unique_ptr<ClientEventHandler>> ClientEventHandlerFactory::crea
 // Implémentation de GameClient
 // =====================================================
 GameClient::GameClient(QObject *parent)
-        : QObject(parent),
-          tcpSocket(new QTcpSocket(this)),
-          playerId(-1) {
+    : QObject(parent),
+      tcpSocket(new QTcpSocket(this)),
+      playerId(-1)
+{
     connect(tcpSocket, &QTcpSocket::readyRead, this, &GameClient::onDataReceived);
+
+    // simulationTimer = new QTimer(this);
+    // connect(simulationTimer, &QTimer::timeout, this, &GameClient::simulatePaddleData);
+    // simulationTimer->start(5);
+}
+
+void GameClient::simulatePaddleData() {
+    simulationPaddleY += 5.0f;
+    if (simulationPaddleY > 500.0f)
+        simulationPaddleY = 0.0f;
+    sendPaddlePositionBinary(simulationPaddleY);
+}
+
+void GameClient::checkPaddlePosition() {
+    lastPaddleY = -1;
+    if (g_game) {
+        float paddleY = g_game->players[g_playerRole]->getPaddle()->y();
+        if (paddleY != lastPaddleY) {
+            lastPaddleY = paddleY;
+            sendPaddlePositionBinary(paddleY);
+        }
+    }
+}
+
+void GameClient::sendPaddlePositionBinary(float paddleY) {
+    // Vérifier si la position a changé avant d'envoyer
+    if (paddleY != lastPaddleY) {
+        lastPaddleY = paddleY;
+
+        QByteArray data;
+        QDataStream stream(&data, QIODevice::WriteOnly);
+        stream.setByteOrder(QDataStream::BigEndian); // Format réseau
+        stream.setVersion(QDataStream::Qt_6_0);
+
+        quint8 messageType = 1; // Identifiant de message "Paddle Move"
+        stream << messageType;
+        stream << static_cast<qint32>(playerId); // ID du joueur
+        stream << paddleY; // Position Y du paddle
+
+        // Vérifier si le socket est bien connecté avant d'envoyer
+        if (tcpSocket->state() == QTcpSocket::ConnectedState) {
+            tcpSocket->write(data);
+            tcpSocket->flush();
+            qDebug() << "Client | Message binaire envoyé:" << data.toHex();
+        } else {
+            qDebug() << "Client | Erreur: Connexion non établie";
+        }
+    }
 }
 
 void GameClient::sendMessage(const QString &message) {
@@ -263,14 +316,6 @@ void GameClient::startGame() {
     QString message = "START_GAME";
     sendMessage(message);
     qDebug() << "Demande de démarrage de la partie envoyée";
-}
-
-void GameClient::sendPaddlePosition(float paddleY) {
-    if (paddleY != lastPaddleY) { // Envoi uniquement en cas de changement
-        lastPaddleY = paddleY;
-        QString message = "PADDLE " + QString::number(playerId) + " " + QString::number(paddleY);
-        sendMessage(message);
-    }
 }
 
 void GameClient::onDataReceived() {
