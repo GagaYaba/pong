@@ -135,6 +135,7 @@ public:
         handlers.push_back(std::make_unique<JoinEventHandler>());
         handlers.push_back(std::make_unique<SelectRoleEventHandler>());
         handlers.push_back(std::make_unique<StartGameEventHandler>());
+        handlers.push_back(std::make_unique<ReadyEventHandler>());
         // On peut ajouter ici d'autres handlers pour de nouveaux types d'évènements
         return handlers;
     }
