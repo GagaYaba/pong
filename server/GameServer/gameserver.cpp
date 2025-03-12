@@ -19,7 +19,6 @@ void GameServer::startServer(quint16 port, int mode, bool autoAssign)
     maxPlayers = (mode == 1) ? 2 : 4;
     autoAssignRoles = autoAssign;
 
-    // Initialisation de la liste des rôles et leur état
     rolesList.clear();
     roleTaken.clear();
     if (mode == 1) {
@@ -64,12 +63,9 @@ void GameServer::onDataReceived()
 
                 sendMessageToPlayer(playerId, "ASSIGN_ID " + QString::number(playerId));
 
-                // Envoyer les infos de la salle d'attente au nouveau joueur
                 sendWaitingRoomInfo(playerId);
-                // Notifier tous les joueurs
                 sendMessageToAll("PLAYER_JOINED " + QString::number(playerId));
 
-                // Si attribution automatique des rôles activée, on attribue directement le premier rôle disponible
                 if (autoAssignRoles) {
                     for (const QString &r : rolesList) {
                         if (!roleTaken[r]) {
@@ -84,13 +80,11 @@ void GameServer::onDataReceived()
                     checkAndStartGame();
                 }
             } else {
-                // Partie pleine
                 udpSocket->writeDatagram("FULL", sender, senderPort);
             }
         }
-        // Cas de la sélection d'un rôle par un joueur (attribution manuelle)
         else if (message.startsWith("SELECT_ROLE ")) {
-            QString chosenRole = message.section(' ', 1, 1); // ex: "p1"
+            QString chosenRole = message.section(' ', 1, 1);
             int playerId = findPlayerId(sender, senderPort);
             if (playerId != -1) {
                 if (!roleTaken.value(chosenRole, true)) {
@@ -99,7 +93,6 @@ void GameServer::onDataReceived()
                     roleTaken[chosenRole] = true;
                     sendMessageToPlayer(playerId, "ROLE_ASSIGNED " + chosenRole);
                     sendMessageToAll("PLAYER_UPDATED " + QString::number(playerId) + " " + chosenRole);
-                    // Mettre à jour la salle d'attente pour tous (pour actualiser la liste des slots disponibles)
                     updateWaitingRoomForAll();
                     checkAndStartGame();
                 } else {
@@ -107,7 +100,6 @@ void GameServer::onDataReceived()
                 }
             }
         }
-        // Vous pouvez ajouter ici d'autres types de messages (ex: READY, MESSAGE, etc.)
     }
 }
 
@@ -137,7 +129,6 @@ void GameServer::sendMessageToPlayer(int playerId, const QString &message)
     }
 }
 
-// Envoie la liste des rôles disponibles et le nombre de slots libres au joueur concerné
 void GameServer::sendWaitingRoomInfo(int playerId)
 {
     QStringList available;
@@ -150,7 +141,6 @@ void GameServer::sendWaitingRoomInfo(int playerId)
     sendMessageToPlayer(playerId, "FREE_COUNT " + QString::number(available.size()));
 }
 
-// Met à jour la salle d'attente pour tous les joueurs qui n'ont pas encore choisi de rôle
 void GameServer::updateWaitingRoomForAll()
 {
     for (auto it = players.begin(); it != players.end(); ++it) {
@@ -160,7 +150,6 @@ void GameServer::updateWaitingRoomForAll()
     }
 }
 
-// Vérifie si tous les joueurs ont choisi leur rôle et démarre la partie le cas échéant
 void GameServer::checkAndStartGame()
 {
     if (players.size() == maxPlayers) {
@@ -173,7 +162,6 @@ void GameServer::checkAndStartGame()
         }
         if (allReady) {
             sendMessageToAll("GAME_START");
-            // Envoi d'une info de configuration (ex: la liste des joueurs et leurs rôles)
             QString gameInfo = "GAME_INFO";
             for (auto it = players.begin(); it != players.end(); ++it) {
                 gameInfo += " " + QString::number(it.key()) + ":" + it.value().role;
@@ -183,7 +171,6 @@ void GameServer::checkAndStartGame()
     }
 }
 
-// Permet de retrouver l'ID du joueur grâce à son adresse IP et son port
 int GameServer::findPlayerId(const QHostAddress &ip, quint16 port)
 {
     for (auto it = players.begin(); it != players.end(); ++it) {

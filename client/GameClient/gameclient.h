@@ -13,8 +13,8 @@ public:
     explicit GameClient(QObject *parent = nullptr);
     void connectToServer(const QHostAddress &serverAddress, quint16 port);
     void sendMessage(const QString &message, const QHostAddress &serverAddress, quint16 port);
-    void selectRole(const QString &role); // Méthode pour envoyer une demande de sélection de rôle
-    void sendPaddlePosition(float paddleY); // Méthode pour envoyer la position de la raquette
+    void selectRole(const QString &role);
+    void sendPaddlePosition(float paddleY);
 
 private slots:
     void onDataReceived();
