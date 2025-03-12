@@ -5,6 +5,7 @@
 Score::Score(int x, int y, QGraphicsItem *parent)
     : QGraphicsTextItem(parent), team1Score(0), team2Score(0) {
 
+    (void)x;
     setDefaultTextColor(Qt::black);
     setFont(QFont("Arial", 16));
 
