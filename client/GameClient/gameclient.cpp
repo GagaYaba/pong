@@ -76,7 +76,7 @@ void GameClient::onDataReceived()
             }
         }
         else if (parts[0] == "AVAILABLE_SLOTS") {
-            parts.removeFirst();"
+            parts.removeFirst();
             qDebug() << "Slots disponibles:" << parts;
         }
         else if (parts[0] == "FREE_COUNT") {
