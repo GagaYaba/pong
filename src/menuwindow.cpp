@@ -12,6 +12,10 @@
 #include <QDebug>
 #include <QStringList>
 
+/**
+ * @brief Constructeur de la classe MenuWindow.
+ * @param parent Le parent QWidget.
+ */
 MenuWindow::MenuWindow(QWidget *parent)
         : QMainWindow(parent), game(nullptr), server(nullptr), client(nullptr), ui(new Ui::MenuWindow) {
     ui->setupUi(this);
@@ -21,12 +25,20 @@ MenuWindow::MenuWindow(QWidget *parent)
     connect(ui->joinButton, &QPushButton::clicked, this, &MenuWindow::onJoin);
 }
 
+/**
+ * @brief Destructeur de la classe MenuWindow.
+ */
 MenuWindow::~MenuWindow() {
     delete game;
     delete server;
     delete client;
     delete ui;
 }
+
+/**
+ * @brief Slot appelé lorsque des emplacements disponibles sont reçus.
+ * @param availableSlots Liste des emplacements disponibles.
+ */
 void MenuWindow::onAvailableSlotsReceived(const QStringList &availableSlots) {
     qDebug() << "Slots reçus:" << availableSlots;
 
@@ -41,12 +53,13 @@ void MenuWindow::onAvailableSlotsReceived(const QStringList &availableSlots) {
     selectDialog->show();
 }
 
-
+/**
+ * @brief Slot appelé lorsque le bouton de démarrage est cliqué.
+ */
 void MenuWindow::onStart() {
     if (!server) {
-        // Initialisation du serveur
         server = new GameServer(this);
-        server->startServer(1, false);  // Démarre le serveur sur un port spécifique (modifie si nécessaire)
+        server->startServer(1, false);
 
         QString ip = getLocalIPAddress();
         QString joinCode = generateJoinCode(ip);
@@ -55,13 +68,13 @@ void MenuWindow::onStart() {
 
         CodeDialog *codeDialog = new CodeDialog(joinCode, this);
         if (codeDialog->exec() == QDialog::Accepted) {
-            delete codeDialog;  // Assurez-vous que le CodeDialog est bien détruit après son utilisation
+            delete codeDialog;
         }
     }
 
     if (!g_client) {
         g_client = new GameClient(this);
-        g_client ->connectToServer(QHostAddress::LocalHost);  // Connexion locale
+        g_client ->connectToServer(QHostAddress::LocalHost);
     }
 
     if (g_client) {
@@ -72,17 +85,25 @@ void MenuWindow::onStart() {
     }
 }
 
-
+/**
+ * @brief Slot appelé lorsque le bouton de quitter est cliqué.
+ */
 void MenuWindow::onQuit() {
     close();
 }
 
+/**
+ * @brief Slot appelé lorsque le jeu est fermé.
+ */
 void MenuWindow::onGameClosed() {
     show();
     game->deleteLater();
     game = nullptr;
 }
 
+/**
+ * @brief Slot appelé lorsque le bouton de rejoindre est cliqué.
+ */
 void MenuWindow::onJoin() {
     JoinDialog dialog(this);
 
@@ -104,24 +125,30 @@ void MenuWindow::onJoin() {
 
         if (!g_client) {
             g_client = new GameClient(this);
-            g_client->connectToServer(QHostAddress(ip));  // Connexion avec l'IP décodée
+            g_client->connectToServer(QHostAddress(ip));
         }
 
         if (g_client) {
             qDebug() << "Connexion du signal availableSlotsReceived à onAvailableSlotsReceived";
             connect(g_client, &GameClient::availableSlotsReceived, this, &MenuWindow::onAvailableSlotsReceived);
-            } else {
+        } else {
             qDebug() << "g_client est NULL, impossible de connecter le signal.";
         }
 
     }
 }
+
+/**
+ * @brief Génère un code de connexion à partir d'une adresse IP.
+ * @param ip L'adresse IP.
+ * @return Le code de connexion généré.
+ */
 QString MenuWindow::generateJoinCode(const QString &ip) {
     int a, b, c, d;
     sscanf(ip.toUtf8().constData(), "%d.%d.%d.%d", &a, &b, &c, &d);
 
     quint32 num = ((quint32)a << 24) | ((quint32)b << 16) | ((quint32)c << 8) | d;
-    
+
     const QString base = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     QString code;
     do {
@@ -132,6 +159,11 @@ QString MenuWindow::generateJoinCode(const QString &ip) {
     return code;
 }
 
+/**
+ * @brief Décode un code de connexion en une adresse IP.
+ * @param code Le code de connexion.
+ * @return L'adresse IP décodée.
+ */
 QString MenuWindow::decodeJoinCode(const QString &code) {
     quint32 num = 0;
     const QString base = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -150,6 +182,11 @@ QString MenuWindow::decodeJoinCode(const QString &code) {
     return QString("%1.%2.%3.%4").arg(a).arg(b).arg(c).arg(d);
 }
 
+/**
+ * @brief Slot appelé lorsque le rôle d'un joueur est sélectionné.
+ * @param player Le rôle du joueur.
+ * @param selected Indique si le rôle est sélectionné.
+ */
 void MenuWindow::onRoleSelected(const QString &player, bool selected) {
     if (g_client) {
         g_client->selectRole(player);
@@ -157,6 +194,9 @@ void MenuWindow::onRoleSelected(const QString &player, bool selected) {
     }
 }
 
+/**
+ * @brief Slot appelé lorsque le jeu commence.
+ */
 void MenuWindow::onGameStarted() {
     if (g_client) {
         g_client->startGame();

@@ -5,19 +5,31 @@
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
-class MainWindow;
+    class MainWindow;
 }
 QT_END_NAMESPACE
 
+/**
+ * @brief Classe représentant la fenêtre principale de l'application.
+ */
 class MainWindow : public QMainWindow
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
+    /**
+     * @brief Constructeur de la classe MainWindow.
+     * @param parent Le parent QWidget.
+     */
     MainWindow(QWidget *parent = nullptr);
+
+    /**
+     * @brief Destructeur de la classe MainWindow.
+     */
     ~MainWindow();
 
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow *ui; ///< Interface utilisateur de la fenêtre principale.
 };
+
 #endif // MAINWINDOW_H

@@ -4,13 +4,18 @@
 #include "../include/globals.h"
 #include "../include/game.h"
 
+/**
+ * @brief Constructeur de la classe SelectDialog.
+ * @param parent Le parent QWidget.
+ * @param availableSlots Liste des emplacements disponibles.
+ * @param client Pointeur vers l'objet GameClient.
+ */
 SelectDialog::SelectDialog(QWidget *parent, const QStringList &availableSlots, GameClient *client) : QDialog(parent),
                                                                                                      ui(new Ui::SelectDialog),
                                                                                                      m_client(client)
 {
     ui->setupUi(this);
 
-    // Mise à jour des slots disponibles selon les données reçues
     if (!availableSlots.contains("p1"))
     {
         ui->player1CheckBox->setChecked(false);
@@ -24,36 +29,38 @@ SelectDialog::SelectDialog(QWidget *parent, const QStringList &availableSlots, G
         ui->player2CheckBox->setText("Player 2 (Occupé)");
     }
 
-    // Connexion pour la gestion du toggling par le joueur local avec exclusion mutuelle.
     connect(ui->player1CheckBox, &QCheckBox::toggled, this, [this](bool checked)
-            {
+    {
         emit roleSelected("p1", true, checked); });
     connect(ui->player2CheckBox, &QCheckBox::toggled, this, [this](bool checked)
-            {
+    {
         emit roleSelected("p2", true, checked); });
 
-    // Seul l'hôte peut lancer la partie
     connect(ui->startButton, &QPushButton::clicked, this, &SelectDialog::onStartGame);
     connect(g_client, &GameClient::gameInfoReceived, this, &SelectDialog::onGameInfoReceived);
-    // Connexion du signal du client pour confirmer ou libérer un rôle
     if (g_client)
     {
         qDebug() << "Connexion du signal roleEmit à onRoleConfirmed";
-        // ATTENTION : Assurez-vous que le signal roleEmit émet bien trois paramètres : role, playerId et join.
         connect(g_client, &GameClient::roleEmit, this, &SelectDialog::onRoleConfirmed);
     }
 
     updateStartButton();
-    // Mise à jour initiale du bouton de démarrage et du label de statut
     ui->statusLabel->setText(g_isHost ? "En attente que tous les joueurs soient prêts..." : "En attente que l'hôte lance la partie.");
 }
 
+/**
+ * @brief Destructeur de la classe SelectDialog.
+ */
 SelectDialog::~SelectDialog()
 {
     delete ui;
 }
 
-// Vérifie si le slot pour le joueur donné est activé et prêt
+/**
+ * @brief Vérifie si un joueur est prêt.
+ * @param player Le nom du joueur.
+ * @return true si le joueur est prêt, false sinon.
+ */
 bool SelectDialog::isPlayerReady(const QString &player) const
 {
     if (player == "p1")
@@ -63,7 +70,10 @@ bool SelectDialog::isPlayerReady(const QString &player) const
     return false;
 }
 
-// Renvoie le rôle sélectionné (devrait être unique grâce à l'exclusion mutuelle)
+/**
+ * @brief Obtient le rôle sélectionné.
+ * @return Le rôle sélectionné.
+ */
 QString SelectDialog::getSelectedRole() const
 {
     if (isPlayerReady("p1"))
@@ -73,10 +83,12 @@ QString SelectDialog::getSelectedRole() const
     return "";
 }
 
-// Mise à jour générique d'un slot.
-// 'player' : le nom du slot ("p1", "p2", etc.).
-// 'self'   : true si le changement vient du joueur local (donc contrôlable par l'utilisateur).
-// 'join'   : true si le joueur prend le slot, false s'il le libère.
+/**
+ * @brief Met à jour l'état d'un emplacement.
+ * @param player Le nom du joueur.
+ * @param self Indique si c'est le joueur lui-même.
+ * @param join Indique si le joueur a rejoint.
+ */
 void SelectDialog::updateSlot(const QString &player, bool self, bool join)
 {
     if (player == "p1")
@@ -130,8 +142,9 @@ void SelectDialog::updateSlot(const QString &player, bool self, bool join)
     updateStartButton();
 }
 
-// Mise à jour du bouton de démarrage.
-// Pour l'hôte, le bouton s'active si tous les slots disponibles (activables) sont pris.
+/**
+ * @brief Met à jour l'état du bouton de démarrage.
+ */
 void SelectDialog::updateStartButton()
 {
     if (g_isHost)
@@ -151,7 +164,9 @@ void SelectDialog::updateStartButton()
     }
 }
 
-// Seul l'hôte peut lancer la partie, et uniquement si tous les joueurs disponibles sont prêts.
+/**
+ * @brief Slot appelé lorsque le bouton de démarrage est cliqué.
+ */
 void SelectDialog::onStartGame()
 {
     if (g_isHost)
@@ -174,8 +189,12 @@ void SelectDialog::onStartGame()
     }
 }
 
-// Mise à jour lorsqu'un rôle est confirmé par le serveur.
-// Le signal doit transmettre le rôle, l'identifiant du joueur (playerId) et join (prendre ou libérer le slot).
+/**
+ * @brief Slot appelé lorsque le rôle d'un joueur est confirmé.
+ * @param role Le rôle du joueur.
+ * @param playerId L'identifiant du joueur.
+ * @param join Indique si le joueur a rejoint.
+ */
 void SelectDialog::onRoleConfirmed(const QString &role, int playerId, bool join)
 {
     qDebug() << "Rôle confirmé pour le joueur:" << role << ", playerId:" << playerId << ", join:" << join;
@@ -189,6 +208,10 @@ void SelectDialog::onRoleConfirmed(const QString &role, int playerId, bool join)
     }
 }
 
+/**
+ * @brief Slot appelé lorsque les informations de jeu sont reçues.
+ * @param gameMode Le mode de jeu.
+ */
 void SelectDialog::onGameInfoReceived(const QString &gameMode) {
     g_gameMode = gameMode;
     qDebug() << "Mode de jeu reçu:" << gameMode;

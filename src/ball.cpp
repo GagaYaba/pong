@@ -8,8 +8,15 @@
 #include <QList>
 #include <QDebug>
 
+/**
+ * @brief Constructeur de la classe Ball.
+ * @param screenWidth La largeur de l'écran.
+ * @param screenHeight La hauteur de l'écran.
+ * @param game Pointeur vers l'objet Game.
+ * @param parent Le parent QObject.
+ */
 Ball::Ball(int screenWidth, int screenHeight, Game* game, QObject* parent)
-    : QObject(parent), screenWidth(screenWidth), screenHeight(screenHeight), game(game) {
+        : QObject(parent), screenWidth(screenWidth), screenHeight(screenHeight), game(game) {
 
     setRect(0, 0, 10, 10);
     setPos(screenWidth / 2, screenHeight / 2);
@@ -26,6 +33,9 @@ Ball::Ball(int screenWidth, int screenHeight, Game* game, QObject* parent)
     }
 }
 
+/**
+ * @brief Déplace la balle.
+ */
 void Ball::move() {
     deltaTime = timer.elapsed() / 16.0f;
     timer.restart();
@@ -36,16 +46,27 @@ void Ball::move() {
     handleCollisions();
 }
 
+/**
+ * @brief Définit la position de la balle.
+ * @param x La position x.
+ * @param y La position y.
+ */
 void Ball::setPos(int x, int y) {
     setX(x);
     setY(y);
 }
 
+/**
+ * @brief Gère les collisions de la balle.
+ */
 void Ball::handleCollisions() {
     handlePaddleCollision();
     handleBoundaryCollision();
 }
 
+/**
+ * @brief Gère les collisions de la balle avec les raquettes.
+ */
 void Ball::handlePaddleCollision() {
     QList<QGraphicsItem*> collidingItemsList = collidingItems();
     for (QGraphicsItem* item : collidingItemsList) {
@@ -64,6 +85,9 @@ void Ball::handlePaddleCollision() {
     }
 }
 
+/**
+ * @brief Gère les collisions de la balle avec les limites de l'écran.
+ */
 void Ball::handleBoundaryCollision() {
     if (y() <= 0 || y() + rect().height() >= screenHeight) {
         dy = -dy;
@@ -77,6 +101,9 @@ void Ball::handleBoundaryCollision() {
     }
 }
 
+/**
+ * @brief Traite un but marqué.
+ */
 void Ball::processGoal() {
     if (hit) {
         if (x() <= 0) {
@@ -97,6 +124,9 @@ void Ball::processGoal() {
     }
 }
 
+/**
+ * @brief Réinitialise la position de la balle.
+ */
 void Ball::resetBall() {
     setPos(screenWidth / 2, screenHeight / 2);
     direction = -direction;
@@ -105,6 +135,11 @@ void Ball::resetBall() {
     hit = false;
 }
 
+/**
+ * @brief Gère le cas où la balle touche une raquette.
+ * @param paddle Pointeur vers la raquette.
+ * @param paddleNetwork Pointeur vers la raquette du réseau.
+ */
 void Ball::handlePaddleHit(Paddle* paddle, PaddleNetwork* paddleNetwork) {
     if (!hit) {
         hit = true;
@@ -125,10 +160,18 @@ void Ball::handlePaddleHit(Paddle* paddle, PaddleNetwork* paddleNetwork) {
     }
 }
 
+/**
+ * @brief Inverse la direction horizontale de la balle.
+ */
 void Ball::reverseXDirection() {
     dx = -dx;
 }
 
+/**
+ * @brief Ajuste la vitesse verticale de la balle en fonction de la position de la raquette.
+ * @param paddle Pointeur vers la raquette.
+ * @param paddleNetwork Pointeur vers la raquette du réseau.
+ */
 void Ball::adjustVerticalSpeed(Paddle* paddle, PaddleNetwork* paddleNetwork) {
     if (paddle) {
         float hitPosition = (y() + rect().height() / 2) - (paddle->y() + paddle->rect().height() / 2);
@@ -139,10 +182,9 @@ void Ball::adjustVerticalSpeed(Paddle* paddle, PaddleNetwork* paddleNetwork) {
     }
 }
 
-void Ball::adjustSpeed() {
-    // if need to reduce ball speed after condition
-}
-
+/**
+ * @brief Limite la vitesse maximale de la balle.
+ */
 void Ball::limitMaxSpeed() {
     float maxSpeed = 6.0f;
     if (std::abs(dx) > maxSpeed) {

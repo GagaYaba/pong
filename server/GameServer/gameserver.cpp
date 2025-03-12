@@ -8,25 +8,40 @@
 // ==============================
 // Interface du BinaryEventHandlerS
 // ==============================
+/**
+ * @brief Interface pour les gestionnaires d'événements binaires.
+ */
 class BinaryEventHandlerS
 {
 public:
     virtual ~BinaryEventHandlerS() {}
-    // Retourne vrai si ce handler peut traiter le message contenu dans le flux
+    /**
+     * @brief Vérifie si le gestionnaire peut traiter le flux de données.
+     * @param stream Le flux de données à vérifier.
+     * @return true si le gestionnaire peut traiter le flux, false sinon.
+     */
     virtual bool canHandle(QDataStream &stream) const = 0;
-    // Traite l'événement en passant le GameServer, le socket client et le flux de données
+
+    /**
+     * @brief Traite le flux de données.
+     * @param server Le serveur de jeu.
+     * @param clientSocket Le socket du client.
+     * @param stream Le flux de données à traiter.
+     */
     virtual void handle(GameServer *server, QTcpSocket *clientSocket, QDataStream &stream) = 0;
 };
 
 // ============================================
 // Handler pour le message binaire "Paddle Move"
 // ============================================
+/**
+ * @brief Gestionnaire pour le message binaire "Paddle Move".
+ */
 class PaddleMoveBinaryEventHandler : public BinaryEventHandlerS
 {
 public:
     bool canHandle(QDataStream &stream) const override
     {
-        // Sauvegarde de la position courante du flux pour ne pas consommer les données
         qint64 pos = stream.device()->pos();
         quint8 messageType;
         stream >> messageType;
@@ -47,12 +62,17 @@ public:
     }
 };
 
+// ============================================
+// Handler pour le message binaire "Ball Move"
+// ============================================
+/**
+ * @brief Gestionnaire pour le message binaire "Ball Move".
+ */
 class BallMoveBinaryEventHandler : public BinaryEventHandlerS
-{   
+{
 public:
     bool canHandle(QDataStream &stream) const override
     {
-        // Sauvegarde de la position courante du flux pour ne pas consommer les données
         qint64 pos = stream.device()->pos();
         quint8 messageType;
         stream >> messageType;
@@ -78,15 +98,21 @@ public:
 // ============================================
 // Factory pour créer les BinaryEventHandlerS
 // ============================================
+/**
+ * @brief Factory pour créer les gestionnaires d'événements binaires.
+ */
 class BinaryEventHandlerFactoryS
 {
 public:
+    /**
+     * @brief Crée une liste de gestionnaires d'événements binaires.
+     * @return Un vecteur de gestionnaires d'événements binaires.
+     */
     static std::vector<std::unique_ptr<BinaryEventHandlerS>> createHandlers()
     {
         std::vector<std::unique_ptr<BinaryEventHandlerS>> handlers;
         handlers.push_back(std::make_unique<PaddleMoveBinaryEventHandler>());
         handlers.push_back(std::make_unique<BallMoveBinaryEventHandler>());
-        // Vous pouvez ajouter d'autres handlers binaires ici
         return handlers;
     }
 };
@@ -94,19 +120,35 @@ public:
 // ==============================
 // Interface de l'EventHandler
 // ==============================
+/**
+ * @brief Interface pour les gestionnaires d'événements.
+ */
 class EventHandler
 {
 public:
     virtual ~EventHandler() {}
-    // Retourne vrai si ce handler peut traiter le message
+    /**
+     * @brief Vérifie si le gestionnaire peut traiter le message.
+     * @param message Le message à vérifier.
+     * @return true si le gestionnaire peut traiter le message, false sinon.
+     */
     virtual bool canHandle(const QString &message) const = 0;
-    // Traite l'événement en passant le GameServer, le socket client et le message
+
+    /**
+     * @brief Traite le message.
+     * @param server Le serveur de jeu.
+     * @param clientSocket Le socket du client.
+     * @param message Le message à traiter.
+     */
     virtual void handle(GameServer *server, QTcpSocket *clientSocket, const QString &message) = 0;
 };
 
 // =====================================
 // Handler pour l'événement "JOIN"
 // =====================================
+/**
+ * @brief Gestionnaire pour l'événement "JOIN".
+ */
 class JoinEventHandler : public EventHandler
 {
 public:
@@ -117,7 +159,6 @@ public:
 
     void handle(GameServer *server, QTcpSocket *clientSocket, const QString & /*message*/) override
     {
-        // Code repris de la branche "JOIN" d'origine
         if (server->currentPlayers < server->maxPlayers)
         {
             int playerId = server->currentPlayers + 1;
@@ -159,6 +200,9 @@ public:
 // ============================================
 // Handler pour l'événement "SELECT_ROLE"
 // ============================================
+/**
+ * @brief Gestionnaire pour l'événement "SELECT_ROLE".
+ */
 class SelectRoleEventHandler : public EventHandler
 {
 public:
@@ -169,7 +213,7 @@ public:
 
     void handle(GameServer *server, QTcpSocket *clientSocket, const QString &message) override
     {
-        QString chosenRole = message.section(' ', 1, 1); // ex: "p1"
+        QString chosenRole = message.section(' ', 1, 1);
         int playerId = server->findPlayerId(clientSocket->peerAddress(), clientSocket->peerPort());
         if (playerId != -1)
         {
@@ -179,7 +223,6 @@ public:
                 server->roleTaken[chosenRole] = true;
                 server->sendMessageToPlayer(playerId, "ROLE_ASSIGNED " + chosenRole);
                 server->sendMessageToAll("PLAYER_UPDATED " + QString::number(playerId) + " " + chosenRole);
-                // server->updateWaitingRoomForAll();
                 server->checkAndStartGame();
             }
             else
@@ -193,6 +236,9 @@ public:
 // ============================================
 // Handler pour l'événement "START_GAME"
 // ============================================
+/**
+ * @brief Gestionnaire pour l'événement "START_GAME".
+ */
 class StartGameEventHandler : public EventHandler
 {
 public:
@@ -213,6 +259,9 @@ public:
 // ============================================
 // Handler pour l'événement "READY"
 // ============================================
+/**
+ * @brief Gestionnaire pour l'événement "READY".
+ */
 class ReadyEventHandler : public EventHandler
 {
 public:
@@ -223,7 +272,7 @@ public:
 
     void handle(GameServer *server, QTcpSocket *clientSocket, const QString &message) override
     {
-        QString playerIdSec = message.section(' ', 1, 1); // ex: "p1"
+        QString playerIdSec = message.section(' ', 1, 1);
         int playerId = server->findPlayerId(clientSocket->peerAddress(), clientSocket->peerPort());
         if (playerId != -1 && playerId == playerIdSec.toInt())
         {
@@ -236,9 +285,16 @@ public:
 // ============================================
 // Factory pour créer les EventHandlers
 // ============================================
+/**
+ * @brief Factory pour créer les gestionnaires d'événements.
+ */
 class EventHandlerFactory
 {
 public:
+    /**
+     * @brief Crée une liste de gestionnaires d'événements.
+     * @return Un vecteur de gestionnaires d'événements.
+     */
     static std::vector<std::unique_ptr<EventHandler>> createHandlers()
     {
         std::vector<std::unique_ptr<EventHandler>> handlers;
@@ -246,7 +302,6 @@ public:
         handlers.push_back(std::make_unique<SelectRoleEventHandler>());
         handlers.push_back(std::make_unique<StartGameEventHandler>());
         handlers.push_back(std::make_unique<ReadyEventHandler>());
-        // On peut ajouter ici d'autres handlers pour de nouveaux types d'évènements
         return handlers;
     }
 };
@@ -254,17 +309,26 @@ public:
 // ==============================
 // Implémentation de GameServer
 // ==============================
+/**
+ * @brief Constructeur de la classe GameServer.
+ * @param parent Pointeur vers l'objet parent.
+ */
 GameServer::GameServer(QObject *parent)
-    : QObject(parent),
-      tcpServer(new QTcpServer(this)),
-      maxPlayers(2),
-      currentPlayers(0),
-      gameMode(1),
-      autoAssignRoles(false)
+        : QObject(parent),
+          tcpServer(new QTcpServer(this)),
+          maxPlayers(2),
+          currentPlayers(0),
+          gameMode(1),
+          autoAssignRoles(false)
 {
     connect(tcpServer, &QTcpServer::newConnection, this, &GameServer::onNewConnection);
 }
 
+/**
+ * @brief Démarre le serveur de jeu.
+ * @param mode Mode de jeu (1 pour OneVOne, 2 pour TwoVTwo).
+ * @param autoAssign Indique si les rôles doivent être assignés automatiquement.
+ */
 void GameServer::startServer(int mode, bool autoAssign)
 {
     gameMode = mode;
@@ -309,6 +373,9 @@ void GameServer::startServer(int mode, bool autoAssign)
     }
 }
 
+/**
+ * @brief Gère une nouvelle connexion client.
+ */
 void GameServer::onNewConnection()
 {
     QTcpSocket *clientSocket = tcpServer->nextPendingConnection();
@@ -316,43 +383,41 @@ void GameServer::onNewConnection()
     connect(clientSocket, &QTcpSocket::disconnected, this, &GameServer::onDisconnected);
 }
 
+/**
+ * @brief Gère la réception de données d'un client.
+ */
 void GameServer::onDataReceived()
 {
     QTcpSocket *clientSocket = qobject_cast<QTcpSocket *>(sender());
     if (clientSocket)
     {
-        // On regarde le contenu sans le retirer de la file d'attente
         QByteArray peekBuffer = clientSocket->peek(clientSocket->bytesAvailable());
 
         if (peekBuffer.endsWith('\n'))
         {
-            // Traitement du message en chaîne de caractères
             QByteArray buffer = clientSocket->readAll();
             QString message = QString::fromUtf8(buffer).trimmed();
             qDebug() << "Serveur | Reçu (string):" << message
                      << "de" << clientSocket->peerAddress().toString()
                      << ":" << clientSocket->peerPort();
 
-            // Récupère la liste des handlers string depuis la factory existante
             auto handlers = EventHandlerFactory::createHandlers();
             for (const auto &handler : handlers)
             {
                 if (handler->canHandle(message))
                 {
                     handler->handle(this, clientSocket, message);
-                    break; // On arrête dès qu'un handler a traité l'évènement
+                    break;
                 }
             }
         }
         else
         {
-            // Traitement du message binaire
             QByteArray buffer = clientSocket->readAll();
             QDataStream stream(buffer);
             stream.setByteOrder(QDataStream::BigEndian);
             stream.setVersion(QDataStream::Qt_6_0);
 
-            // Récupère la liste des handlers binaires depuis la factory dédiée
             auto binaryHandlers = BinaryEventHandlerFactoryS::createHandlers();
             bool handled = false;
             for (const auto &handler : binaryHandlers)
@@ -372,6 +437,9 @@ void GameServer::onDataReceived()
     }
 }
 
+/**
+ * @brief Gère la déconnexion d'un client.
+ */
 void GameServer::onDisconnected()
 {
     QTcpSocket *clientSocket = qobject_cast<QTcpSocket *>(sender());
@@ -389,6 +457,10 @@ void GameServer::onDisconnected()
     }
 }
 
+/**
+ * @brief Envoie un message à tous les joueurs.
+ * @param message Le message à envoyer.
+ */
 void GameServer::sendMessageToAll(const QString &message)
 {
     qDebug() << "  ";
@@ -405,6 +477,11 @@ void GameServer::sendMessageToAll(const QString &message)
     qDebug() << "  ";
 }
 
+/**
+ * @brief Envoie un message à un joueur spécifique.
+ * @param playerId L'ID du joueur.
+ * @param message Le message à envoyer.
+ */
 void GameServer::sendMessageToPlayer(int playerId, const QString &message)
 {
     qDebug() << "  ";
@@ -417,6 +494,12 @@ void GameServer::sendMessageToPlayer(int playerId, const QString &message)
     }
 }
 
+/**
+ * @brief Envoie un message binaire à un joueur spécifique.
+ * @param playerId L'ID du joueur.
+ * @param messageType Le type de message.
+ * @param payload Les données du message.
+ */
 void GameServer::sendBinaryToPlayer(int playerId, quint8 messageType, const QByteArray &payload) {
     if (!players.contains(playerId)) {
         qDebug() << "Serveur | Erreur: Joueur" << playerId << "non trouvé.";
@@ -434,13 +517,19 @@ void GameServer::sendBinaryToPlayer(int playerId, quint8 messageType, const QByt
     stream.setByteOrder(QDataStream::BigEndian);
     stream.setVersion(QDataStream::Qt_6_0);
 
-    stream << messageType;  // Type du message
-    data.append(payload);   // Ajouter la charge utile (payload)
+    stream << messageType;
+    data.append(payload);
 
     clientSocket->write(data);
     clientSocket->flush();
 }
 
+/**
+ * @brief Envoie un message binaire à tous les joueurs sauf un.
+ * @param excludedPlayerId L'ID du joueur à exclure.
+ * @param messageType Le type de message.
+ * @param payload Les données du message.
+ */
 void GameServer::sendBinaryToAllExcept(int excludedPlayerId, quint8 messageType, const QByteArray &payload) {
     for (auto playerId : players.keys()) {
         if (playerId != excludedPlayerId) {
@@ -449,36 +538,56 @@ void GameServer::sendBinaryToAllExcept(int excludedPlayerId, quint8 messageType,
     }
 }
 
+/**
+ * @brief Diffuse un message binaire à tous les joueurs.
+ * @param messageType Le type de message.
+ * @param payload Les données du message.
+ */
 void GameServer::broadcastBinaryData(quint8 messageType, const QByteArray &payload) {
     for (auto playerId : players.keys()) {
         sendBinaryToPlayer(playerId, messageType, payload);
     }
 }
 
+/**
+ * @brief Envoie la position de la raquette d'un joueur.
+ * @param playerId L'ID du joueur.
+ * @param paddleY La position Y de la raquette.
+ */
 void GameServer::sendPaddlePosition(int playerId, float paddleY) {
     QByteArray payload;
     QDataStream stream(&payload, QIODevice::WriteOnly);
     stream.setByteOrder(QDataStream::BigEndian);
     stream.setVersion(QDataStream::Qt_6_0);
 
-    stream << static_cast<qint32>(playerId); // ID du joueur
-    stream << paddleY; // Position Y du paddle
+    stream << static_cast<qint32>(playerId);
+    stream << paddleY;
 
     sendBinaryToAllExcept(playerId, playerId, payload);
 }
 
+/**
+ * @brief Envoie la position de la balle.
+ * @param playerId L'ID du joueur.
+ * @param ballY La position Y de la balle.
+ * @param ballX La position X de la balle.
+ */
 void GameServer::sendBallPosition(int playerId, float ballY, float ballX) {
     QByteArray payload;
     QDataStream stream(&payload, QIODevice::WriteOnly);
     stream.setByteOrder(QDataStream::BigEndian);
     stream.setVersion(QDataStream::Qt_6_0);
 
-    stream << ballY; // Position Y de la balle
-    stream << ballX; // Position X de la balle
+    stream << ballY;
+    stream << ballX;
 
     sendBinaryToAllExcept(playerId, 5, payload);
 }
 
+/**
+ * @brief Envoie les informations de la salle d'attente à un joueur.
+ * @param playerId L'ID du joueur.
+ */
 void GameServer::sendWaitingRoomInfo(int playerId)
 {
     QStringList available;
@@ -491,6 +600,9 @@ void GameServer::sendWaitingRoomInfo(int playerId)
     sendMessageToPlayer(playerId, msgSlots);
 }
 
+/**
+ * @brief Met à jour les informations de la salle d'attente pour tous les joueurs.
+ */
 void GameServer::updateWaitingRoomForAll()
 {
     for (auto it = players.begin(); it != players.end(); ++it)
@@ -502,6 +614,9 @@ void GameServer::updateWaitingRoomForAll()
     }
 }
 
+/**
+ * @brief Vérifie si tous les joueurs sont prêts et démarre le jeu.
+ */
 void GameServer::checkAndStartGame()
 {
     if (players.size() == maxPlayers)
@@ -522,6 +637,12 @@ void GameServer::checkAndStartGame()
     }
 }
 
+/**
+ * @brief Trouve l'ID d'un joueur à partir de son adresse IP et de son port.
+ * @param ip L'adresse IP du joueur.
+ * @param port Le port du joueur.
+ * @return L'ID du joueur, ou -1 si non trouvé.
+ */
 int GameServer::findPlayerId(const QHostAddress &ip, quint16 port)
 {
     for (auto it = players.begin(); it != players.end(); ++it)

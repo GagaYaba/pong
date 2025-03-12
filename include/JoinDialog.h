@@ -2,23 +2,38 @@
 #define JOINDIALOG_H
 
 #include <QDialog>
-#include "./ui_JoinDialog.h"
+#include "../src/ui_JoinDialog.h"
 
 namespace Ui {
     class JoinDialog;
 }
 
+/**
+ * @brief Classe représentant une boîte de dialogue pour rejoindre un jeu.
+ */
 class JoinDialog : public QDialog {
 Q_OBJECT
 
 public:
+    /**
+     * @brief Constructeur de la classe JoinDialog.
+     * @param parent Le parent QWidget.
+     */
     explicit JoinDialog(QWidget *parent = nullptr);
+
+    /**
+     * @brief Destructeur de la classe JoinDialog.
+     */
     ~JoinDialog();
 
-    QString getCode() const;  // Récupérer le code entré
+    /**
+     * @brief Obtient le code de la boîte de dialogue.
+     * @return Le code sous forme de QString.
+     */
+    QString getCode() const;
 
 private:
-    Ui::JoinDialog *ui;
+    Ui::JoinDialog *ui; ///< Interface utilisateur de la boîte de dialogue.
 };
 
-#endif // JOINDIALOG_H
+#endif

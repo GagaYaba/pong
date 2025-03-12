@@ -13,14 +13,27 @@
 // =====================================================
 // Handler pour "ROLE_ASSIGNED"
 // =====================================================
+/**
+ * @brief Gestionnaire d'événements pour le message "ROLE_ASSIGNED".
+ */
 class RoleAssignedEventHandler : public ClientEventHandler
 {
 public:
+    /**
+     * @brief Vérifie si le gestionnaire peut traiter le message "ROLE_ASSIGNED".
+     * @param message Le message à vérifier.
+     * @return true si le message commence par "ROLE_ASSIGNED", false sinon.
+     */
     bool canHandle(const QString &message) const override
     {
         return message.startsWith("ROLE_ASSIGNED");
     }
 
+    /**
+     * @brief Traite le message "ROLE_ASSIGNED".
+     * @param client Le client de jeu.
+     * @param message Le message reçu.
+     */
     void handle(GameClient *client, const QString &message) override
     {
         qDebug() << "Rôle attribué";
@@ -40,14 +53,27 @@ public:
 // =====================================================
 // Handler pour "ASSIGN_ID"
 // =====================================================
+/**
+ * @brief Gestionnaire d'événements pour le message "ASSIGN_ID".
+ */
 class AssignIdEventHandler : public ClientEventHandler
 {
 public:
+    /**
+     * @brief Vérifie si le gestionnaire peut traiter le message "ASSIGN_ID".
+     * @param message Le message à vérifier.
+     * @return true si le message commence par "ASSIGN_ID", false sinon.
+     */
     bool canHandle(const QString &message) const override
     {
         return message.startsWith("ASSIGN_ID");
     }
 
+    /**
+     * @brief Traite le message "ASSIGN_ID".
+     * @param client Le client de jeu.
+     * @param message Le message reçu.
+     */
     void handle(GameClient *client, const QString &message) override
     {
         QStringList parts = message.split(" ");
@@ -67,17 +93,30 @@ public:
 // =====================================================
 // Handler pour "AVAILABLE_SLOTS"
 // =====================================================
+/**
+ * @brief Gestionnaire d'événements pour le message "AVAILABLE_SLOTS".
+ */
 class AvailableSlotsEventHandler : public ClientEventHandler
 {
 public:
+    /**
+     * @brief Vérifie si le gestionnaire peut traiter le message "AVAILABLE_SLOTS".
+     * @param message Le message à vérifier.
+     * @return true si le message commence par "AVAILABLE_SLOTS", false sinon.
+     */
     bool canHandle(const QString &message) const override
     {
         return message.startsWith("AVAILABLE_SLOTS");
     }
 
+    /**
+     * @brief Traite le message "AVAILABLE_SLOTS".
+     * @param client Le client de jeu.
+     * @param message Le message reçu.
+     */
     void handle(GameClient *client, const QString &message) override
     {
-        QStringList parts = message.split(" "); // utilise QStringList et non QList<QString>
+        QStringList parts = message.split(" ");
         parts.removeFirst();
         if (client)
         {
@@ -94,14 +133,27 @@ public:
 // =====================================================
 // Handler pour "PLAYER_JOINED"
 // =====================================================
+/**
+ * @brief Gestionnaire d'événements pour le message "PLAYER_JOINED".
+ */
 class PlayerJoinedEventHandler : public ClientEventHandler
 {
 public:
+    /**
+     * @brief Vérifie si le gestionnaire peut traiter le message "PLAYER_JOINED".
+     * @param message Le message à vérifier.
+     * @return true si le message commence par "PLAYER_JOINED", false sinon.
+     */
     bool canHandle(const QString &message) const override
     {
         return message.startsWith("PLAYER_JOINED");
     }
 
+    /**
+     * @brief Traite le message "PLAYER_JOINED".
+     * @param client Le client de jeu.
+     * @param message Le message reçu.
+     */
     void handle(GameClient *client, const QString &message) override
     {
         QStringList parts = message.split(" ");
@@ -116,14 +168,27 @@ public:
 // =====================================================
 // Handler pour "PLAYER_UPDATED"
 // =====================================================
+/**
+ * @brief Gestionnaire d'événements pour le message "PLAYER_UPDATED".
+ */
 class PlayerUpdatedEventHandler : public ClientEventHandler
 {
 public:
+    /**
+     * @brief Vérifie si le gestionnaire peut traiter le message "PLAYER_UPDATED".
+     * @param message Le message à vérifier.
+     * @return true si le message commence par "PLAYER_UPDATED", false sinon.
+     */
     bool canHandle(const QString &message) const override
     {
         return message.startsWith("PLAYER_UPDATED");
     }
 
+    /**
+     * @brief Traite le message "PLAYER_UPDATED".
+     * @param client Le client de jeu.
+     * @param message Le message reçu.
+     */
     void handle(GameClient *client, const QString &message) override
     {
         QStringList parts = message.split(" ");
@@ -147,14 +212,27 @@ public:
 // =====================================================
 // Handler pour "GAME_INFO"
 // =====================================================
+/**
+ * @brief Gestionnaire d'événements pour le message "GAME_INFO".
+ */
 class GameInfoEventHandler : public ClientEventHandler
 {
 public:
+    /**
+     * @brief Vérifie si le gestionnaire peut traiter le message "GAME_INFO".
+     * @param message Le message à vérifier.
+     * @return true si le message commence par "GAME_INFO", false sinon.
+     */
     bool canHandle(const QString &message) const override
     {
         return message.startsWith("GAME_INFO");
     }
 
+    /**
+     * @brief Traite le message "GAME_INFO".
+     * @param client Le client de jeu.
+     * @param message Le message reçu.
+     */
     void handle(GameClient *client, const QString &message) override
     {
         QStringList parts = message.split(" ");
@@ -165,7 +243,7 @@ public:
             qDebug() << "Mode de jeu:" << gameMode;
             QString message = "READY " + QString::number(client->playerId);
             client->sendMessage(message);
-            emit client->gameInfoReceived(parts[1]); // Émet le signal pour fermer le dialog
+            emit client->gameInfoReceived(parts[1]);
         }
         else
         {
@@ -177,14 +255,27 @@ public:
 // =====================================================
 // Handler pour "GAME_START"
 // =====================================================
+/**
+ * @brief Gestionnaire d'événements pour le message "GAME_START".
+ */
 class GameStartEventHandler : public ClientEventHandler
 {
 public:
+    /**
+     * @brief Vérifie si le gestionnaire peut traiter le message "GAME_START".
+     * @param message Le message à vérifier.
+     * @return true si le message commence par "GAME_START", false sinon.
+     */
     bool canHandle(const QString &message) const override
     {
         return message.startsWith("GAME_START");
     }
 
+    /**
+     * @brief Traite le message "GAME_START".
+     * @param client Le client de jeu.
+     * @param message Le message reçu.
+     */
     void handle(GameClient *client, const QString &message) override
     {
         Q_UNUSED(message);
@@ -202,14 +293,27 @@ public:
 // =====================================================
 // Handler pour "FULL"
 // =====================================================
+/**
+ * @brief Gestionnaire d'événements pour le message "FULL".
+ */
 class FullEventHandler : public ClientEventHandler
 {
 public:
+    /**
+     * @brief Vérifie si le gestionnaire peut traiter le message "FULL".
+     * @param message Le message à vérifier.
+     * @return true si le message commence par "FULL", false sinon.
+     */
     bool canHandle(const QString &message) const override
     {
         return message.startsWith("FULL");
     }
 
+    /**
+     * @brief Traite le message "FULL".
+     * @param client Le client de jeu.
+     * @param message Le message reçu.
+     */
     void handle(GameClient *client, const QString &message) override
     {
         Q_UNUSED(message);
@@ -220,15 +324,27 @@ public:
 // =====================================================
 // Handler par défaut pour les messages inconnus
 // =====================================================
+/**
+ * @brief Gestionnaire d'événements par défaut pour les messages inconnus.
+ */
 class UnknownEventHandler : public ClientEventHandler
 {
 public:
+    /**
+     * @brief Vérifie si le gestionnaire peut traiter le message inconnu.
+     * @param message Le message à vérifier.
+     * @return true.
+     */
     bool canHandle(const QString &message) const override
     {
-        // Toujours vrai en fallback
         return true;
     }
 
+    /**
+     * @brief Traite le message inconnu.
+     * @param client Le client de jeu.
+     * @param message Le message reçu.
+     */
     void handle(GameClient *client, const QString &message) override
     {
         qDebug() << "Message inconnu reçu:" << message;
@@ -238,11 +354,14 @@ public:
 // =====================================================
 // Factory pour créer les handlers côté client
 // =====================================================
+/**
+ * @brief Crée une liste de gestionnaires d'événements côté client.
+ * @return Un vecteur de gestionnaires d'événements côté client.
+ */
 std::vector<std::unique_ptr<ClientEventHandler>> ClientEventHandlerFactory::createHandlers()
 {
     std::vector<std::unique_ptr<ClientEventHandler>> handlers;
 
-    // Ajout des gestionnaires d'événements spécifiques
     handlers.push_back(std::make_unique<RoleAssignedEventHandler>());
     handlers.push_back(std::make_unique<AssignIdEventHandler>());
     handlers.push_back(std::make_unique<AvailableSlotsEventHandler>());
@@ -251,7 +370,7 @@ std::vector<std::unique_ptr<ClientEventHandler>> ClientEventHandlerFactory::crea
     handlers.push_back(std::make_unique<GameStartEventHandler>());
     handlers.push_back(std::make_unique<GameInfoEventHandler>());
     handlers.push_back(std::make_unique<FullEventHandler>());
-    handlers.push_back(std::make_unique<UnknownEventHandler>()); // Handler par défaut
+    handlers.push_back(std::make_unique<UnknownEventHandler>());
 
     return handlers;
 }
@@ -259,21 +378,33 @@ std::vector<std::unique_ptr<ClientEventHandler>> ClientEventHandlerFactory::crea
 // =====================================================
 // Handler pour "BINARY_PLAYER1"
 // =====================================================
+/**
+ * @brief Gestionnaire d'événements binaires pour le message de type 1.
+ */
 class BinaryPlayer1EventHandler : public BinaryClientEventHandler
 {
 public:
+    /**
+     * @brief Vérifie si le gestionnaire peut traiter le message binaire de type 1.
+     * @param msgType Le type de message à vérifier.
+     * @return true si le type de message est 1, false sinon.
+     */
     bool canHandle(quint8 msgType) const override
     {
         return msgType == 1;
     }
 
+    /**
+     * @brief Traite le message binaire de type 1.
+     * @param client Le client de jeu.
+     * @param data Les données reçues.
+     */
     void handle(GameClient *client, const QByteArray &data) override
     {
         QDataStream stream(data);
         stream.setByteOrder(QDataStream::BigEndian);
         stream.setVersion(QDataStream::Qt_6_0);
 
-        // On lit le type (déjà vérifié) puis les autres données
         quint8 type;
         stream >> type;
         qint32 senderId;
@@ -284,28 +415,39 @@ public:
         int id = senderId;
         PlayerNetwork *player = g_game->playersNetwork[0];
         player->updatePaddlePosition(paddleY);
-        // Traitez ici le message pour le joueur 1
     }
 };
 
 // =====================================================
 // Handler pour "BINARY_PLAYER2"
 // =====================================================
+/**
+ * @brief Gestionnaire d'événements binaires pour le message de type 2.
+ */
 class BinaryPlayer2EventHandler : public BinaryClientEventHandler
 {
 public:
+    /**
+     * @brief Vérifie si le gestionnaire peut traiter le message binaire de type 2.
+     * @param msgType Le type de message à vérifier.
+     * @return true si le type de message est 2, false sinon.
+     */
     bool canHandle(quint8 msgType) const override
     {
         return msgType == 2;
     }
 
+    /**
+     * @brief Traite le message binaire de type 2.
+     * @param client Le client de jeu.
+     * @param data Les données reçues.
+     */
     void handle(GameClient *client, const QByteArray &data) override
     {
         QDataStream stream(data);
         stream.setByteOrder(QDataStream::BigEndian);
         stream.setVersion(QDataStream::Qt_6_0);
 
-        // On lit le type (déjà vérifié) puis les autres données
         quint8 type;
         stream >> type;
         qint32 senderId;
@@ -322,21 +464,33 @@ public:
 // =====================================================
 // Handler pour "BINARY_PLAYER3"
 // =====================================================
+/**
+ * @brief Gestionnaire d'événements binaires pour le message de type 3.
+ */
 class BinaryPlayer3EventHandler : public BinaryClientEventHandler
 {
 public:
+    /**
+     * @brief Vérifie si le gestionnaire peut traiter le message binaire de type 3.
+     * @param msgType Le type de message à vérifier.
+     * @return true si le type de message est 3, false sinon.
+     */
     bool canHandle(quint8 msgType) const override
     {
         return msgType == 3;
     }
 
+    /**
+     * @brief Traite le message binaire de type 3.
+     * @param client Le client de jeu.
+     * @param data Les données reçues.
+     */
     void handle(GameClient *client, const QByteArray &data) override
     {
         QDataStream stream(data);
         stream.setByteOrder(QDataStream::BigEndian);
         stream.setVersion(QDataStream::Qt_6_0);
 
-        // On lit le type (déjà vérifié) puis les autres données
         quint8 type;
         stream >> type;
         qint32 senderId;
@@ -345,56 +499,78 @@ public:
         stream >> paddleY;
 
         qDebug() << "Handler binaire joueur 3 | ID:" << senderId << "Paddle Y:" << paddleY;
-        // Traitez ici le message pour le joueur 3
     }
 };
 
 // =====================================================
 // Handler pour "BINARY_PLAYER4"
 // =====================================================
+/**
+ * @brief Gestionnaire d'événements binaires pour le message de type 4.
+ */
 class BinaryPlayer4EventHandler : public BinaryClientEventHandler
 {
 public:
+    /**
+     * @brief Vérifie si le gestionnaire peut traiter le message binaire de type 4.
+     * @param msgType Le type de message à vérifier.
+     * @return true si le type de message est 4, false sinon.
+     */
     bool canHandle(quint8 msgType) const override
     {
         return msgType == 4;
     }
 
+    /**
+     * @brief Traite le message binaire de type 4.
+     * @param client Le client de jeu.
+     * @param data Les données reçues.
+     */
     void handle(GameClient *client, const QByteArray &data) override
     {
         QDataStream stream(data);
         stream.setByteOrder(QDataStream::BigEndian);
         stream.setVersion(QDataStream::Qt_6_0);
 
-        // On lit le type (déjà vérifié) puis les autres données
         quint8 type;
         stream >> type;
         qint32 senderId;
         stream >> senderId;
         float paddleY;
         stream >> paddleY;
-
-        // Traitez ici le message pour le joueur 4
     }
 };
 
 // =====================================================
 // Handler pour "BINARY_BALL"
 // =====================================================
+/**
+ * @brief Gestionnaire d'événements binaires pour le message de type 5.
+ */
 class BinaryBall5EventHandler : public BinaryClientEventHandler
 {
 public:
+    /**
+     * @brief Vérifie si le gestionnaire peut traiter le message binaire de type 5.
+     * @param msgType Le type de message à vérifier.
+     * @return true si le type de message est 5, false sinon.
+     */
     bool canHandle(quint8 msgType) const override
     {
         return msgType == 5;
     }
+
+    /**
+     * @brief Traite le message binaire de type 5.
+     * @param client Le client de jeu.
+     * @param data Les données reçues.
+     */
     void handle(GameClient *client, const QByteArray &data) override
     {
         QDataStream stream(data);
         stream.setByteOrder(QDataStream::BigEndian);
         stream.setVersion(QDataStream::Qt_6_0);
 
-        // On lit le type (déjà vérifié) puis les données de la balle
         quint8 type;
         stream >> type;
         float ballY;
@@ -405,23 +581,33 @@ public:
         if (!g_isHost) {
             g_game->getBall()->setPos(ballX, ballY);
         }
-        // Traitez ici le message pour la balle
     }
 };
-
 
 // =====================================================
 // Handler par défaut pour les messages binaires inconnus
 // =====================================================
+/**
+ * @brief Gestionnaire d'événements par défaut pour les messages binaires inconnus.
+ */
 class BinaryUnknownEventHandler : public BinaryClientEventHandler
 {
 public:
+    /**
+     * @brief Vérifie si le gestionnaire peut traiter le message binaire inconnu.
+     * @param msgType Le type de message à vérifier.
+     * @return true.
+     */
     bool canHandle(quint8 msgType) const override
     {
-        // Toujours vrai en fallback
         return true;
     }
 
+    /**
+     * @brief Traite le message binaire inconnu.
+     * @param client Le client de jeu.
+     * @param data Les données reçues.
+     */
     void handle(GameClient *client, const QByteArray &data) override
     {
         qDebug() << "Message binaire inconnu reçu:" << data.toHex();
@@ -431,36 +617,42 @@ public:
 // =====================================================
 // Factory pour créer les handlers binaires côté client
 // =====================================================
+/**
+ * @brief Crée une liste de gestionnaires d'événements binaires côté client.
+ * @return Un vecteur de gestionnaires d'événements binaires côté client.
+ */
 std::vector<std::unique_ptr<BinaryClientEventHandler>> BinaryEventHandlerFactory::createHandlers()
 {
-        std::vector<std::unique_ptr<BinaryClientEventHandler>> handlers;
+    std::vector<std::unique_ptr<BinaryClientEventHandler>> handlers;
 
-        // Ajout des gestionnaires d'événements spécifiques
-        handlers.push_back(std::make_unique<BinaryPlayer1EventHandler>());
-        handlers.push_back(std::make_unique<BinaryPlayer2EventHandler>());
-        handlers.push_back(std::make_unique<BinaryPlayer3EventHandler>());
-        handlers.push_back(std::make_unique<BinaryPlayer4EventHandler>());
-        handlers.push_back(std::make_unique<BinaryBall5EventHandler>());
-        handlers.push_back(std::make_unique<BinaryUnknownEventHandler>()); // Handler par défaut
+    handlers.push_back(std::make_unique<BinaryPlayer1EventHandler>());
+    handlers.push_back(std::make_unique<BinaryPlayer2EventHandler>());
+    handlers.push_back(std::make_unique<BinaryPlayer3EventHandler>());
+    handlers.push_back(std::make_unique<BinaryPlayer4EventHandler>());
+    handlers.push_back(std::make_unique<BinaryBall5EventHandler>());
+    handlers.push_back(std::make_unique<BinaryUnknownEventHandler>());
 
-        return handlers;
-};
+    return handlers;
+}
 
 // =====================================================
 // Implémentation de GameClient
 // =====================================================
+/**
+ * @brief Constructeur de la classe GameClient.
+ * @param parent Le parent QObject.
+ */
 GameClient::GameClient(QObject *parent)
-    : QObject(parent),
-      tcpSocket(new QTcpSocket(this)),
-      playerId(-1)
+        : QObject(parent),
+          tcpSocket(new QTcpSocket(this)),
+          playerId(-1)
 {
     connect(tcpSocket, &QTcpSocket::readyRead, this, &GameClient::onDataReceived);
-
-    // simulationTimer = new QTimer(this);
-    // connect(simulationTimer, &QTimer::timeout, this, &GameClient::simulatePaddleData);
-    // simulationTimer->start(5);
 }
 
+/**
+ * @brief Démarre le timer pour vérifier la position de la raquette.
+ */
 void GameClient::startCheckPaddleTimer()
 {
     checkPaddleTimer = new QTimer(this);
@@ -468,6 +660,9 @@ void GameClient::startCheckPaddleTimer()
     checkPaddleTimer->start(5);
 }
 
+/**
+ * @brief Démarre le timer pour vérifier la position de la balle.
+ */
 void GameClient::startCheckBallTimer()
 {
     checkBallTimer = new QTimer(this);
@@ -475,6 +670,9 @@ void GameClient::startCheckBallTimer()
     checkBallTimer->start(5);
 }
 
+/**
+ * @brief Simule les données de la raquette.
+ */
 void GameClient::simulatePaddleData()
 {
     simulationPaddleY += 5.0f;
@@ -483,6 +681,9 @@ void GameClient::simulatePaddleData()
     sendPaddlePositionBinary(simulationPaddleY);
 }
 
+/**
+ * @brief Vérifie la position de la raquette et envoie les données binaires.
+ */
 void GameClient::checkPaddlePosition()
 {
     if (g_game)
@@ -492,6 +693,9 @@ void GameClient::checkPaddlePosition()
     }
 }
 
+/**
+ * @brief Vérifie la position de la balle et envoie les données binaires.
+ */
 void GameClient::checkBallPosition()
 {
     if (g_game)
@@ -502,58 +706,25 @@ void GameClient::checkBallPosition()
     }
 }
 
-// void GameClient::checkPaddlePosition() {
-//     lastPaddleY = -1;
-
-//     qDebug() << g_playerId;
-
-//     if (!g_game) {
-//         qDebug() << "Erreur: g_game est NULL";
-//         return;
-//     }
-
-//     if (g_playerId < 0 || g_playerId >= g_game->players.size()) {
-//         qDebug() << "Erreur: g_playerId (" << g_playerId << ") hors limites";
-//         return;
-//     }
-
-//     Player* player = g_game->players[g_playerId];  // Récupérer le joueur
-//     if (!player) {
-//         qDebug() << "Erreur: Player est NULL";
-//         return;
-//     }
-
-//     Paddle* paddle = player->getPaddle();  // Récupérer le paddle
-//     if (!paddle) {
-//         qDebug() << "Erreur: Paddle est NULL";
-//         return;
-//     }
-
-//     float paddleY = paddle->y();
-//     if (paddleY != lastPaddleY) {
-//         lastPaddleY = paddleY;
-//         sendPaddlePositionBinary(paddleY);
-//     }
-// }
-
+/**
+ * @brief Envoie la position de la raquette en données binaires.
+ * @param paddleY La position Y de la raquette.
+ */
 void GameClient::sendPaddlePositionBinary(float paddleY)
 {
-    // Vérifier si la position a changé avant d'envoyer
     if (paddleY != lastPaddleY)
     {
         lastPaddleY = paddleY;
 
         QByteArray data;
         QDataStream stream(&data, QIODevice::WriteOnly);
-        stream.setByteOrder(QDataStream::BigEndian); // Format réseau
+        stream.setByteOrder(QDataStream::BigEndian);
         stream.setVersion(QDataStream::Qt_6_0);
 
-        quint8 messageType = 1; // Identifiant de message "Paddle Move"
+        quint8 messageType = 1;
         stream << messageType;
-        stream << static_cast<qint32>(playerId); // ID du joueur
-        stream << paddleY;                       // Position Y du paddle
-
-        // Vérifier si le socket est bien connecté avant d'envoyer
+        stream << static_cast<qint32>(playerId);
+        stream << paddleY;
         if (tcpSocket->state() == QTcpSocket::ConnectedState)
         {
             tcpSocket->write(data);
@@ -566,9 +737,13 @@ void GameClient::sendPaddlePositionBinary(float paddleY)
     }
 }
 
+/**
+ * @brief Envoie la position de la balle en données binaires.
+ * @param ballY La position Y de la balle.
+ * @param ballX La position X de la balle.
+ */
 void GameClient::sendBallPositionBinary(float ballY, float ballX)
 {
-    // Vérifier si la position a changé avant d'envoyer
     if (ballY != lastBallY || ballX != lastBallX)
     {
         lastBallY = ballY;
@@ -576,16 +751,15 @@ void GameClient::sendBallPositionBinary(float ballY, float ballX)
 
         QByteArray data;
         QDataStream stream(&data, QIODevice::WriteOnly);
-        stream.setByteOrder(QDataStream::BigEndian); // Format réseau
+        stream.setByteOrder(QDataStream::BigEndian);
         stream.setVersion(QDataStream::Qt_6_0);
 
-        quint8 messageType = 2; // Identifiant de message "Ball Move"
+        quint8 messageType = 2;
         stream << messageType;
-        stream << static_cast<qint32>(playerId); // ID du joueur
-        stream << ballY;                         // Position Y de la balle
-        stream << ballX;                         // Position X de la balle
+        stream << static_cast<qint32>(playerId);
+        stream << ballY;
+        stream << ballX;
 
-        // Vérifier si le socket est bien connecté avant d'envoyer
         if (tcpSocket->state() == QTcpSocket::ConnectedState)
         {
             tcpSocket->write(data);
@@ -598,6 +772,10 @@ void GameClient::sendBallPositionBinary(float ballY, float ballX)
     }
 }
 
+/**
+ * @brief Envoie un message au serveur.
+ * @param message Le message à envoyer.
+ */
 void GameClient::sendMessage(const QString &message)
 {
     QString messageToSend = message + "\n";
@@ -614,6 +792,10 @@ void GameClient::sendMessage(const QString &message)
     }
 }
 
+/**
+ * @brief Se connecte au serveur.
+ * @param serverAddr L'adresse du serveur.
+ */
 void GameClient::connectToServer(const QHostAddress &serverAddr)
 {
     this->serverAddress = serverAddr;
@@ -644,6 +826,10 @@ void GameClient::connectToServer(const QHostAddress &serverAddr)
     }
 }
 
+/**
+ * @brief Sélectionne un rôle pour le joueur.
+ * @param role Le rôle à sélectionner.
+ */
 void GameClient::selectRole(const QString &role)
 {
     QString message = "SELECT_ROLE " + role;
@@ -651,6 +837,9 @@ void GameClient::selectRole(const QString &role)
     qDebug() << "Demande de sélection de rôle envoyée:" << role;
 }
 
+/**
+ * @brief Démarre la partie.
+ */
 void GameClient::startGame()
 {
     QString message = "START_GAME";
@@ -658,21 +847,20 @@ void GameClient::startGame()
     qDebug() << "Demande de démarrage de la partie envoyée";
 }
 
+/**
+ * @brief Gère les données reçues du serveur.
+ */
 void GameClient::onDataReceived()
 {
-    // On regarde le contenu disponible sans le retirer d'abord
     QByteArray peekBuffer = tcpSocket->peek(tcpSocket->bytesAvailable());
 
     if (peekBuffer.endsWith('\n'))
     {
-        // Traitement du message en chaîne de caractères
         QByteArray data = tcpSocket->readAll();
         QString message = QString::fromUtf8(data).trimmed();
         qDebug() << "Client (" << playerId << ") | Message string reçu:" << message;
 
-        // Récupère les handlers string via la factory existante
         auto handlers = ClientEventHandlerFactory::createHandlers();
-        // On découpe éventuellement les messages multiples
         QStringList messages = message.split("\n", Qt::SkipEmptyParts);
         for (const QString &msg : messages)
         {
@@ -682,17 +870,15 @@ void GameClient::onDataReceived()
                 if (handler->canHandle(msg))
                 {
                     handler->handle(this, msg);
-                    break; // Dès qu'un handler a traité le message, on sort de la boucle
+                    break;
                 }
             }
         }
     }
     else
     {
-        // Traitement du message binaire
         QByteArray data = tcpSocket->readAll();
 
-        // On suppose que le premier octet représente le type de message
         if (data.size() < 1)
         {
             qDebug() << "Client | Message binaire vide ou incorrect";
@@ -700,7 +886,6 @@ void GameClient::onDataReceived()
         }
         quint8 msgType = static_cast<quint8>(data.at(0));
 
-        // Récupère les handlers binaires via la factory dédiée
         auto binaryHandlers = BinaryEventHandlerFactory::createHandlers();
         bool handled = false;
         for (const auto &handler : binaryHandlers)
