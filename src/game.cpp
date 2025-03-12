@@ -31,7 +31,7 @@ void Game::setupPlayersAndPaddles() {
     int screenHeight = 600;
 
     if (gameMode == OneVOne) {
-        players.append(new Player(new Paddle(screenWidth * 0.05, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::P1), Qt::Key_S, Qt::Key_W));
+        players.append(new Player(new Paddle(screenWidth * 0.05, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::P1), Qt::Key_A, Qt::Key_Q));
         players.append(new Player(new Paddle(screenWidth * 0.95 - 10, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::P2), Qt::Key_Up, Qt::Key_Down));
     }
 
