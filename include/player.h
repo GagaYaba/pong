@@ -9,7 +9,7 @@ public:
     Player(Paddle* paddle, QString role, int upKey, int downKey, QSet<int>* keysPressed);
 
     virtual ~Player() = default;
-    virtual Paddle* getPaddle() const; // Retourne un Paddle*
+    virtual Paddle* getPaddle() const;
     virtual void update();
 
     QString type;
@@ -20,13 +20,13 @@ private:
 
     int upKey;
     int downKey;
-    QSet<int>* keysPressed; // Ajout des touches pressées
+    QSet<int>* keysPressed;
 };
 
 class PlayerNetwork {
 public:
     PlayerNetwork(PaddleNetwork* paddle, QString role);
-    virtual PaddleNetwork* getPaddleNetwork() const; // Retourne un Paddle*
+    virtual PaddleNetwork* getPaddleNetwork() const;
     void updatePaddlePosition(float y);
     QString type;
     QString role;

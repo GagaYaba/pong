@@ -165,7 +165,7 @@ public:
             qDebug() << "Mode de jeu:" << gameMode;
             QString message = "READY " + QString::number(client->playerId);
             client->sendMessage(message);
-            emit client->gameInfoReceived(parts[1]); // Émet le signal pour fermer le dialog
+            emit client->gameInfoReceived(parts[1]);
         }
         else
         {
@@ -238,7 +238,6 @@ std::vector<std::unique_ptr<ClientEventHandler>> ClientEventHandlerFactory::crea
 {
     std::vector<std::unique_ptr<ClientEventHandler>> handlers;
 
-    // Ajout des gestionnaires d'événements spécifiques
     handlers.push_back(std::make_unique<RoleAssignedEventHandler>());
     handlers.push_back(std::make_unique<AssignIdEventHandler>());
     handlers.push_back(std::make_unique<AvailableSlotsEventHandler>());
@@ -247,7 +246,7 @@ std::vector<std::unique_ptr<ClientEventHandler>> ClientEventHandlerFactory::crea
     handlers.push_back(std::make_unique<GameStartEventHandler>());
     handlers.push_back(std::make_unique<GameInfoEventHandler>());
     handlers.push_back(std::make_unique<FullEventHandler>());
-    handlers.push_back(std::make_unique<UnknownEventHandler>()); // Handler par défaut
+    handlers.push_back(std::make_unique<UnknownEventHandler>());
 
     return handlers;
 }
@@ -269,7 +268,6 @@ public:
         stream.setByteOrder(QDataStream::BigEndian);
         stream.setVersion(QDataStream::Qt_6_0);
 
-        // On lit le type (déjà vérifié) puis les autres données
         quint8 type;
         stream >> type;
         qint32 senderId;
@@ -281,7 +279,6 @@ public:
         int id = senderId;
         PlayerNetwork *player = g_game->playersNetwork[0];
         player->updatePaddlePosition(paddleY);
-        // Traitez ici le message pour le joueur 1
     }
 };
 
@@ -302,7 +299,6 @@ public:
         stream.setByteOrder(QDataStream::BigEndian);
         stream.setVersion(QDataStream::Qt_6_0);
 
-        // On lit le type (déjà vérifié) puis les autres données
         quint8 type;
         stream >> type;
         qint32 senderId;
@@ -337,7 +333,6 @@ public:
         stream.setByteOrder(QDataStream::BigEndian);
         stream.setVersion(QDataStream::Qt_6_0);
 
-        // On lit le type (déjà vérifié) puis les autres données
         quint8 type;
         stream >> type;
         qint32 senderId;
@@ -346,7 +341,6 @@ public:
         stream >> paddleY;
 
         qDebug() << "Handler binaire joueur 3 | ID:" << senderId << "Paddle Y:" << paddleY;
-        // Traitez ici le message pour le joueur 3
     }
 };
 
@@ -367,7 +361,6 @@ public:
         stream.setByteOrder(QDataStream::BigEndian);
         stream.setVersion(QDataStream::Qt_6_0);
 
-        // On lit le type (déjà vérifié) puis les autres données
         quint8 type;
         stream >> type;
         qint32 senderId;
@@ -376,7 +369,6 @@ public:
         stream >> paddleY;
 
         qDebug() << "Handler binaire joueur 4 | ID:" << senderId << "Paddle Y:" << paddleY;
-        // Traitez ici le message pour le joueur 4
     }
 };
 
@@ -388,7 +380,6 @@ class BinaryUnknownEventHandler : public BinaryClientEventHandler
 public:
     bool canHandle(quint8 msgType) const override
     {
-        // Toujours vrai en fallback
         return true;
     }
 
@@ -405,12 +396,11 @@ std::vector<std::unique_ptr<BinaryClientEventHandler>> BinaryEventHandlerFactory
 {
         std::vector<std::unique_ptr<BinaryClientEventHandler>> handlers;
 
-        // Ajout des gestionnaires d'événements spécifiques
         handlers.push_back(std::make_unique<BinaryPlayer1EventHandler>());
         handlers.push_back(std::make_unique<BinaryPlayer2EventHandler>());
         handlers.push_back(std::make_unique<BinaryPlayer3EventHandler>());
         handlers.push_back(std::make_unique<BinaryPlayer4EventHandler>());
-        handlers.push_back(std::make_unique<BinaryUnknownEventHandler>()); // Handler par défaut
+        handlers.push_back(std::make_unique<BinaryUnknownEventHandler>());
 
         return handlers;
 };
@@ -454,43 +444,8 @@ void GameClient::checkPaddlePosition()
     }
 }
 
-// void GameClient::checkPaddlePosition() {
-//     lastPaddleY = -1;
-
-//     qDebug() << g_playerId;
-
-//     if (!g_game) {
-//         qDebug() << "Erreur: g_game est NULL";
-//         return;
-//     }
-
-//     if (g_playerId < 0 || g_playerId >= g_game->players.size()) {
-//         qDebug() << "Erreur: g_playerId (" << g_playerId << ") hors limites";
-//         return;
-//     }
-
-//     Player* player = g_game->players[g_playerId];  // Récupérer le joueur
-//     if (!player) {
-//         qDebug() << "Erreur: Player est NULL";
-//         return;
-//     }
-
-//     Paddle* paddle = player->getPaddle();  // Récupérer le paddle
-//     if (!paddle) {
-//         qDebug() << "Erreur: Paddle est NULL";
-//         return;
-//     }
-
-//     float paddleY = paddle->y();
-//     if (paddleY != lastPaddleY) {
-//         lastPaddleY = paddleY;
-//         sendPaddlePositionBinary(paddleY);
-//     }
-// }
-
 void GameClient::sendPaddlePositionBinary(float paddleY)
 {
-    // Vérifier si la position a changé avant d'envoyer
     if (paddleY != lastPaddleY)
     {
         qDebug() << "Client | Position du paddle:" << paddleY;
@@ -498,15 +453,14 @@ void GameClient::sendPaddlePositionBinary(float paddleY)
 
         QByteArray data;
         QDataStream stream(&data, QIODevice::WriteOnly);
-        stream.setByteOrder(QDataStream::BigEndian); // Format réseau
+        stream.setByteOrder(QDataStream::BigEndian);
         stream.setVersion(QDataStream::Qt_6_0);
 
-        quint8 messageType = 1; // Identifiant de message "Paddle Move"
+        quint8 messageType = 1;
         stream << messageType;
-        stream << static_cast<qint32>(playerId); // ID du joueur
-        stream << paddleY;                       // Position Y du paddle
+        stream << static_cast<qint32>(playerId);
+        stream << paddleY;
 
-        // Vérifier si le socket est bien connecté avant d'envoyer
         if (tcpSocket->state() == QTcpSocket::ConnectedState)
         {
             tcpSocket->write(data);
@@ -582,19 +536,15 @@ void GameClient::startGame()
 
 void GameClient::onDataReceived()
 {
-    // On regarde le contenu disponible sans le retirer d'abord
     QByteArray peekBuffer = tcpSocket->peek(tcpSocket->bytesAvailable());
 
     if (peekBuffer.endsWith('\n'))
     {
-        // Traitement du message en chaîne de caractères
         QByteArray data = tcpSocket->readAll();
         QString message = QString::fromUtf8(data).trimmed();
         qDebug() << "Client (" << playerId << ") | Message string reçu:" << message;
 
-        // Récupère les handlers string via la factory existante
         auto handlers = ClientEventHandlerFactory::createHandlers();
-        // On découpe éventuellement les messages multiples
         QStringList messages = message.split("\n", Qt::SkipEmptyParts);
         for (const QString &msg : messages)
         {
@@ -604,17 +554,15 @@ void GameClient::onDataReceived()
                 if (handler->canHandle(msg))
                 {
                     handler->handle(this, msg);
-                    break; // Dès qu'un handler a traité le message, on sort de la boucle
+                    break;
                 }
             }
         }
     }
     else
     {
-        // Traitement du message binaire
         QByteArray data = tcpSocket->readAll();
 
-        // On suppose que le premier octet représente le type de message
         if (data.size() < 1)
         {
             qDebug() << "Client | Message binaire vide ou incorrect";
@@ -623,7 +571,6 @@ void GameClient::onDataReceived()
         quint8 msgType = static_cast<quint8>(data.at(0));
         qDebug() << "Client (" << playerId << ") | Message binaire reçu, type:" << msgType;
 
-        // Récupère les handlers binaires via la factory dédiée
         auto binaryHandlers = BinaryEventHandlerFactory::createHandlers();
         bool handled = false;
         for (const auto &handler : binaryHandlers)

@@ -15,7 +15,7 @@ public:
     explicit JoinDialog(QWidget *parent = nullptr);
     ~JoinDialog();
 
-    QString getCode() const;  // Récupérer le code entré
+    QString getCode() const;
 
 private:
     Ui::JoinDialog *ui;

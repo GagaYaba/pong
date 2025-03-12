@@ -35,10 +35,9 @@ private slots:
 
 
 private:
-    // Méthodes de gestion du code de connexion
     QString generateJoinCode(const QString &ip);
     QString decodeJoinCode(const QString& code);
-    SelectDialog *selectDialog = nullptr;  // Stocke la boîte de dialogue
+    SelectDialog *selectDialog = nullptr;
     Game *game;
     GameServer *server;
     GameClient *client;

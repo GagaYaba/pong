@@ -31,7 +31,6 @@ void Player::update() {
     }
 }
 
-// Ajout de la mise à jour du paddle réseau
 void PlayerNetwork::updatePaddlePosition(float y) {
     paddle->updatePosition(y);
 }

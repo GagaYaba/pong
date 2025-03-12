@@ -20,15 +20,11 @@ class GameClient : public QObject
 public:
     explicit GameClient(QObject *parent = nullptr);
 
-    // Connexion au serveur
     void connectToServer(const QHostAddress &serverAddr);
     void startGame();
-    // Envoi de messages au serveur
     void sendMessage(const QString &message);
 
-    // Sélectionner un rôle
     void selectRole(const QString &role);
-    // Envoyer la position de la raquette
     void sendPaddlePositionBinary(float paddleY);
     void simulatePaddleData();
     void checkPaddlePosition();
@@ -45,7 +41,6 @@ signals:
 
 
 private slots:
-    // Gestion des données reçues du serveur
     void onDataReceived();
 
 
@@ -55,8 +50,6 @@ private:
     float lastPaddleY = -1;
     QTimer *simulationTimer;
     float simulationPaddleY { 0.0f };
-
-    // Liste des gestionnaires d'événements
     
     std::vector<std::unique_ptr<ClientEventHandler>> handlers;
 };

@@ -44,9 +44,8 @@ void MenuWindow::onAvailableSlotsReceived(const QStringList &availableSlots) {
 
 void MenuWindow::onStart() {
     if (!server) {
-        // Initialisation du serveur
         server = new GameServer(this);
-        server->startServer(1, false);  // Démarre le serveur sur un port spécifique (modifie si nécessaire)
+        server->startServer(1, false);
 
         QString ip = getLocalIPAddress();
         QString joinCode = generateJoinCode(ip);
@@ -55,13 +54,13 @@ void MenuWindow::onStart() {
 
         CodeDialog *codeDialog = new CodeDialog(joinCode, this);
         if (codeDialog->exec() == QDialog::Accepted) {
-            delete codeDialog;  // Assurez-vous que le CodeDialog est bien détruit après son utilisation
+            delete codeDialog;
         }
     }
 
     if (!g_client) {
         g_client = new GameClient(this);
-        g_client ->connectToServer(QHostAddress::LocalHost);  // Connexion locale
+        g_client ->connectToServer(QHostAddress::LocalHost);
     }
 
     if (g_client) {
@@ -104,7 +103,7 @@ void MenuWindow::onJoin() {
 
         if (!g_client) {
             g_client = new GameClient(this);
-            g_client->connectToServer(QHostAddress(ip));  // Connexion avec l'IP décodée
+            g_client->connectToServer(QHostAddress(ip));
         }
 
         if (g_client) {

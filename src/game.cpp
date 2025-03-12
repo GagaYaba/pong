@@ -15,7 +15,6 @@ Game::Game(QWidget *parent, GameMode mode)
 
     keysPressed = new QSet<int>();
 
-    // Configure les joueurs et les paddles en fonction du mode de jeu
     setupPlayersAndPaddles();
 
     ball = new Ball(screenWidth, screenHeight, this);
@@ -39,7 +38,6 @@ void Game::setupPlayersAndPaddles() {
     int screenWidth = 600;
     int screenHeight = 600;
 
-    // Vérifier quel joueur est ce client
     if (g_playerRole == "p1") {
         players.append(new Player(
                 new Paddle(screenWidth * 0.05, screenHeight * 0.25, 5, screenHeight, keysPressed, Paddle::p1), g_playerRole,
@@ -123,7 +121,6 @@ void Game::closeEvent(QCloseEvent *event) {
 }
 
 void Game::updateGame() {
-    // Mise à jour des joueurs locaux
     for (Player *player : players) {
         if (player->type == "Player") {
             player->update();

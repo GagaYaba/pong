@@ -39,7 +39,7 @@ private slots:
     void onGameInfoReceived(const QString &gameMode);
 
 private:
-    Game *game{};  // Variable pour gérer l'instance du jeu
+    Game *game{};
     Ui::SelectDialog *ui;
     QPushButton *startButton{};
     QCheckBox *player1CheckBox{};
