@@ -465,14 +465,14 @@ void GameClient::startCheckPaddleTimer()
 {
     checkPaddleTimer = new QTimer(this);
     connect(checkPaddleTimer, &QTimer::timeout, this, &GameClient::checkPaddlePosition);
-    checkPaddleTimer->start(100);
+    checkPaddleTimer->start(5);
 }
 
 void GameClient::startCheckBallTimer()
 {
     checkBallTimer = new QTimer(this);
     connect(checkBallTimer, &QTimer::timeout, this, &GameClient::checkBallPosition);
-    checkBallTimer->start(100);
+    checkBallTimer->start(5);
 }
 
 void GameClient::simulatePaddleData()
@@ -541,7 +541,6 @@ void GameClient::sendPaddlePositionBinary(float paddleY)
     // Vérifier si la position a changé avant d'envoyer
     if (paddleY != lastPaddleY)
     {
-        qDebug() << "Client | Position du paddle:" << paddleY;
         lastPaddleY = paddleY;
 
         QByteArray data;
@@ -559,7 +558,6 @@ void GameClient::sendPaddlePositionBinary(float paddleY)
         {
             tcpSocket->write(data);
             tcpSocket->flush();
-            qDebug() << "Client | Message binaire envoyé:" << data.toHex();
         }
         else
         {
@@ -573,7 +571,6 @@ void GameClient::sendBallPositionBinary(float ballY, float ballX)
     // Vérifier si la position a changé avant d'envoyer
     if (ballY != lastBallY || ballX != lastBallX)
     {
-        qDebug() << "Client | Position de la balle:" << ballY << ballX;
         lastBallY = ballY;
         lastBallX = ballX;
 
@@ -593,7 +590,6 @@ void GameClient::sendBallPositionBinary(float ballY, float ballX)
         {
             tcpSocket->write(data);
             tcpSocket->flush();
-            qDebug() << "Client | Message binaire envoyé:" << data.toHex();
         }
         else
         {
@@ -703,7 +699,6 @@ void GameClient::onDataReceived()
             return;
         }
         quint8 msgType = static_cast<quint8>(data.at(0));
-        qDebug() << "Client (" << playerId << ") | Message binaire reçu, type:" << msgType;
 
         // Récupère les handlers binaires via la factory dédiée
         auto binaryHandlers = BinaryEventHandlerFactory::createHandlers();
