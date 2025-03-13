@@ -36,6 +36,12 @@ Ce projet est une implémentation du jeu classique Pong en 2D, développé en C+
    ```sh
    make
    ```
+
+## Deux versions du jeu
+1. Sur la branche 'Game-local': possibilitée de jouer en 1v1 ou 2v2 sur un seul PC, la pertie se termine quand un des deux joueurs atteint un score de 3.
+
+2. Sur la branche 'Main' (ou 'Dev'): possibilitée de jouer en 1v1 en réseau avec 2 PC.
+
 ## Fonctionnement du serveur et du client
 ### Serveur
 Le serveur est responsable de :
